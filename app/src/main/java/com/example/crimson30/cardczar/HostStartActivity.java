@@ -3,12 +3,30 @@ package com.example.crimson30.cardczar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.EditText;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HostStartActivity extends Activity {
+
+    String result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +57,31 @@ public class HostStartActivity extends Activity {
     }
 
     public void intentToRoom(View view) {
+
+        EditText roomnameEditText = (EditText) findViewById(R.id.roomnameEditText);
+        EditText hostnameEditText = (EditText) findViewById(R.id.hostnameEditText);
+
+
+        // StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        // StrictMode.setThreadPolicy(policy);
+
+        /*
+        try {
+            String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_create_db.php";
+            HttpClient httpclient = HttpClientBuilder.create().build();
+            HttpPost post = new HttpPost(url);
+            List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+            urlParameters.add(new BasicNameValuePair("room", roomnameEditText.getText().toString()));
+            urlParameters.add(new BasicNameValuePair("host", hostnameEditText.getText().toString()));
+            post.setEntity(new UrlEncodedFormEntity(urlParameters));
+            HttpResponse response = httpclient.execute(post);
+            Log.d("Response of request", response.toString());
+            result = EntityUtils.toString(response.getEntity());
+        } catch (IOException e) { e.printStackTrace(); }
+        */
+
         Intent roomIntent = new Intent(this, RoomActivity.class);
         startActivity(roomIntent);
     }
+
 }
