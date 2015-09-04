@@ -23,6 +23,7 @@ import org.apache.http.util.EntityUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class HostStartActivity extends Activity {
 
@@ -92,17 +93,18 @@ public class HostStartActivity extends Activity {
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost post = new HttpPost(url);
             List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-            urlParameters.add(new BasicNameValuePair("room", "test456"));
-            //urlParameters.add(new BasicNameValuePair("host","test456"));
+            urlParameters.add(new BasicNameValuePair("room",roomnameEditText.getText().toString()));
+            urlParameters.add(new BasicNameValuePair("host",hostnameEditText.getText().toString()));
             post.setEntity(new UrlEncodedFormEntity(urlParameters));
             HttpResponse response = httpclient.execute(post);
             Log.d("Response of request", response.toString());
             result = EntityUtils.toString(response.getEntity());
+            Log.d("Result of request", result);
         } catch (IOException e) { e.printStackTrace(); }
 
-
+        if (Objects.equals(result, "OK")) {
         Intent roomIntent = new Intent(this, RoomActivity.class);
-        startActivity(roomIntent);
+        startActivity(roomIntent); }
     }
 
 }
