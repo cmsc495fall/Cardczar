@@ -15,7 +15,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
@@ -32,6 +32,7 @@ public class HostStartActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_host_start);
+
     }
 
     @Override
@@ -58,8 +59,8 @@ public class HostStartActivity extends Activity {
 
     public void intentToRoom(View view) {
 
-        EditText roomnameEditText = (EditText) findViewById(R.id.roomnameEditText);
-        EditText hostnameEditText = (EditText) findViewById(R.id.hostnameEditText);
+        // EditText roomnameEditText = (EditText) findViewById(R.id.roomnameEditText);
+        // EditText hostnameEditText = (EditText) findViewById(R.id.hostnameEditText);
 
 
         // StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -79,6 +80,26 @@ public class HostStartActivity extends Activity {
             result = EntityUtils.toString(response.getEntity());
         } catch (IOException e) { e.printStackTrace(); }
         */
+
+        EditText roomnameEditText = (EditText) findViewById(R.id.roomnameEditText);
+        EditText hostnameEditText = (EditText) findViewById(R.id.hostnameEditText);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        try {
+            String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_create_db.php";
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost post = new HttpPost(url);
+            List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+            urlParameters.add(new BasicNameValuePair("room", "test456"));
+            //urlParameters.add(new BasicNameValuePair("host","test456"));
+            post.setEntity(new UrlEncodedFormEntity(urlParameters));
+            HttpResponse response = httpclient.execute(post);
+            Log.d("Response of request", response.toString());
+            result = EntityUtils.toString(response.getEntity());
+        } catch (IOException e) { e.printStackTrace(); }
+
 
         Intent roomIntent = new Intent(this, RoomActivity.class);
         startActivity(roomIntent);
