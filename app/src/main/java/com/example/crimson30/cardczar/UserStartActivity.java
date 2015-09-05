@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -59,6 +60,7 @@ public class UserStartActivity extends Activity {
 
         EditText roomJoinEditText = (EditText) findViewById(R.id.roomJoinEditText);
         EditText usernameEditText = (EditText) findViewById(R.id.usernameEditText);
+        TextView roomStatusTextView = (TextView) findViewById(R.id.roomStatusTextView);
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -79,7 +81,11 @@ public class UserStartActivity extends Activity {
 
         if (Objects.equals(result, "OK")) {
             Intent roomIntent = new Intent(this, WaitingRoomActivity.class);
-            startActivity(roomIntent); }
+            startActivity(roomIntent);
+        } else {
+            roomStatusTextView.setText(result);
+        }
+
 
     }
 
