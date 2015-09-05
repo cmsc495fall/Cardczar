@@ -31,8 +31,13 @@
     <string name="refreshUsersButtonText">Refresh</string>
     <string name="gameStartButtonText">Start</string>
 
+    <!-- WaitingRoom -->
+    <string name="title_activity_waiting_room">WaitingRoom</string>
+    <string name="waitingTextViewText">Wait for host</string>
+
     <!-- Gameplay -->
     <string name="title_activity_gameplay">GameplayActivity</string>
+
 
 
 
