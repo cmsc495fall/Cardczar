@@ -11,7 +11,7 @@
     <!-- HostStart -->
     <string name="title_activity_host_start">HostStartActivity</string>
     <string name="roomnameTextViewText">Choose a room name. \n You\'ll need to give this to users. </string>
-    <string name="roomnameEditTextText">12345678</string>
+    <string name="roomnameEditTextText">r12345678</string>
     <string name="hostnameTextViewText">Enter your username</string>
     <string name="hostnameEditTextText">host</string>
     <string name="hostStartButtonText">Start Room</string>
@@ -19,7 +19,7 @@
     <!-- UserStart -->
     <string name="title_activity_user_start">UserStartActivity</string>
     <string name="roomJoinTextViewText">Enter room name</string>
-    <string name="roomJoinEditTextText">12345678</string>
+    <string name="roomJoinEditTextText">r12345678</string>
     <string name="usernameTextViewText">Enter your username</string>
     <string name="usernameEditTextText">user</string>
     <string name="userStartButtonText">Join Game</string>

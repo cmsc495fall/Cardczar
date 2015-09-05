@@ -1,11 +1,31 @@
 package com.example.crimson30.cardczar;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class UserStartActivity extends Activity {
+    String result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,4 +54,32 @@ public class UserStartActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    public void intentToWaitingRoom(View view) {
+
+        EditText roomJoinEditText = (EditText) findViewById(R.id.roomJoinEditText);
+        EditText usernameEditText = (EditText) findViewById(R.id.usernameEditText);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        try {
+            String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_join.php";
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost post = new HttpPost(url);
+            List<NameValuePair> urlParameters = new ArrayList<>();
+            urlParameters.add(new BasicNameValuePair("room",roomJoinEditText.getText().toString()));
+            urlParameters.add(new BasicNameValuePair("user",usernameEditText.getText().toString()));
+            post.setEntity(new UrlEncodedFormEntity(urlParameters));
+            HttpResponse response = httpclient.execute(post);
+            // Log.d("Response of request", response.toString());
+            result = EntityUtils.toString(response.getEntity());
+            Log.d("Result of request", result);
+        } catch (IOException e) { e.printStackTrace(); }
+
+        if (Objects.equals(result, "OK")) {
+            Intent roomIntent = new Intent(this, RoomActivity.class);
+            startActivity(roomIntent); }
+    }
+
 }
