@@ -81,6 +81,7 @@ public class UserStartActivity extends Activity {
 
         if (Objects.equals(result, "OK")) {
             Intent roomIntent = new Intent(this, WaitingRoomActivity.class);
+            roomIntent.putExtra("roomName",roomJoinEditText.getText().toString());
             startActivity(roomIntent);
         } else {
             roomStatusTextView.setText(result);
