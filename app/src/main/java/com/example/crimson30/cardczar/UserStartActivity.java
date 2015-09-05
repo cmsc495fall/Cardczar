@@ -63,7 +63,6 @@ public class UserStartActivity extends Activity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-
         try {
             String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_join.php";
             HttpClient httpclient = new DefaultHttpClient();
