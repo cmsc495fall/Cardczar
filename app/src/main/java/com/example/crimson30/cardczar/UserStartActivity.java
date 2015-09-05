@@ -77,7 +77,6 @@ public class UserStartActivity extends Activity {
             Log.d("Result of request", result);
         } catch (IOException e) { e.printStackTrace(); }
 
-
         if (Objects.equals(result, "OK")) {
             Intent roomIntent = new Intent(this, WaitingRoomActivity.class);
             startActivity(roomIntent); }
