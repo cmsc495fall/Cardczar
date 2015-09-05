@@ -82,6 +82,7 @@ public class HostStartActivity extends Activity {
 
         if (Objects.equals(result, "OK")) {
         Intent roomIntent = new Intent(this, RoomActivity.class);
+        roomIntent.putExtra("roomName",roomnameEditText.getText().toString());
         startActivity(roomIntent); }
     }
 
