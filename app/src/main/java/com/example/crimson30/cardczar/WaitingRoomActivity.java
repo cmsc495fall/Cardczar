@@ -3,7 +3,6 @@ package com.example.crimson30.cardczar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Movie;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -11,8 +10,6 @@ import android.os.StrictMode;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -20,6 +17,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.WaitingThreadAborter;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
@@ -27,19 +25,77 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class WaitingRoomActivity extends Activity {
     String result;
-    String roomName;
+    String roomname;
+    String username;
+    Thread thread;
+    Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        roomName = getIntent().getExtras().getString("roomName", "ERROR: ROOM NOT RECEIVED");
         super.onCreate(savedInstanceState);
+        Bundle extras = getIntent().getExtras();
+        roomname = extras.getString("roomname");
+        username = extras.getString("username");
         setContentView(R.layout.activity_waiting_room);
+
+        thread=new Thread(new userPollThread());
+        thread.start();
+
+        handler=new Handler(){
+            @Override
+             public void handleMessage(Message msg) {
+                Intent roomIntent = new Intent(getApplicationContext(), GameplayActivity.class);
+                Bundle extras = new Bundle();
+                extras.putString("roomname", roomname);
+                extras.putString("username", username);
+                roomIntent.putExtras(extras);
+                startActivity(roomIntent);
+            }
+        };
+
+    }
+
+    class userPollThread implements Runnable {
+        private volatile boolean running = true;
+
+        @Override
+        public void run() {
+
+            while (running) {
+                try {
+                    Thread.sleep(1210);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_check_start.php";
+                    HttpClient httpclient = new DefaultHttpClient();
+                    HttpPost post = new HttpPost(url);
+                    List<NameValuePair> urlParameters = new ArrayList<>();
+                    urlParameters.add(new BasicNameValuePair("room", roomname));
+                    post.setEntity(new UrlEncodedFormEntity(urlParameters));
+                    HttpResponse response = httpclient.execute(post);
+                    result = EntityUtils.toString(response.getEntity());
+                    Log.d("Result of check start", result);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                Message message = Message.obtain();
+                if (Objects.equals(result, "OK")) {
+                    handler.removeCallbacks(this);  // Clear message queue!
+                    handler.sendMessage(message);
+                    this.running=false;
+                }
+
+
+            }
+        }
+
     }
 
     @Override
@@ -74,7 +130,7 @@ public class WaitingRoomActivity extends Activity {
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost post = new HttpPost(url);
             List<NameValuePair> urlParameters = new ArrayList<>();
-            urlParameters.add(new BasicNameValuePair("room",roomName));
+            urlParameters.add(new BasicNameValuePair("room",roomname));
             post.setEntity(new UrlEncodedFormEntity(urlParameters));
             HttpResponse response = httpclient.execute(post);
             // Log.d("Response of request", response.toString());
@@ -84,7 +140,7 @@ public class WaitingRoomActivity extends Activity {
 
         if (Objects.equals(result, "OK")) {
             Intent roomIntent = new Intent(this, GameplayActivity.class);
-            roomIntent.putExtra("roomName",roomName);
+            roomIntent.putExtra("roomname",roomname);
             startActivity(roomIntent);
         } else {
             // waitingTextView.setText(result);

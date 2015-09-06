@@ -77,12 +77,15 @@ public class HostStartActivity extends Activity {
             HttpResponse response = httpclient.execute(post);
             // Log.d("Response of request", response.toString());
             result = EntityUtils.toString(response.getEntity());
-            Log.d("Result of request", result);
+            Log.d("Result of create_db", result);
         } catch (IOException e) { e.printStackTrace(); }
 
         if (Objects.equals(result, "OK")) {
         Intent roomIntent = new Intent(this, RoomActivity.class);
-        roomIntent.putExtra("roomName",roomnameEditText.getText().toString());
+            Bundle extras = new Bundle();
+            extras.putString("roomname", roomnameEditText.getText().toString());
+            extras.putString("username",hostnameEditText.getText().toString());
+            roomIntent.putExtras(extras);
         startActivity(roomIntent); }
     }
 

@@ -74,14 +74,16 @@ public class UserStartActivity extends Activity {
             urlParameters.add(new BasicNameValuePair("user",usernameEditText.getText().toString()));
             post.setEntity(new UrlEncodedFormEntity(urlParameters));
             HttpResponse response = httpclient.execute(post);
-            // Log.d("Response of request", response.toString());
             result = EntityUtils.toString(response.getEntity());
-            Log.d("Result of request", result);
+            Log.d("Result of join request", result);
         } catch (IOException e) { e.printStackTrace(); }
 
         if (Objects.equals(result, "OK")) {
             Intent roomIntent = new Intent(this, WaitingRoomActivity.class);
-            roomIntent.putExtra("roomName",roomJoinEditText.getText().toString());
+            Bundle extras = new Bundle();
+            extras.putString("roomname", roomJoinEditText.getText().toString());
+            extras.putString("username",usernameEditText.getText().toString());
+            roomIntent.putExtras(extras);
             startActivity(roomIntent);
         } else {
             roomStatusTextView.setText(result);

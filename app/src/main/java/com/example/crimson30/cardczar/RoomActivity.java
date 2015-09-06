@@ -29,13 +29,18 @@ import java.util.Objects;
 
 public class RoomActivity extends Activity {
     String result;
-    String roomName;
+    String roomname;
+    String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle extras = getIntent().getExtras();
+        roomname = extras.getString("roomname");
+        username = extras.getString("username");
         setContentView(R.layout.activity_room);
-        roomName = getIntent().getExtras().getString("roomName", "ERROR: ROOM NOT RECEIVED");
+
+
     }
 
     @Override
@@ -69,17 +74,19 @@ public class RoomActivity extends Activity {
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost post = new HttpPost(url);
             List<NameValuePair> urlParameters = new ArrayList<>();
-            urlParameters.add(new BasicNameValuePair("room",roomName));
+            urlParameters.add(new BasicNameValuePair("room",roomname));
             post.setEntity(new UrlEncodedFormEntity(urlParameters));
             HttpResponse response = httpclient.execute(post);
-            // Log.d("Response of request", response.toString());
             result = EntityUtils.toString(response.getEntity());
-            Log.d("Result of request", result);
+            Log.d("Result of start request", result);
         } catch (IOException e) { e.printStackTrace(); }
 
         if (Objects.equals(result, "OK")) {
             Intent roomIntent = new Intent(this, GameplayActivity.class);
-            roomIntent.putExtra("roomName",roomName);
+            Bundle extras = new Bundle();
+            extras.putString("roomname", roomname);
+            extras.putString("username", username);
+            roomIntent.putExtras(extras);
             startActivity(roomIntent); }
     }
 
@@ -92,12 +99,11 @@ public class RoomActivity extends Activity {
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost post = new HttpPost(url);
             List<NameValuePair> urlParameters = new ArrayList<>();
-            urlParameters.add(new BasicNameValuePair("room",roomName));
+            urlParameters.add(new BasicNameValuePair("room",roomname));
             post.setEntity(new UrlEncodedFormEntity(urlParameters));
             HttpResponse response = httpclient.execute(post);
-            // Log.d("Response of request", response.toString());
             result = EntityUtils.toString(response.getEntity());
-            Log.d("Result of request", result);
+            Log.d("Result of user list", result);
         } catch (IOException e) { e.printStackTrace(); }
 
 

@@ -6,9 +6,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class GameplayActivity extends Activity {
+    String roomname;
+    String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Bundle extras = getIntent().getExtras();
+        roomname = extras.getString("roomname");
+        username = extras.getString("username");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gameplay);
     }
