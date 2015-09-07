@@ -17,6 +17,7 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class GameplayActivity extends Activity {
@@ -24,6 +25,7 @@ public class GameplayActivity extends Activity {
     String role;     // if role="host", then user can boot other users
     String roomname; // room name (database name)
     String username;
+    String [] cards;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +51,9 @@ public class GameplayActivity extends Activity {
             result = EntityUtils.toString(response.getEntity());
             Log.d("Result of create_db", result);
         } catch (IOException e) { e.printStackTrace(); }
+        cards = result.split("\\|");
+
+
     }
 
     @Override
