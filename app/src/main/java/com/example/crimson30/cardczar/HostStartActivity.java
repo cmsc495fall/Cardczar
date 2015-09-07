@@ -83,12 +83,13 @@ public class HostStartActivity extends Activity {
 
         // If server result=OK, intend to Room
         if (Objects.equals(result, "OK")) {
-        Intent roomIntent = new Intent(this, RoomActivity.class);
+            Intent roomIntent = new Intent(this, RoomActivity.class);
             Bundle extras = new Bundle();
             extras.putString("roomname", roomnameEditText.getText().toString());
             extras.putString("username",hostnameEditText.getText().toString());
             roomIntent.putExtras(extras);
-        startActivity(roomIntent); }
+            startActivity(roomIntent);
+        } // end if
     } // end intentToRoom()
 
 }

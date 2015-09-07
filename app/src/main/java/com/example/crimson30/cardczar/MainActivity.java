@@ -7,7 +7,6 @@ import android.view.MenuItem;
 
 import android.content.Intent;
 import android.view.View;
-import android.widget.Button;
 
 public class MainActivity extends Activity {
 
@@ -15,18 +14,6 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        Button joinButton = (Button) findViewById(R.id.joinButton);
-
-        joinButton.setOnClickListener(
-                new Button.OnClickListener() {
-                    public void onClick(View v) {
-                        Intent join = new Intent(MainActivity.this, UserStartActivity.class);
-                        startActivity(join);
-                    }
-                }
-        );
-
     }
 
     @Override

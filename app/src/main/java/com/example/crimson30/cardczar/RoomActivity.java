@@ -87,7 +87,7 @@ public class RoomActivity extends Activity {
             Bundle extras = new Bundle();
             extras.putString("roomname", roomname);
             extras.putString("username", username);
-            extras.putString("role", "notDealer");
+            extras.putBoolean("host", true);
             roomIntent.putExtras(extras);
             startActivity(roomIntent); }
 

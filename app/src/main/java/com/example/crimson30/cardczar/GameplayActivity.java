@@ -1,10 +1,12 @@
 package com.example.crimson30.cardczar;
 
 import android.app.Activity;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 
 import org.apache.http.HttpResponse;
@@ -22,10 +24,14 @@ import java.util.List;
 
 public class GameplayActivity extends Activity {
     String result;   // LAMP server result
-    String role;     // if role="host", then user can boot other users
     String roomname; // room name (database name)
     String username;
+    Boolean host;     // if role="host", then user can boot other users
+    Boolean dealer;
     String [] cards;
+    String [] usernames;
+    int numusers;
+    Boolean game_over;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +42,8 @@ public class GameplayActivity extends Activity {
         Bundle extras = getIntent().getExtras();
         roomname = extras.getString("roomname");
         username = extras.getString("username");
-        role = extras.getString("role");
+        host = extras.getBoolean("host");
+        if (host) { dealer=true; } else { dealer=false; }
 
         // Draw 8
         try {
@@ -57,6 +64,25 @@ public class GameplayActivity extends Activity {
         result = "empty|"+result;
         cards = result.split("\\|");
 
+        // Get list of users from LAMP
+        try {
+            String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_user_list.php";
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost post = new HttpPost(url);
+            List<NameValuePair> urlParameters = new ArrayList<>();
+            urlParameters.add(new BasicNameValuePair("room",roomname));
+            post.setEntity(new UrlEncodedFormEntity(urlParameters));
+            HttpResponse response = httpclient.execute(post);
+            result = EntityUtils.toString(response.getEntity());
+            Log.d("Result of user list", result);
+        } catch (IOException e) { e.printStackTrace(); }
+
+        // Add blank value, so that 1st card is usernames[1], not usernames[0], etc.
+        // Makes it easier for developer to deal with
+        result = "empty|"+result;
+        usernames = result.split("\\|");
+        numusers = usernames.length-1;
+
         Button button1 = (Button) findViewById(R.id.button1);
         Button button2 = (Button) findViewById(R.id.button2);
         Button button3 = (Button) findViewById(R.id.button3);
@@ -66,7 +92,17 @@ public class GameplayActivity extends Activity {
         Button button7 = (Button) findViewById(R.id.button7);
         Button button8 = (Button) findViewById(R.id.button8);
 
-        if (role.equals("notDealer")) {
+        if (dealer) {
+            if (numusers>1) { button1.setText("WAIT FOR RESPONSE"); } else { button1.setVisibility(View.GONE);}
+            if (numusers>2) { button2.setText("WAIT FOR RESPONSE"); } else { button2.setVisibility(View.GONE);}
+            if (numusers>3) { button3.setText("WAIT FOR RESPONSE"); } else { button3.setVisibility(View.GONE);}
+            if (numusers>4) { button4.setText("WAIT FOR RESPONSE"); } else { button4.setVisibility(View.GONE);}
+            if (numusers>5) { button5.setText("WAIT FOR RESPONSE"); } else { button5.setVisibility(View.GONE);}
+            if (numusers>6) { button6.setText("WAIT FOR RESPONSE"); } else { button6.setVisibility(View.GONE);}
+            if (numusers>7) { button7.setText("WAIT FOR RESPONSE"); } else { button7.setVisibility(View.GONE);}
+            if (numusers>8) { button8.setText("WAIT FOR RESPONSE"); } else { button8.setVisibility(View.GONE);}
+
+        } else {
             button1.setText(cards[1]);
             button2.setText(cards[2]);
             button3.setText(cards[3]);
@@ -75,8 +111,10 @@ public class GameplayActivity extends Activity {
             button6.setText(cards[6]);
             button7.setText(cards[7]);
             button8.setText(cards[8]);
-        } // end if
+        }
 
+        game_over = false;
+        // while (!game_over) { turn(); }
     }
 
     @Override
@@ -100,4 +138,29 @@ public class GameplayActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    public void turn (View view) {
+
+        if (dealer) {
+            // Get list of users from LAMP
+            try {
+                String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_user_list.php";
+                HttpClient httpclient = new DefaultHttpClient();
+                HttpPost post = new HttpPost(url);
+                List<NameValuePair> urlParameters = new ArrayList<>();
+                urlParameters.add(new BasicNameValuePair("room", roomname));
+                post.setEntity(new UrlEncodedFormEntity(urlParameters));
+                HttpResponse response = httpclient.execute(post);
+                result = EntityUtils.toString(response.getEntity());
+                Log.d("Result of user list", result);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            // !dealer stuff
+        }
+    } // end turn()
+
+
 }
