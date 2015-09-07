@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -17,7 +18,6 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class GameplayActivity extends Activity {
@@ -51,8 +51,31 @@ public class GameplayActivity extends Activity {
             result = EntityUtils.toString(response.getEntity());
             Log.d("Result of create_db", result);
         } catch (IOException e) { e.printStackTrace(); }
+
+        // Add blank value, so that 1st card is cards[1], not cards[0], etc.
+        // Makes it easier for developer to deal with
+        result = "empty|"+result;
         cards = result.split("\\|");
 
+        Button button1 = (Button) findViewById(R.id.button1);
+        Button button2 = (Button) findViewById(R.id.button2);
+        Button button3 = (Button) findViewById(R.id.button3);
+        Button button4 = (Button) findViewById(R.id.button4);
+        Button button5 = (Button) findViewById(R.id.button5);
+        Button button6 = (Button) findViewById(R.id.button6);
+        Button button7 = (Button) findViewById(R.id.button7);
+        Button button8 = (Button) findViewById(R.id.button8);
+
+        if (role.equals("notDealer")) {
+            button1.setText(cards[1]);
+            button2.setText(cards[2]);
+            button3.setText(cards[3]);
+            button4.setText(cards[4]);
+            button5.setText(cards[5]);
+            button6.setText(cards[6]);
+            button7.setText(cards[7]);
+            button8.setText(cards[8]);
+        } // end if
 
     }
 

@@ -50,7 +50,7 @@ public class WaitingRoomActivity extends Activity {
                 Bundle extras = new Bundle();
                 extras.putString("roomname", roomname);
                 extras.putString("username", username);
-                extras.putString("role", "user");
+                extras.putString("role", "notDealer");
                 roomIntent.putExtras(extras);
                 startActivity(roomIntent);
             }

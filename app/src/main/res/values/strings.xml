@@ -37,8 +37,14 @@
 
     <!-- Gameplay -->
     <string name="title_activity_gameplay">GameplayActivity</string>
-
-
+    <string name="button1Text">!</string>
+    <string name="button2Text">!</string>
+    <string name="button3Text">!</string>
+    <string name="button4Text">!</string>
+    <string name="button5Text">!</string>
+    <string name="button6Text">!</string>
+    <string name="button7Text">!</string>
+    <string name="button8Text">!</string>
 
 
 </resources>
