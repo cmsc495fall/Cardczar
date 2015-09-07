@@ -65,6 +65,7 @@ public class UserStartActivity extends Activity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
+        // Call appropriate PHP file to join game
         try {
             String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_join.php";
             HttpClient httpclient = new DefaultHttpClient();
@@ -78,6 +79,7 @@ public class UserStartActivity extends Activity {
             Log.d("Result of join request", result);
         } catch (IOException e) { e.printStackTrace(); }
 
+        // If server result=OK, intend to WaitingRoom
         if (Objects.equals(result, "OK")) {
             Intent roomIntent = new Intent(this, WaitingRoomActivity.class);
             Bundle extras = new Bundle();
@@ -89,7 +91,6 @@ public class UserStartActivity extends Activity {
             roomStatusTextView.setText(result);
         }
 
-
-    }
+    } // end intentToWaitingRoom
 
 }

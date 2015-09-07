@@ -66,13 +66,14 @@ public class HostStartActivity extends Activity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
+        // Tell LAMP to make database
         try {
             String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_create_db.php";
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost post = new HttpPost(url);
             List<NameValuePair> urlParameters = new ArrayList<>();
             urlParameters.add(new BasicNameValuePair("room",roomnameEditText.getText().toString()));
-            urlParameters.add(new BasicNameValuePair("host",hostnameEditText.getText().toString()));
+            urlParameters.add(new BasicNameValuePair("user",hostnameEditText.getText().toString()));
             post.setEntity(new UrlEncodedFormEntity(urlParameters));
             HttpResponse response = httpclient.execute(post);
             // Log.d("Response of request", response.toString());
@@ -80,6 +81,7 @@ public class HostStartActivity extends Activity {
             Log.d("Result of create_db", result);
         } catch (IOException e) { e.printStackTrace(); }
 
+        // If server result=OK, intend to Room
         if (Objects.equals(result, "OK")) {
         Intent roomIntent = new Intent(this, RoomActivity.class);
             Bundle extras = new Bundle();
@@ -87,6 +89,6 @@ public class HostStartActivity extends Activity {
             extras.putString("username",hostnameEditText.getText().toString());
             roomIntent.putExtras(extras);
         startActivity(roomIntent); }
-    }
+    } // end intentToRoom()
 
 }
