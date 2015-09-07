@@ -1,7 +1,6 @@
 package com.example.crimson30.cardczar;
 
 import android.app.Activity;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -32,6 +31,7 @@ public class GameplayActivity extends Activity {
     String [] usernames;
     int numusers;
     Boolean game_over;
+    Thread turnThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,8 +113,10 @@ public class GameplayActivity extends Activity {
             button8.setText(cards[8]);
         }
 
-        game_over = false;
-        // while (!game_over) { turn(); }
+        // game_over = false;
+        // turnThread=new Thread(new turn());
+        // turnThread.start();
+
     }
 
     @Override
@@ -139,28 +141,65 @@ public class GameplayActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void turn (View view) {
+    class turn implements Runnable {
 
-        if (dealer) {
-            // Get list of users from LAMP
-            try {
-                String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_user_list.php";
-                HttpClient httpclient = new DefaultHttpClient();
-                HttpPost post = new HttpPost(url);
-                List<NameValuePair> urlParameters = new ArrayList<>();
-                urlParameters.add(new BasicNameValuePair("room", roomname));
-                post.setEntity(new UrlEncodedFormEntity(urlParameters));
-                HttpResponse response = httpclient.execute(post);
-                result = EntityUtils.toString(response.getEntity());
-                Log.d("Result of user list", result);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        @Override
+        public void run() {
 
-        } else {
-            // !dealer stuff
-        }
+            // EITHER SET OR GET BAIT
+            if (dealer) {
+                // SET BAIT
+                try {
+                    String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_set_bait.php";
+                    HttpClient httpclient = new DefaultHttpClient();
+                    HttpPost post = new HttpPost(url);
+                    List<NameValuePair> urlParameters = new ArrayList<>();
+                    urlParameters.add(new BasicNameValuePair("room", roomname));
+                    post.setEntity(new UrlEncodedFormEntity(urlParameters));
+                    HttpResponse response = httpclient.execute(post);
+                    result = EntityUtils.toString(response.getEntity());
+                    Log.d("Result of set bait", result);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            } else { // !dealer
+                // GET BAIT
+                try {
+                    String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_bait.php";
+                    HttpClient httpclient = new DefaultHttpClient();
+                    HttpPost post = new HttpPost(url);
+                    List<NameValuePair> urlParameters = new ArrayList<>();
+                    urlParameters.add(new BasicNameValuePair("room", roomname));
+                    post.setEntity(new UrlEncodedFormEntity(urlParameters));
+                    HttpResponse response = httpclient.execute(post);
+                    result = EntityUtils.toString(response.getEntity());
+                    Log.d("Result of set bait", result);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } // end if (SET OR GET BAIT)
+
+            // WAIT FOR ACTION
+            if (dealer) {
+                // wait until all users set their submission (all submissions NOT "WAIT FOR RESPONSE")
+                // then wait again for button
+            } else {
+                // WAIT FOR BUTTON (button notifies thread)
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            } // end if (WAIT FOR ACTION)
+        } // end run()
+
     } // end turn()
+
+    public void buttonClick(View view) {
+        turn.class.notify();
+    } // end buttonClick
 
 
 }

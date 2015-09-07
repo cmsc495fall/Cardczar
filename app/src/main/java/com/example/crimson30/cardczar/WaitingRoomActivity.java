@@ -27,7 +27,7 @@ public class WaitingRoomActivity extends Activity {
     String result;   // LAMP server result
     String roomname; // room name (database name)
     String username;
-    Thread thread;   // thread auto-checks server for game start
+    Thread serverWaitThread;   // thread auto-checks server for game start
     Handler handler; // handler intends to GameplayActivity
 
     @Override
@@ -40,8 +40,8 @@ public class WaitingRoomActivity extends Activity {
         roomname = extras.getString("roomname");
         username = extras.getString("username");
 
-        thread=new Thread(new userPollThread());
-        thread.start();
+        serverWaitThread=new Thread(new checkStartThread());
+        serverWaitThread.start();
 
         handler=new Handler(){
             @Override
@@ -61,7 +61,7 @@ public class WaitingRoomActivity extends Activity {
     // When host starts game, gamestate:started in SQL is set to true
     // Every 1.21 seconds, this thread checks to see if the host has started game
     // When gamestate:started = true, this method calls the handler that intends Gameplay
-    class userPollThread implements Runnable {
+    class checkStartThread implements Runnable {
         private volatile boolean running = true;
 
         @Override
