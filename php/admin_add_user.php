@@ -1,7 +1,7 @@
 <?php
 
 // LINK TO DB
-$link = mysql_connect('localhost', 'root', 'cmsc495fall');
+$link = mysql_connect('localhost', 'root', 'password');
 if (!$link) { die('Could not connect: ' . mysql_error()); }
 
 // PULL POST DATA
@@ -38,7 +38,6 @@ if (connected) {
   mysql_query($query, $link) or die("Update DB Error: ".mysql_error());
  }
 }
-
 
 // CLOSE DATABASE
 mysql_close($link);
