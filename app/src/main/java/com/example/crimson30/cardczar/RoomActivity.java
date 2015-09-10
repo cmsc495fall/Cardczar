@@ -78,7 +78,7 @@ public class RoomActivity extends Activity {
             post.setEntity(new UrlEncodedFormEntity(urlParameters));
             HttpResponse response = httpclient.execute(post);
             result = EntityUtils.toString(response.getEntity());
-            Log.d("Result of start request", result);
+            Log.d("RoomA start result:", result);
         } catch (IOException e) { e.printStackTrace(); }
 
         // If server result=OK, intend to Gameplay

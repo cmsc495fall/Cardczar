@@ -40,7 +40,7 @@ public class WaitingRoomActivity extends Activity {
         roomname = extras.getString("roomname");
         username = extras.getString("username");
 
-        serverWaitThread=new Thread(new checkStartThread());
+        serverWaitThread=new Thread(new CheckStartThread());
         serverWaitThread.start();
 
         handler=new Handler(){
@@ -61,7 +61,7 @@ public class WaitingRoomActivity extends Activity {
     // When host starts game, gamestate:started in SQL is set to true
     // Every 1.21 seconds, this thread checks to see if the host has started game
     // When gamestate:started = true, this method calls the handler that intends Gameplay
-    class checkStartThread implements Runnable {
+    class CheckStartThread implements Runnable {
         private volatile boolean running = true;
 
         @Override
