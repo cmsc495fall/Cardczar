@@ -33,6 +33,8 @@ public class GameplayActivity extends Activity {
     String [] cards;
     String [] usernames;
     int numusers;
+    int myUserNum;
+    int buttonClicked;
     Turn turnThread;
     Handler handler; // handler for GUI activities
 
@@ -108,15 +110,24 @@ public class GameplayActivity extends Activity {
         result = "empty|"+result;
         usernames = result.split("\\|");
         numusers = usernames.length-1;
+        for (String value : usernames) {
+            int i=1;
+            if (value.equals(username)) {
+                myUserNum = i;
+                break;
+            }
+            i++;
+        }
+        System.out.println("myUserNum = "+myUserNum);
 
         final Button button1 = (Button) findViewById(R.id.button1);
-        Button button2 = (Button) findViewById(R.id.button2);
-        Button button3 = (Button) findViewById(R.id.button3);
-        Button button4 = (Button) findViewById(R.id.button4);
-        Button button5 = (Button) findViewById(R.id.button5);
-        Button button6 = (Button) findViewById(R.id.button6);
-        Button button7 = (Button) findViewById(R.id.button7);
-        Button button8 = (Button) findViewById(R.id.button8);
+        final Button button2 = (Button) findViewById(R.id.button2);
+        final Button button3 = (Button) findViewById(R.id.button3);
+        final Button button4 = (Button) findViewById(R.id.button4);
+        final Button button5 = (Button) findViewById(R.id.button5);
+        final Button button6 = (Button) findViewById(R.id.button6);
+        final Button button7 = (Button) findViewById(R.id.button7);
+        final Button button8 = (Button) findViewById(R.id.button8);
 
         if (dealer) {
             if (numusers>1) { button1.setText("WAIT FOR RESPONSE"); } else { button1.setVisibility(View.GONE);}
@@ -146,7 +157,22 @@ public class GameplayActivity extends Activity {
         handler=new Handler(){
             @Override
             public void handleMessage(Message msg) {
-                button1.setText("test");
+                Bundle bundle = msg.getData();
+                String operation = bundle.getString("operation");
+                String data = bundle.getString("data");
+                if (operation.equals("displayResponses")) {
+                    data = "empty|"+data;
+                    String [] responses = data.split("\\|");
+                    int numresponses = responses.length-1;
+                    if (numresponses>0) { button1.setText(responses[1]); }
+                    if (numresponses>1) { button2.setText(responses[2]); }
+                    if (numresponses>2) { button3.setText(responses[3]); }
+                    if (numresponses>3) { button4.setText(responses[4]); }
+                    if (numresponses>4) { button5.setText(responses[5]); }
+                    if (numresponses>5) { button6.setText(responses[6]); }
+                    if (numresponses>6) { button7.setText(responses[7]); }
+                    if (numresponses>7) { button8.setText(responses[8]); }
+                }
             }
         }; // end handler
     }
@@ -183,6 +209,8 @@ public class GameplayActivity extends Activity {
 
             while (running) {
 
+                // ###### SEE IF DEALER GOES HERE ######
+
                 if (dealer) {
 
                     // STEP 1: WAIT FOR SUBMISSIONS TO FILL UP
@@ -211,10 +239,14 @@ public class GameplayActivity extends Activity {
                         }
 
                         // When desired result, move past while and to step 2
-                        Message message = Message.obtain();
+                        Message msg = Message.obtain();
                         if (!result.equals("Submissions are neither empty nor full")) {
                             handler.removeCallbacks(this);  // Clear message queue
-                            handler.sendMessage(message);
+                            Bundle bundle = new Bundle();
+                            bundle.putString("operation","displayResponses");
+                            bundle.putString("data", result);
+                            msg.setData(bundle);
+                            handler.sendMessage(msg);
                             waitForAllSubmissions=false;
                         }
                     } // end while (waitForAllSubmissions)
@@ -245,6 +277,25 @@ public class GameplayActivity extends Activity {
                             e.printStackTrace();
                         }
                     }
+
+                    // STEP 4: PROCESS WINNER
+                    try {
+                        String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_process_winner.php";
+                        HttpClient httpclient = new DefaultHttpClient();
+                        HttpPost post = new HttpPost(url);
+                        List<NameValuePair> urlParameters = new ArrayList<>();
+                        urlParameters.add(new BasicNameValuePair("room", roomname));
+                        urlParameters.add(new BasicNameValuePair("user", String.valueOf(buttonClicked)));
+                        post.setEntity(new UrlEncodedFormEntity(urlParameters));
+                        HttpResponse response = httpclient.execute(post);
+                        result = EntityUtils.toString(response.getEntity());
+                        Log.d("GP process winner res:", result);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    System.out.println("Made it this far!!");
+
 
 
                 } else { // !dealer
@@ -283,6 +334,7 @@ public class GameplayActivity extends Activity {
 
     public void button1Click(View view) {
         System.out.println("button1Click");
+        buttonClicked=1;
         synchronized (turnThread) {
             turnThread.notify(); }
 
@@ -290,32 +342,51 @@ public class GameplayActivity extends Activity {
 
     public void button2Click(View view) {
         System.out.println("button2Click");
+        buttonClicked=2;
         synchronized (turnThread) {
             turnThread.notify(); }
     } // end buttonClick
 
     public void button3Click(View view) {
         System.out.println("button3Click");
+        buttonClicked=3;
+        synchronized (turnThread) {
+            turnThread.notify(); }
     } // end buttonClick
 
     public void button4Click(View view) {
         System.out.println("button4Click");
+        buttonClicked=4;
+        synchronized (turnThread) {
+            turnThread.notify(); }
     } // end buttonClick
 
     public void button5Click(View view) {
         System.out.println("button5Click");
+        buttonClicked=5;
+        synchronized (turnThread) {
+            turnThread.notify(); }
     } // end buttonClick
 
     public void button6Click(View view) {
         System.out.println("button6Click");
+        buttonClicked=6;
+        synchronized (turnThread) {
+            turnThread.notify(); }
     } // end buttonClick
 
     public void button7Click(View view) {
         System.out.println("button7Click");
+        buttonClicked=7;
+        synchronized (turnThread) {
+            turnThread.notify(); }
     } // end buttonClick
 
     public void button8Click(View view) {
         System.out.println("button8Click");
+        buttonClicked=8;
+        synchronized (turnThread) {
+            turnThread.notify(); }
     } // end buttonClick
 
 }

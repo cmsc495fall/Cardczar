@@ -90,10 +90,10 @@ public class WaitingRoomActivity extends Activity {
                 }
 
                 // If gamestate:started is true, send message to handler and stop thread
-                Message message = Message.obtain();
+                Message msg = Message.obtain();
                 if (Objects.equals(result, "OK")) {
                     handler.removeCallbacks(this);  // Clear message queue
-                    handler.sendMessage(message);
+                    handler.sendMessage(msg);
                     this.running=false;
                 }
 
