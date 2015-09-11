@@ -14,10 +14,10 @@ mysql_select_db($db_name , $link) or die("Select DB Error: ".mysql_error());
 $tablecontents = mysql_query("SELECT * FROM gamestate");
 if ($myrow = mysql_fetch_array($tablecontents))
 
-  {  echo "gamestate<table border=1><tr><td>id</td><td>started</td><td>finished</td><td>timecreated</td><td>round</td><td>numusers</td><td>activeuser</td><td>host</td><td>activebait</td></tr>";
+  {  echo "gamestate<table border=1><tr><td>id</td><td>started</td><td>timecreated</td><td>round</td><td>numusers</td><td>dealer</td><td>host</td><td>activebait</td><td>selectedresponse</td><td>turnprogress</td></tr>";
      $num = 1;
      do
-        { echo "<tr><td>".$myrow["id"]."</td><td>".$myrow["started"]."</td><td>".$myrow["finished"]."</td><td>".$myrow["timecreated"]."</td><td>".$myrow["round"]."</td><td>".$myrow["numusers"]."</td><td>".$myrow["dealer"]."</td><td>".$myrow["host"]."</td><td>".$myrow["activebait"]."</td></tr>";
+        { echo "<tr><td>".$myrow["id"]."</td><td>".$myrow["started"]."</td><td>".$myrow["timecreated"]."</td><td>".$myrow["round"]."</td><td>".$myrow["numusers"]."</td><td>".$myrow["dealer"]."</td><td>".$myrow["host"]."</td><td>".$myrow["activebait"]."</td><td>".$myrow["selectedresponse"]."</td><td>".$myrow["turnprogress"]."</td></tr>";
           $num++;
         } 
      while ($myrow = mysql_fetch_array($tablecontents));
@@ -31,10 +31,10 @@ if ($myrow = mysql_fetch_array($tablecontents))
 $tablecontents2 = mysql_query("SELECT * FROM users");
 if ($myrow = mysql_fetch_array($tablecontents2))
 
-  {  echo "users<table border=1><tr><td>id</td><td>username</td><td>points</td><td>quit</td><td>submission</td><td>timelastcontact</td></tr>";
+  {  echo "users<table border=1><tr><td>id</td><td>username</td><td>points</td><td>submission</td><td>timelastcontact</td></tr>";
      $num = 1;
      do
-        { echo "<tr><td>".$myrow["id"]."</td><td>".$myrow["username"]."</td><td>".$myrow["points"]."</td><td>".$myrow["quit"]."</td><td>".$myrow["submission"]."</td><td>".$myrow["timelastcontact"]."</td></tr>";
+        { echo "<tr><td>".$myrow["id"]."</td><td>".$myrow["username"]."</td><td>".$myrow["points"]."</td><td>".$myrow["submission"]."</td><td>".$myrow["timelastcontact"]."</td></tr>";
           $num++;
         } 
      while ($myrow = mysql_fetch_array($tablecontents2));

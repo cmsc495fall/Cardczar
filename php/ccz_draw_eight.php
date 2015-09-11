@@ -9,7 +9,7 @@ if (!$link) { die('Could not connect: ' . mysql_error()); }
 $db_name = $_POST["room"];
 
 // SELECT THAT DB
-mysql_select_db($db_name , $link) or die("Select DB Error: ".mysql_error());
+mysql_select_db($db_name , $link) or die("draw eight Select DB Error: ".mysql_error());
 
 $tablecontents = mysql_query("SELECT * FROM responses");
 
@@ -18,7 +18,7 @@ for ($i = 1; $i <= 8; $i++) {
     $response_text = $myrow[text];
     echo urldecode($response_text)."|";
     $query = "DELETE FROM responses where text = '$response_text'";
-    mysql_query($query, $link) or die("Delete row error: ".mysql_error()); 
+    mysql_query($query, $link) or die("draw eight Delete row error: ".mysql_error()); 
   }  else  { echo "Select rows error"; }
 } // end for
 

@@ -9,7 +9,7 @@ if (!$link) { die('Could not connect: ' . mysql_error()); }
 $db_name = $_POST["room"];
 
 // SELECT THAT DB
-mysql_select_db($db_name , $link) or die("Select DB Error: ".mysql_error());
+mysql_select_db($db_name , $link) or die("user list Select DB Error: ".mysql_error());
 
 // GET USERS (do while because for mysql_feth_array gets first user)
 $tablecontents = mysql_query("SELECT * FROM users");

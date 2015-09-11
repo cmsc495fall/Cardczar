@@ -12,7 +12,7 @@ $db_name = $_SERVER['QUERY_STRING'];
 mysql_select_db($db_name , $link) or die("Select DB Error: ".mysql_error());
 
 // GET bait TEXT, ECHO bait TEXT, then DELETE ROW
-$textcontents = mysql_query("SELECT text FROM gamestate LIMIT 1") or die(mysql_error());
+$textcontents = mysql_query("SELECT text FROM bait LIMIT 1") or die(mysql_error());
 $row = mysql_fetch_assoc($textcontents);
 $bait_text = $row[text];
 echo urldecode($bait_text);

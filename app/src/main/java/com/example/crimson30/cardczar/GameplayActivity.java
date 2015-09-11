@@ -2,6 +2,7 @@ package com.example.crimson30.cardczar;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
@@ -21,10 +22,7 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.CountDownLatch;
 
 public class GameplayActivity extends Activity {
     String result;   // LAMP server result
@@ -35,7 +33,9 @@ public class GameplayActivity extends Activity {
     String [] cards;
     String [] usernames;
     int numusers;
-    Thread turnThread;
+    Turn turnThread;
+    Handler handler; // handler for GUI activities
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +109,7 @@ public class GameplayActivity extends Activity {
         usernames = result.split("\\|");
         numusers = usernames.length-1;
 
-        Button button1 = (Button) findViewById(R.id.button1);
+        final Button button1 = (Button) findViewById(R.id.button1);
         Button button2 = (Button) findViewById(R.id.button2);
         Button button3 = (Button) findViewById(R.id.button3);
         Button button4 = (Button) findViewById(R.id.button4);
@@ -139,8 +139,16 @@ public class GameplayActivity extends Activity {
             button8.setText(cards[8]);
         }
 
-        turnThread=new Thread(new Turn());
+        turnThread=new Turn();
         turnThread.start();
+
+
+        handler=new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                button1.setText("test");
+            }
+        }; // end handler
     }
 
     @Override
@@ -166,27 +174,9 @@ public class GameplayActivity extends Activity {
     }
 
 
-    public class Message {
 
-        private String text;
-
-        public Message(String textParam) {
-            text = textParam;
-        }
-
-        public String getText() {
-            return text;
-        }
-
-        public void setText(String textParam) {
-            text = textParam;
-        }
-
-    }
-
-    class Turn implements Runnable {
+    class Turn extends Thread {
         private volatile boolean running = true;
-        Thread waitThread;
 
         @Override
         public void run() {
@@ -221,11 +211,14 @@ public class GameplayActivity extends Activity {
                         }
 
                         // When desired result, move past while and to step 2
-                        if (Objects.equals(result, "OK")) {
+                        Message message = Message.obtain();
+                        if (!result.equals("Submissions are neither empty nor full")) {
+                            handler.removeCallbacks(this);  // Clear message queue
+                            handler.sendMessage(message);
                             waitForAllSubmissions=false;
                         }
-
                     } // end while (waitForAllSubmissions)
+
 
                     // STEP 2: SET TURNPROGRESS TO all_reponses_in
                     try {
@@ -243,8 +236,16 @@ public class GameplayActivity extends Activity {
                         e.printStackTrace();
                     }
 
+
                     // STEP 3: WAIT FOR BUTTON
-                    running=false;
+                    synchronized (this) {
+                        try {
+                            wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
 
                 } else { // !dealer
                     // GET BAIT
@@ -273,17 +274,48 @@ public class GameplayActivity extends Activity {
                     }
                 }  // end if (dealer or !dealer)
 
-                System.out.println("Line 277 or so");
 
             } // end while running
         } // end run()
 
     } // end turn()
 
-    public void buttonClick(View view) {
-        // wake turn up?
+
+    public void button1Click(View view) {
+        System.out.println("button1Click");
+        synchronized (turnThread) {
+            turnThread.notify(); }
 
     } // end buttonClick
 
+    public void button2Click(View view) {
+        System.out.println("button2Click");
+        synchronized (turnThread) {
+            turnThread.notify(); }
+    } // end buttonClick
+
+    public void button3Click(View view) {
+        System.out.println("button3Click");
+    } // end buttonClick
+
+    public void button4Click(View view) {
+        System.out.println("button4Click");
+    } // end buttonClick
+
+    public void button5Click(View view) {
+        System.out.println("button5Click");
+    } // end buttonClick
+
+    public void button6Click(View view) {
+        System.out.println("button6Click");
+    } // end buttonClick
+
+    public void button7Click(View view) {
+        System.out.println("button7Click");
+    } // end buttonClick
+
+    public void button8Click(View view) {
+        System.out.println("button8Click");
+    } // end buttonClick
 
 }

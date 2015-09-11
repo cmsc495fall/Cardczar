@@ -27,7 +27,7 @@ mysql_query($query, $link) or die("Create DB Error: ".mysql_error());
 mysql_select_db($db_name , $link) or die("Select DB Error: ".mysql_error());
 
 // CREATE TABLES (GAMESTATE, USERS, Q & A)
-$query = 'CREATE TABLE gamestate (id INT NOT NULL AUTO_INCREMENT, PRIMARY KEY(id), started BOOLEAN, finished BOOLEAN, timecreated INT, round INT, numusers INT, dealer INT, host INT, activebait VARCHAR(128));';
+$query = 'CREATE TABLE gamestate (id INT NOT NULL AUTO_INCREMENT, PRIMARY KEY(id), started BOOLEAN, timecreated INT, round INT, numusers INT, dealer INT, host INT, activebait VARCHAR(128), selectedresponse VARCHAR(128), turnprogress VARCHAR(15));';
 mysql_query($query, $link) or die("Create gamestate Error: ".mysql_error());
 
 $query = 'CREATE TABLE users (id INT NOT NULL AUTO_INCREMENT, PRIMARY KEY(id), username VARCHAR(30) UNIQUE, points INT, quit BOOLEAN, submission VARCHAR(128), timelastcontact TIMESTAMP);';
@@ -41,7 +41,7 @@ mysql_query($query, $link) or die("Create responses Error: ".mysql_error());
 
 
 // INSERT INTO TABLES
-$query = "INSERT INTO gamestate (started, finished, timecreated, round, numusers, dealer, host, activebait) VALUES (FALSE, FALSE,".time().", 0, 1, 0, 1, 'NO_BAIT_YET');";
+$query = "INSERT INTO gamestate (started, timecreated, round, numusers, dealer, host, activebait, turnprogress) VALUES (FALSE,".time().", 0, 1, 0, 1, 'NO_BAIT_YET', 'NONE');";
 mysql_query($query, $link) or die("gamestate INSERT Error: ".mysql_error());
 
 $query = "INSERT INTO users (username, points, quit, submission, timelastcontact) VALUES ('$user_name', 0, FALSE, 'WAIT FOR RESPONSE', ".time().");";

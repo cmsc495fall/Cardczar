@@ -17,8 +17,7 @@ if ($myrow = mysql_fetch_array($tablecontents))
   {  echo "OK";
      $num = 1;
      do
-        { $submission_text=$myrow[submission];
-          $query = "UPDATE users SET submission=$submission_text WHERE id=$myrow[id];";
+        { $query = "UPDATE users SET submission='TESTING' WHERE id=$myrow[id];";
           mysql_query($query, $link) or die("users UPDATE Error: ".mysql_error());
           $num++;
         } 
