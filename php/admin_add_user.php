@@ -1,12 +1,12 @@
 <?php
 
-// LINK TO DB
-$link = mysql_connect('localhost', 'root', 'password');
+// LINK TO SQL
+$link = mysql_connect('localhost', 'root', 'cmsc495fall');
 if (!$link) { die('Could not connect: ' . mysql_error()); }
 
 // PULL POST DATA
 $db_name = $_SERVER['QUERY_STRING'];
-$user_name = 'user'.uniqid();
+$username = 'user'.uniqid();
 
 // SELECT DB
 if (mysql_select_db($db_name, $link)) {
@@ -20,7 +20,7 @@ if (mysql_select_db($db_name, $link)) {
 
 if (connected) {
 
- $query = "INSERT INTO users (username, points, quit, submission, timelastcontact) VALUES ('".$user_name."', 0, FALSE, 'WAIT FOR RESPONSE', ".time().");";
+ $query = "INSERT INTO users (username, points, quit, submission, timelastcontact) VALUES ('".$username."', 0, FALSE, 'WAIT FOR RESPONSE', ".time().");";
  if (mysql_query($query, $link)) {
      echo "OK";
      $inserted = TRUE;

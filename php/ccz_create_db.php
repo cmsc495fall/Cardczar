@@ -10,13 +10,13 @@ return $out_array;
 }
 
 
-// LINK TO DB
+// LINK TO SQL
 $link = mysql_connect('localhost', 'root', 'cmsc495fall');
 if (!$link) { die('Could not connect: ' . mysql_error()); }
 
 // GET POST DATA
-$db_name = urlencode($_POST["room"]);
-$user_name = urlencode($_POST["user"]);
+$db_name = urlencode($_POST["roomname"]);
+$username = urlencode($_POST["username"]);
 
 // CREATE DB
 $query = 'CREATE DATABASE '.$db_name;
@@ -44,7 +44,7 @@ mysql_query($query, $link) or die("Create responses Error: ".mysql_error());
 $query = "INSERT INTO gamestate (started, timecreated, round, numusers, dealer, host, activebait, turnprogress) VALUES (FALSE,".time().", 0, 1, 0, 1, 'NO_BAIT_YET', 'NONE');";
 mysql_query($query, $link) or die("gamestate INSERT Error: ".mysql_error());
 
-$query = "INSERT INTO users (username, points, quit, submission, timelastcontact) VALUES ('$user_name', 0, FALSE, 'WAIT FOR RESPONSE', ".time().");";
+$query = "INSERT INTO users (username, points, quit, submission, timelastcontact) VALUES ('$username', 0, FALSE, 'WAIT FOR RESPONSE', ".time().");";
 mysql_query($query, $link) or die("users INSERT Error: ".mysql_error());
 
 $bait=file('/var/www/html/b.txt');

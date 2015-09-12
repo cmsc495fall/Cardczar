@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -72,12 +73,13 @@ public class HostStartActivity extends Activity {
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost post = new HttpPost(url);
             List<NameValuePair> urlParameters = new ArrayList<>();
-            urlParameters.add(new BasicNameValuePair("room",roomnameEditText.getText().toString()));
-            urlParameters.add(new BasicNameValuePair("user",hostnameEditText.getText().toString()));
+            urlParameters.add(new BasicNameValuePair("roomname",roomnameEditText.getText().toString()));
+            urlParameters.add(new BasicNameValuePair("username",hostnameEditText.getText().toString()));
             post.setEntity(new UrlEncodedFormEntity(urlParameters));
             HttpResponse response = httpclient.execute(post);
             // Log.d("Response of request", response.toString());
             result = EntityUtils.toString(response.getEntity());
+            response.getEntity().consumeContent();
             Log.d("Result of create_db", result);
         } catch (IOException e) { e.printStackTrace(); }
 

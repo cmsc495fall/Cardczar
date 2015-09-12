@@ -60,7 +60,7 @@ public class GameplayActivity extends Activity {
                 HttpClient httpclient = new DefaultHttpClient();
                 HttpPost post = new HttpPost(url);
                 List<NameValuePair> urlParameters = new ArrayList<>();
-                urlParameters.add(new BasicNameValuePair("room", roomname));
+                urlParameters.add(new BasicNameValuePair("roomname", roomname));
                 urlParameters.add(new BasicNameValuePair("turnprogress", "baitset"));
                 post.setEntity(new UrlEncodedFormEntity(urlParameters));
                 HttpResponse response = httpclient.execute(post);
@@ -69,8 +69,6 @@ public class GameplayActivity extends Activity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            TextView baitTextView = (TextView) findViewById(R.id.baitTextView);
-            baitTextView.setText(result);
         } // end if (SET BAIT)
 
         // Draw 8
@@ -79,7 +77,7 @@ public class GameplayActivity extends Activity {
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost post = new HttpPost(url);
             List<NameValuePair> urlParameters = new ArrayList<>();
-            urlParameters.add(new BasicNameValuePair("room",roomname));
+            urlParameters.add(new BasicNameValuePair("roomname",roomname));
             post.setEntity(new UrlEncodedFormEntity(urlParameters));
             HttpResponse response = httpclient.execute(post);
             // Log.d("Response of request", response.toString());
@@ -98,7 +96,7 @@ public class GameplayActivity extends Activity {
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost post = new HttpPost(url);
             List<NameValuePair> urlParameters = new ArrayList<>();
-            urlParameters.add(new BasicNameValuePair("room",roomname));
+            urlParameters.add(new BasicNameValuePair("roomname",roomname));
             post.setEntity(new UrlEncodedFormEntity(urlParameters));
             HttpResponse response = httpclient.execute(post);
             result = EntityUtils.toString(response.getEntity());
@@ -111,12 +109,12 @@ public class GameplayActivity extends Activity {
         usernames = result.split("\\|");
         numusers = usernames.length-1;
         for (String value : usernames) {
-            int i=1;
+            int i=0;
+            i++;
             if (value.equals(username)) {
                 myUserNum = i;
                 break;
             }
-            i++;
         }
         System.out.println("myUserNum = "+myUserNum);
 
@@ -160,6 +158,10 @@ public class GameplayActivity extends Activity {
                 Bundle bundle = msg.getData();
                 String operation = bundle.getString("operation");
                 String data = bundle.getString("data");
+                if (operation.equals("displayBait")) {
+                    TextView baitTextView = (TextView) findViewById(R.id.baitTextView);
+                    baitTextView.setText(result);
+                } else
                 if (operation.equals("displayResponses")) {
                     data = "empty|"+data;
                     String [] responses = data.split("\\|");
@@ -173,7 +175,7 @@ public class GameplayActivity extends Activity {
                     if (numresponses>6) { button7.setText(responses[7]); }
                     if (numresponses>7) { button8.setText(responses[8]); }
                 }
-            }
+            } // end handleMessage()
         }; // end handler
     }
 
@@ -209,6 +211,32 @@ public class GameplayActivity extends Activity {
 
             while (running) {
 
+                // STEP -1: GET BAIT
+
+                try {
+                    String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_bait.php";
+                    HttpClient httpclient = new DefaultHttpClient();
+                    HttpPost post = new HttpPost(url);
+                    List<NameValuePair> urlParameters = new ArrayList<>();
+                    urlParameters.add(new BasicNameValuePair("roomname", roomname));
+                    post.setEntity(new UrlEncodedFormEntity(urlParameters));
+                    HttpResponse response = httpclient.execute(post);
+                    result = EntityUtils.toString(response.getEntity());
+                    Log.d("GP get bait res-1:", result);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                Message msg = Message.obtain();
+                handler.removeCallbacks(this);  // Clear message queue
+                Bundle bundle = new Bundle();
+                bundle.putString("operation","displayBait");
+                bundle.putString("data", result);
+                msg.setData(bundle);
+                handler.sendMessage(msg);
+
+
+                // STEP 0: SEE IF DEALER
                 // ###### SEE IF DEALER GOES HERE ######
 
                 if (dealer) {
@@ -224,25 +252,25 @@ public class GameplayActivity extends Activity {
 
                         // See if server is OK yet for given php file and paramater (see examples about 10 lines up)
                         try {
-                            String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_user_responses.php";
+                            String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_users_responses.php";
                             HttpClient httpclient = new DefaultHttpClient();
                             HttpPost post = new HttpPost(url);
                             List<NameValuePair> urlParameters = new ArrayList<>();
-                            urlParameters.add(new BasicNameValuePair("room", roomname));
+                            urlParameters.add(new BasicNameValuePair("roomname", roomname));
                             urlParameters.add(new BasicNameValuePair("action", "waitforallfull"));
                             post.setEntity(new UrlEncodedFormEntity(urlParameters));
                             HttpResponse response = httpclient.execute(post);
                             result = EntityUtils.toString(response.getEntity());
-                            Log.d("GP dealer wait result1:", result);
+                            Log.d("GP dealer getresp res1:", result);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
 
                         // When desired result, move past while and to step 2
-                        Message msg = Message.obtain();
                         if (!result.equals("Submissions are neither empty nor full")) {
+                            msg = Message.obtain();
                             handler.removeCallbacks(this);  // Clear message queue
-                            Bundle bundle = new Bundle();
+                            Bundle bundle2 = new Bundle();
                             bundle.putString("operation","displayResponses");
                             bundle.putString("data", result);
                             msg.setData(bundle);
@@ -252,18 +280,18 @@ public class GameplayActivity extends Activity {
                     } // end while (waitForAllSubmissions)
 
 
-                    // STEP 2: SET TURNPROGRESS TO all_reponses_in
+                    // STEP 2: SET TURNPROGRESS TO allreponsesin (don't use underscores... URLencoding, remember?)
                     try {
                         String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_set_turn_progress.php";
                         HttpClient httpclient = new DefaultHttpClient();
                         HttpPost post = new HttpPost(url);
                         List<NameValuePair> urlParameters = new ArrayList<>();
-                        urlParameters.add(new BasicNameValuePair("room", roomname));
-                        urlParameters.add(new BasicNameValuePair("progress", "all_responses_in"));
+                        urlParameters.add(new BasicNameValuePair("roomname", roomname));
+                        urlParameters.add(new BasicNameValuePair("turnprogress", "allresponsesin"));
                         post.setEntity(new UrlEncodedFormEntity(urlParameters));
                         HttpResponse response = httpclient.execute(post);
                         result = EntityUtils.toString(response.getEntity());
-                        Log.d("GP dealer wait result1:", result);
+                        Log.d("GP dealer tprog res2:", result);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -284,19 +312,70 @@ public class GameplayActivity extends Activity {
                         HttpClient httpclient = new DefaultHttpClient();
                         HttpPost post = new HttpPost(url);
                         List<NameValuePair> urlParameters = new ArrayList<>();
-                        urlParameters.add(new BasicNameValuePair("room", roomname));
+                        urlParameters.add(new BasicNameValuePair("roomname", roomname));
                         urlParameters.add(new BasicNameValuePair("user", String.valueOf(buttonClicked)));
                         post.setEntity(new UrlEncodedFormEntity(urlParameters));
                         HttpResponse response = httpclient.execute(post);
                         result = EntityUtils.toString(response.getEntity());
-                        Log.d("GP process winner res:", result);
+                        Log.d("GP process winner res3:", result);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
 
-                    System.out.println("Made it this far!!");
+                    // STEP 5: PROCESS GAME OVER
+                    //  #############
+                    // GAME OVER CODE
+                    // ##############
 
+                    // STEP 6: WAIT FOR ALL SUBMISSIONS TO EMPTY
+                    waitForAllSubmissions=true;
+                    while (waitForAllSubmissions) {
+                        try {
+                            Thread.sleep(1210);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
 
+                        // See if server is OK yet for given php file and paramater (see examples about 10 lines up)
+                        try {
+                            String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_users_responses.php";
+                            HttpClient httpclient = new DefaultHttpClient();
+                            HttpPost post = new HttpPost(url);
+                            List<NameValuePair> urlParameters = new ArrayList<>();
+                            urlParameters.add(new BasicNameValuePair("roomname", roomname));
+                            urlParameters.add(new BasicNameValuePair("action", "waitforallempty"));
+                            post.setEntity(new UrlEncodedFormEntity(urlParameters));
+                            HttpResponse response = httpclient.execute(post);
+                            result = EntityUtils.toString(response.getEntity());
+                            Log.d("GP dealer getresp res6:", result);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (!result.equals("Submissions are neither empty nor full")) {
+                            System.out.println("Dealer moving to set bait");
+                            waitForAllSubmissions=false;
+                        }
+
+                    }  // end while waitForAllSubmissions
+
+                    // STEP 7: SET BAIT
+                    try {
+                        String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_set_bait.php";
+                        HttpClient httpclient = new DefaultHttpClient();
+                        HttpPost post = new HttpPost(url);
+                        List<NameValuePair> urlParameters = new ArrayList<>();
+                        urlParameters.add(new BasicNameValuePair("roomname", roomname));
+                        urlParameters.add(new BasicNameValuePair("turnprogress", "baitset"));
+                        post.setEntity(new UrlEncodedFormEntity(urlParameters));
+                        HttpResponse response = httpclient.execute(post);
+                        result = EntityUtils.toString(response.getEntity());
+                        Log.d("GP dealer setbait res7:", result);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    // STEP 8: START OVER (as !dealer)
 
                 } else { // !dealer
                     // GET BAIT
@@ -305,17 +384,15 @@ public class GameplayActivity extends Activity {
                         HttpClient httpclient = new DefaultHttpClient();
                         HttpPost post = new HttpPost(url);
                         List<NameValuePair> urlParameters = new ArrayList<>();
-                        urlParameters.add(new BasicNameValuePair("room", roomname));
+                        urlParameters.add(new BasicNameValuePair("roomname", roomname));
                         post.setEntity(new UrlEncodedFormEntity(urlParameters));
                         HttpResponse response = httpclient.execute(post);
                         result = EntityUtils.toString(response.getEntity());
-                        Log.d("GP get_bait result:", result);
+                        Log.d("GP !dealer gbait res1:", result);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
 
-                    TextView baitTextView = (TextView) findViewById(R.id.baitTextView);
-                    baitTextView.setText(result);
 
                     // WAIT FOR SOMETHING
                     try {

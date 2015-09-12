@@ -71,8 +71,8 @@ public class UserStartActivity extends Activity {
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost post = new HttpPost(url);
             List<NameValuePair> urlParameters = new ArrayList<>();
-            urlParameters.add(new BasicNameValuePair("room",roomJoinEditText.getText().toString()));
-            urlParameters.add(new BasicNameValuePair("user",usernameEditText.getText().toString()));
+            urlParameters.add(new BasicNameValuePair("roomname",roomJoinEditText.getText().toString()));
+            urlParameters.add(new BasicNameValuePair("username",usernameEditText.getText().toString()));
             post.setEntity(new UrlEncodedFormEntity(urlParameters));
             HttpResponse response = httpclient.execute(post);
             result = EntityUtils.toString(response.getEntity());
