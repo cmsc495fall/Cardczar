@@ -3,17 +3,38 @@ package com.example.crimson30.cardczar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.EditText;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class HostStartActivity extends Activity {
+
+    String result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_host_start);
+
     }
 
     @Override
@@ -39,7 +60,38 @@ public class HostStartActivity extends Activity {
     }
 
     public void intentToRoom(View view) {
-        Intent roomIntent = new Intent(this, RoomActivity.class);
-        startActivity(roomIntent);
-    }
+
+        EditText roomnameEditText = (EditText) findViewById(R.id.roomnameEditText);
+        EditText hostnameEditText = (EditText) findViewById(R.id.hostnameEditText);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        // Tell LAMP to make database
+        try {
+            String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_create_db.php";
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost post = new HttpPost(url);
+            List<NameValuePair> urlParameters = new ArrayList<>();
+            urlParameters.add(new BasicNameValuePair("roomname",roomnameEditText.getText().toString()));
+            urlParameters.add(new BasicNameValuePair("username",hostnameEditText.getText().toString()));
+            post.setEntity(new UrlEncodedFormEntity(urlParameters));
+            HttpResponse response = httpclient.execute(post);
+            // Log.d("Response of request", response.toString());
+            result = EntityUtils.toString(response.getEntity());
+            response.getEntity().consumeContent();
+            Log.d("Result of create_db", result);
+        } catch (IOException e) { e.printStackTrace(); }
+
+        // If server result=OK, intend to Room
+        if (Objects.equals(result, "OK")) {
+            Intent roomIntent = new Intent(this, RoomActivity.class);
+            Bundle extras = new Bundle();
+            extras.putString("roomname", roomnameEditText.getText().toString());
+            extras.putString("username",hostnameEditText.getText().toString());
+            roomIntent.putExtras(extras);
+            startActivity(roomIntent);
+        } // end if
+    } // end intentToRoom()
+
 }

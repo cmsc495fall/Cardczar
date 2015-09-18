@@ -1,11 +1,32 @@
 package com.example.crimson30.cardczar;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class UserStartActivity extends Activity {
+    String result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,4 +55,42 @@ public class UserStartActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    public void intentToWaitingRoom(View view) {
+
+        EditText roomJoinEditText = (EditText) findViewById(R.id.roomJoinEditText);
+        EditText usernameEditText = (EditText) findViewById(R.id.usernameEditText);
+        TextView roomStatusTextView = (TextView) findViewById(R.id.roomStatusTextView);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        // Call appropriate PHP file to join game
+        try {
+            String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_join.php";
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost post = new HttpPost(url);
+            List<NameValuePair> urlParameters = new ArrayList<>();
+            urlParameters.add(new BasicNameValuePair("roomname",roomJoinEditText.getText().toString()));
+            urlParameters.add(new BasicNameValuePair("username",usernameEditText.getText().toString()));
+            post.setEntity(new UrlEncodedFormEntity(urlParameters));
+            HttpResponse response = httpclient.execute(post);
+            result = EntityUtils.toString(response.getEntity());
+            Log.d("Result of join request", result);
+        } catch (IOException e) { e.printStackTrace(); }
+
+        // If server result=OK, intend to WaitingRoom
+        if (Objects.equals(result, "OK")) {
+            Intent roomIntent = new Intent(this, WaitingRoomActivity.class);
+            Bundle extras = new Bundle();
+            extras.putString("roomname", roomJoinEditText.getText().toString());
+            extras.putString("username",usernameEditText.getText().toString());
+            roomIntent.putExtras(extras);
+            startActivity(roomIntent);
+        } else {
+            roomStatusTextView.setText(result);
+        }
+
+    } // end intentToWaitingRoom
+
 }

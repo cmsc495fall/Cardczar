@@ -34,6 +34,10 @@
             android:name=".GameplayActivity"
             android:label="@string/title_activity_gameplay" >
         </activity>
+        <activity
+            android:name=".WaitingRoomActivity"
+            android:label="@string/title_activity_waiting_room">
+        </activity>
     </application>
 
 </manifest>
