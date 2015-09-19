@@ -378,28 +378,39 @@ public class GameplayActivity extends Activity {
                     // STEP 8: START OVER (as !dealer)
 
                 } else { // !dealer
-                    // GET BAIT
-                    try {
-                        String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_bait.php";
-                        HttpClient httpclient = new DefaultHttpClient();
-                        HttpPost post = new HttpPost(url);
-                        List<NameValuePair> urlParameters = new ArrayList<>();
-                        urlParameters.add(new BasicNameValuePair("roomname", roomname));
-                        post.setEntity(new UrlEncodedFormEntity(urlParameters));
-                        HttpResponse response = httpclient.execute(post);
-                        result = EntityUtils.toString(response.getEntity());
-                        Log.d("GP !dealer gbait res1:", result);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    // STEP 1: WAIT FOR SUBMISSIONS TO FILL UP
 
+                    /* see dealer step 3 for reference */
 
-                    // WAIT FOR SOMETHING
-                    try {
-                        wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    // STEP 2: SUBMIT RESPONSE TO SERVER
+
+                    /* See any httpclient request for reference */
+
+                    // STEP 3: WAIT FOR TURN PROGRESS TO CHANGE TO allresponsesin
+
+                    /* The point here is that when all responses are in,
+                       the user should get the responses so that they can
+                       be revealed to the user at the end of the turn.
+                       At this point, the user doesn't SEE the responses,
+                       but will have them for later.
+                       Should still be waiting on the dealer to select
+                       a response (dealer can't select until all responses
+                       are in.*/
+
+                    // STEP 4: GET RESPONSES, STORE IN LOCAL ARRAY
+
+                    // STEP 5: WAIT ON DEALER SELECTION (TURN PROGRESS winnerpicked or gameover)
+
+                    // STEP 6: SHOW RESPONSES
+
+                    // STEP 7: IF GAME OVER, THEN DO GAME OVER CODE
+
+                    // STEP 8: CHANGE RESPONSE BACK TO "WAIT FOR RESPONSE"
+
+                    /* This is so that dealer knows to set bait */
+
+                    // STEP 9: WAIT FOR TURN PROGRESS TO GO TO baitset
+
                 }  // end if (dealer or !dealer)
 
 

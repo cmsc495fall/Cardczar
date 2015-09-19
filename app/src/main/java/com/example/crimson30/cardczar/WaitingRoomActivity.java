@@ -80,7 +80,7 @@ public class WaitingRoomActivity extends Activity {
                     HttpClient httpclient = new DefaultHttpClient();
                     HttpPost post = new HttpPost(url);
                     List<NameValuePair> urlParameters = new ArrayList<>();
-                    urlParameters.add(new BasicNameValuePair("room", roomname));
+                    urlParameters.add(new BasicNameValuePair("roomname", roomname));
                     post.setEntity(new UrlEncodedFormEntity(urlParameters));
                     HttpResponse response = httpclient.execute(post);
                     result = EntityUtils.toString(response.getEntity());

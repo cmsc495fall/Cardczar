@@ -15,7 +15,7 @@ mysql_select_db($db_name , $link) or die("Select DB Error: ".mysql_error());
 
 
 // SET submission IN users
-$query = "UPDATE users SET submission='$submission' WHERE username='user3';";
+$query = "UPDATE users SET submission='$submission' WHERE username='$username';";
 mysql_query($query, $link) or die("Set submission error: ".mysql_error()); 
 
 // CLOSE DATABASE
