@@ -159,10 +159,16 @@ $db_name = $_SERVER['QUERY_STRING']
   <input type="submit" name="submit" value="Submit" />
   </form>
   </td>
-  <td>
-  </td>
-  <td>
-  </td>
+   <td>
+    ccz_get_user_count.php<br>
+    <form action="ccz_get_user_count.php" method="post" target="_top">
+    Room: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<INPUT size="30" name="roomname" value="<?php echo $db_name;?>"><br>
+    <br>
+    <input type="submit" name="submit" value="Submit" />
+    </form>
+    </td>
+   <td>
+   </td>
  </tr>
 
 </table>

@@ -19,25 +19,33 @@ if (mysql_select_db($db_name, $link)) {
 // UPDATE TABLES
 if (connected) {
 
- // ADD USER TO users
- $query = "INSERT INTO users (username, points, quit, submission, timelastcontact) VALUES ('".$username."', 0, FALSE, 'WAIT FOR RESPONSE', ".time().");";
- if (mysql_query($query, $link)) {
-     echo "OK";
-     $inserted = TRUE;
- } else {
-     echo 'Error: ' . mysql_error() . "\n";
-     $inserted = FALSE;
- }
+ //Check to see if the user already exists
+ $result = mysql_query("SELECT count(*) from users where username='$username'");
+ $row = mysql_fetch_assoc($result);
+ $usercount = $row['count(*)'];
+ if ($usercount > 0){
+     die("Username '$username' has already been taken. Choose another username");
+  }
 
- // INCREMENT NUMUSERS IN gamestate
- if ($inserted) {
-  $tablecontents = mysql_query("SELECT * FROM gamestate");
-  if ($myrow = mysql_fetch_array($tablecontents))
-  $numusers = $myrow["numusers"];
-  $numusers++;
-  $query = "UPDATE gamestate SET numusers=".$numusers." WHERE id=1;  ";
-  mysql_query($query, $link) or die("Update DB Error: ".mysql_error());
- }
+  // ADD USER TO users
+  $query = "INSERT INTO users (username, points, quit, submission, timelastcontact) VALUES ('".$username."', 0, FALSE, 'WAIT FOR RESPONSE', ".time().");";
+  if (mysql_query($query, $link)) {
+    echo "OK";
+    $inserted = TRUE;
+  } else {
+      echo 'Error: ' . mysql_error() . "\n";
+      $inserted = FALSE;
+  }
+
+  // INCREMENT NUMUSERS IN gamestate
+  if ($inserted) {
+    $tablecontents = mysql_query("SELECT * FROM gamestate");
+    if ($myrow = mysql_fetch_array($tablecontents))
+        $numusers = $myrow["numusers"];
+        $numusers++;
+        $query = "UPDATE gamestate SET numusers=".$numusers." WHERE id=1;  ";
+        mysql_query($query, $link) or die("Update DB Error: ".mysql_error());
+  }
 }
 
 // CLOSE DATABASE
