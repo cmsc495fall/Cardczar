@@ -168,6 +168,12 @@ $db_name = $_SERVER['QUERY_STRING']
     </form>
     </td>
    <td>
+       ccz_delete_db.php<br>
+       <form action="ccz_delete_db.php" method="post" target="_top">
+       Room: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<INPUT size="30" name="roomname" value="<?php echo $db_name;?>"><br>
+       <br>
+       <input type="submit" name="submit" value="Submit" />
+       </form>
    </td>
  </tr>
 
