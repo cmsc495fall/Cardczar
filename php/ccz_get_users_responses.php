@@ -19,7 +19,7 @@ $hasNoWAIT_FOR_RESPONSE = true;  // if remains true, then is true
 $response_string="";
 
 // GET USERS (do while because for mysql_feth_array gets first user)
-$tablecontents = mysql_query("SELECT * FROM users");
+$tablecontents = mysql_query("SELECT * FROM users where quit=0");
 if ($myrow = mysql_fetch_array($tablecontents))
   {
      $num = 1;

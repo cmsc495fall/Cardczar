@@ -12,7 +12,7 @@ $db_name = urlencode($_POST["roomname"]);
 mysql_select_db($db_name , $link) or die("user list Select DB Error: ".mysql_error());
 
 // GET USERS (do while because for mysql_feth_array gets first user)
-$tablecontents = mysql_query("SELECT * FROM users");
+$tablecontents = mysql_query("SELECT * FROM users where quit=0");
 if ($myrow = mysql_fetch_array($tablecontents))
   {  $num = 1;
      do
