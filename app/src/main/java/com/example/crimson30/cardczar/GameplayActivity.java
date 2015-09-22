@@ -32,9 +32,11 @@ public class GameplayActivity extends Activity {
     Boolean dealer;
     String [] cards;
     String [] usernames;
+    String responses;
     int numusers;
     int myUserNum;
     int buttonClicked;
+    String buttonClickedString;
     Turn turnThread;
     Handler handler; // handler for GUI activities
 
@@ -65,7 +67,7 @@ public class GameplayActivity extends Activity {
                 post.setEntity(new UrlEncodedFormEntity(urlParameters));
                 HttpResponse response = httpclient.execute(post);
                 result = EntityUtils.toString(response.getEntity());
-                Log.d("GP set_bait result:", result);
+                Log.d("GP oncreate set_bait:", result);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -82,7 +84,7 @@ public class GameplayActivity extends Activity {
             HttpResponse response = httpclient.execute(post);
             // Log.d("Response of request", response.toString());
             result = EntityUtils.toString(response.getEntity());
-            Log.d("GP draw_eight result", result);
+            Log.d("GP onCreate draw_eight:", result);
         } catch (IOException e) { e.printStackTrace(); }
 
         // Add blank value, so that 1st card is cards[1], not cards[0], etc.
@@ -100,7 +102,7 @@ public class GameplayActivity extends Activity {
             post.setEntity(new UrlEncodedFormEntity(urlParameters));
             HttpResponse response = httpclient.execute(post);
             result = EntityUtils.toString(response.getEntity());
-            Log.d("GP user_list result:", result);
+            Log.d("GP onCreate user_list:", result);
         } catch (IOException e) { e.printStackTrace(); }
 
         // Add blank value, so that 1st card is usernames[1], not usernames[0], etc.
@@ -163,7 +165,6 @@ public class GameplayActivity extends Activity {
                     baitTextView.setText(result);
                 } else
                 if (operation.equals("displayResponses")) {
-                    data = "empty|"+data;
                     String [] responses = data.split("\\|");
                     int numresponses = responses.length-1;
                     if (numresponses>0) { button1.setText(responses[1]); }
@@ -174,6 +175,16 @@ public class GameplayActivity extends Activity {
                     if (numresponses>5) { button6.setText(responses[6]); }
                     if (numresponses>6) { button7.setText(responses[7]); }
                     if (numresponses>7) { button8.setText(responses[8]); }
+                } else if (operation.equals("newResponse")) {
+                    if (buttonClicked==1) { button1.setText(data); } else
+                    if (buttonClicked==2) { button2.setText(data); } else
+                    if (buttonClicked==3) { button3.setText(data); } else
+                    if (buttonClicked==4) { button4.setText(data); } else
+                    if (buttonClicked==5) { button5.setText(data); } else
+                    if (buttonClicked==6) { button6.setText(data); } else
+                    if (buttonClicked==7) { button7.setText(data); } else
+                    if (buttonClicked==8) { button8.setText(data); }
+
                 }
             } // end handleMessage()
         }; // end handler
@@ -222,7 +233,7 @@ public class GameplayActivity extends Activity {
                     post.setEntity(new UrlEncodedFormEntity(urlParameters));
                     HttpResponse response = httpclient.execute(post);
                     result = EntityUtils.toString(response.getEntity());
-                    Log.d("GP get bait res-1:", result);
+                    Log.d("GP step -1, get_bait:", result);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -237,9 +248,24 @@ public class GameplayActivity extends Activity {
 
 
                 // STEP 0: SEE IF DEALER
-                // ###### SEE IF DEALER GOES HERE ######
+                try {
+                    String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_dealer_num.php";
+                    HttpClient httpclient = new DefaultHttpClient();
+                    HttpPost post = new HttpPost(url);
+                    List<NameValuePair> urlParameters = new ArrayList<>();
+                    urlParameters.add(new BasicNameValuePair("roomname", roomname));
+                    post.setEntity(new UrlEncodedFormEntity(urlParameters));
+                    HttpResponse response = httpclient.execute(post);
+                    result = EntityUtils.toString(response.getEntity());
+                    Log.d("GP step 0, get_dealer:", result);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (myUserNum==Integer.parseInt(result)) { dealer = true; } else { dealer = false; }
 
-                if (dealer) {
+
+                if (dealer) { // DEALER CODE
+
 
                     // STEP 1: WAIT FOR SUBMISSIONS TO FILL UP
                     boolean waitForAllSubmissions = true;
@@ -250,7 +276,10 @@ public class GameplayActivity extends Activity {
                             e.printStackTrace();
                         }
 
-                        // See if server is OK yet for given php file and paramater (see examples about 10 lines up)
+                        // See if server is OK yet for given php file and parameter
+                        // Note: ccz_get_users_responses.php returns "Submissions are neither empty nor full"
+                        //       when responses aren't all ready.
+                        //       When ready, it returns the actual responses from all users.
                         try {
                             String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_users_responses.php";
                             HttpClient httpclient = new DefaultHttpClient();
@@ -261,16 +290,18 @@ public class GameplayActivity extends Activity {
                             post.setEntity(new UrlEncodedFormEntity(urlParameters));
                             HttpResponse response = httpclient.execute(post);
                             result = EntityUtils.toString(response.getEntity());
-                            Log.d("GP dealer getresp res1:", result);
+                            Log.d("GP dealer step1:", result);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
 
-                        // When desired result, move past while and to step 2
+                        // Pad result, since display function does not use responses[0]
+                        result = "empty|"+result;
+
+                        // When desired result, pass all responses to handler for display, move past while and to step 2
                         if (!result.equals("Submissions are neither empty nor full")) {
                             msg = Message.obtain();
                             handler.removeCallbacks(this);  // Clear message queue
-                            Bundle bundle2 = new Bundle();
                             bundle.putString("operation","displayResponses");
                             bundle.putString("data", result);
                             msg.setData(bundle);
@@ -291,7 +322,7 @@ public class GameplayActivity extends Activity {
                         post.setEntity(new UrlEncodedFormEntity(urlParameters));
                         HttpResponse response = httpclient.execute(post);
                         result = EntityUtils.toString(response.getEntity());
-                        Log.d("GP dealer tprog res2:", result);
+                        Log.d("GP dealer step2:", result);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -306,6 +337,7 @@ public class GameplayActivity extends Activity {
                         }
                     }
 
+
                     // STEP 4: PROCESS WINNER
                     try {
                         String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_process_winner.php";
@@ -313,19 +345,22 @@ public class GameplayActivity extends Activity {
                         HttpPost post = new HttpPost(url);
                         List<NameValuePair> urlParameters = new ArrayList<>();
                         urlParameters.add(new BasicNameValuePair("roomname", roomname));
+                        // Note: user number, not username
                         urlParameters.add(new BasicNameValuePair("user", String.valueOf(buttonClicked)));
                         post.setEntity(new UrlEncodedFormEntity(urlParameters));
                         HttpResponse response = httpclient.execute(post);
                         result = EntityUtils.toString(response.getEntity());
-                        Log.d("GP process winner res3:", result);
+                        Log.d("GP dealer step4:", result);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+
 
                     // STEP 5: PROCESS GAME OVER
                     //  #############
                     // GAME OVER CODE
                     // ##############
+
 
                     // STEP 6: WAIT FOR ALL SUBMISSIONS TO EMPTY
                     waitForAllSubmissions=true;
@@ -336,7 +371,7 @@ public class GameplayActivity extends Activity {
                             e.printStackTrace();
                         }
 
-                        // See if server is OK yet for given php file and paramater (see examples about 10 lines up)
+                        // See if server is OK yet for given php file and parameter
                         try {
                             String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_users_responses.php";
                             HttpClient httpclient = new DefaultHttpClient();
@@ -347,7 +382,7 @@ public class GameplayActivity extends Activity {
                             post.setEntity(new UrlEncodedFormEntity(urlParameters));
                             HttpResponse response = httpclient.execute(post);
                             result = EntityUtils.toString(response.getEntity());
-                            Log.d("GP dealer getresp res6:", result);
+                            Log.d("GP dealer step6:", result);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -358,6 +393,7 @@ public class GameplayActivity extends Activity {
                         }
 
                     }  // end while waitForAllSubmissions
+
 
                     // STEP 7: SET BAIT
                     try {
@@ -370,46 +406,164 @@ public class GameplayActivity extends Activity {
                         post.setEntity(new UrlEncodedFormEntity(urlParameters));
                         HttpResponse response = httpclient.execute(post);
                         result = EntityUtils.toString(response.getEntity());
-                        Log.d("GP dealer setbait res7:", result);
+                        Log.d("GP dealer step7:", result);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
 
+
                     // STEP 8: START OVER (as !dealer)
 
-                } else { // !dealer
-                    // STEP 1: WAIT FOR SUBMISSIONS TO FILL UP
+                } else { // !DEALER CODE
 
-                    /* see dealer step 3 for reference */
 
-                    // STEP 2: SUBMIT RESPONSE TO SERVER
+                    // STEP 1: WAIT FOR BUTTON (USER SUBMISSION)
+                    synchronized (this) {
+                        try {
+                            wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
 
-                    /* See any httpclient request for reference */
+
+                    // STEP 2: SUBMIT RESPONSE TO SERVER AND DRAW CARD
+                    try {
+                        String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_user_submit.php";
+                        HttpClient httpclient = new DefaultHttpClient();
+                        HttpPost post = new HttpPost(url);
+                        List<NameValuePair> urlParameters = new ArrayList<>();
+                        urlParameters.add(new BasicNameValuePair("roomname", roomname));
+                        urlParameters.add(new BasicNameValuePair("username", username));
+                        // Note: user number, not username
+                        urlParameters.add(new BasicNameValuePair("submission", buttonClickedString));
+                        post.setEntity(new UrlEncodedFormEntity(urlParameters));
+                        HttpResponse response = httpclient.execute(post);
+                        result = EntityUtils.toString(response.getEntity());
+                        Log.d("GP !dealer step2:", result);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    // Set local array to result for new card (replace old/submitted card)
+                    cards[buttonClicked]=result;
+
+                    // Result from ccz_user_submit.php is replacement response (replace old card)
+                    msg = Message.obtain();
+                    handler.removeCallbacks(this);  // Clear message queue
+                    bundle.putString("operation","newResponse");
+                    bundle.putString("data", result);
+                    msg.setData(bundle);
+                    handler.sendMessage(msg);
+
 
                     // STEP 3: WAIT FOR TURN PROGRESS TO CHANGE TO allresponsesin
+                    boolean waitForAllSubmissions = true;
+                    while (waitForAllSubmissions) {
+                        try {
+                            Thread.sleep(1210);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
 
-                    /* The point here is that when all responses are in,
-                       the user should get the responses so that they can
-                       be revealed to the user at the end of the turn.
-                       At this point, the user doesn't SEE the responses,
-                       but will have them for later.
-                       Should still be waiting on the dealer to select
-                       a response (dealer can't select until all responses
-                       are in.*/
+                        // See if server is OK yet for given php file and parameter
+                        try {
+                            String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_turn_progress.php";
+                            HttpClient httpclient = new DefaultHttpClient();
+                            HttpPost post = new HttpPost(url);
+                            List<NameValuePair> urlParameters = new ArrayList<>();
+                            urlParameters.add(new BasicNameValuePair("roomname", roomname));
+                            post.setEntity(new UrlEncodedFormEntity(urlParameters));
+                            HttpResponse response = httpclient.execute(post);
+                            result = EntityUtils.toString(response.getEntity());
+                            Log.d("GP !dealer step3:", result);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        // When desired result, move past while and to step 4
+                        if (result.equals("allresponsesin")) {
+                            waitForAllSubmissions=false;
+                        }
+                    } // end while (waitForAllSubmissions)
 
                     // STEP 4: GET RESPONSES, STORE IN LOCAL ARRAY
 
+                    // Note: ccz_get_users_responses.php returns "Submissions are neither empty nor full"
+                    //       when responses aren't all ready.
+                    //       When ready, it returns the actual responses from all users.
+                    // In this case, it should be full, since turnprogress was set to allresponsesin
+                    try {
+                        String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_users_responses.php";
+                        HttpClient httpclient = new DefaultHttpClient();
+                        HttpPost post = new HttpPost(url);
+                        List<NameValuePair> urlParameters = new ArrayList<>();
+                        urlParameters.add(new BasicNameValuePair("roomname", roomname));
+                        urlParameters.add(new BasicNameValuePair("action", "waitforallfull"));
+                        post.setEntity(new UrlEncodedFormEntity(urlParameters));
+                        HttpResponse response = httpclient.execute(post);
+                        result = EntityUtils.toString(response.getEntity());
+                        Log.d("GP !dealer step4:", result);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    // Put responses in array so all users can see all responses
+                    // Add blank value, so that 1st response is responses[1], not responses[0], etc.
+                    // Makes it easier for developer to deal with
+                    responses = "empty|"+result;
+
+
                     // STEP 5: WAIT ON DEALER SELECTION (TURN PROGRESS winnerpicked or gameover)
+                    boolean waitForDealer = true;
+                    while (waitForDealer) {
+                        try {
+                            Thread.sleep(1210);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
 
-                    // STEP 6: SHOW RESPONSES
+                        // See if server is OK yet for given php file and parameter
+                        try {
+                            String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_turn_progress.php";
+                            HttpClient httpclient = new DefaultHttpClient();
+                            HttpPost post = new HttpPost(url);
+                            List<NameValuePair> urlParameters = new ArrayList<>();
+                            urlParameters.add(new BasicNameValuePair("roomname", roomname));
+                            post.setEntity(new UrlEncodedFormEntity(urlParameters));
+                            HttpResponse response = httpclient.execute(post);
+                            result = EntityUtils.toString(response.getEntity());
+                            Log.d("GP !dealer step5:", result);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
 
-                    // STEP 7: IF GAME OVER, THEN DO GAME OVER CODE
+                        // When desired result, move past while and to step 6
+                        if (result.equals("winnerpicked") || (result.equals("gameover"))) {
+                            waitForDealer=false;
+                        }
+                    } // end while (waitForDealer)
 
-                    // STEP 8: CHANGE RESPONSE BACK TO "WAIT FOR RESPONSE"
+
+                    // STEP 6: GET WINNER
+
+
+                    // STEP 7: SHOW RESPONSES
+                    msg = Message.obtain();
+                    handler.removeCallbacks(this);  // Clear message queue
+                    bundle.putString("operation","displayResponses");
+                    bundle.putString("data", responses);
+                    msg.setData(bundle);
+                    handler.sendMessage(msg);
+
+
+                    // STEP 8: IF GAME OVER, THEN DO GAME OVER CODE
+
+                    // STEP 9: CHANGE RESPONSE BACK TO "WAIT FOR RESPONSE"
 
                     /* This is so that dealer knows to set bait */
 
-                    // STEP 9: WAIT FOR TURN PROGRESS TO GO TO baitset
+                    // STEP 10: WAIT FOR TURN PROGRESS TO GO TO baitset
 
                 }  // end if (dealer or !dealer)
 
@@ -423,6 +577,8 @@ public class GameplayActivity extends Activity {
     public void button1Click(View view) {
         System.out.println("button1Click");
         buttonClicked=1;
+        Button button = (Button) findViewById(R.id.button1);
+        buttonClickedString=button.getText().toString();
         synchronized (turnThread) {
             turnThread.notify(); }
 
@@ -431,6 +587,8 @@ public class GameplayActivity extends Activity {
     public void button2Click(View view) {
         System.out.println("button2Click");
         buttonClicked=2;
+        Button button = (Button) findViewById(R.id.button1);
+        buttonClickedString=button.getText().toString();
         synchronized (turnThread) {
             turnThread.notify(); }
     } // end buttonClick
@@ -438,6 +596,8 @@ public class GameplayActivity extends Activity {
     public void button3Click(View view) {
         System.out.println("button3Click");
         buttonClicked=3;
+        Button button = (Button) findViewById(R.id.button1);
+        buttonClickedString=button.getText().toString();
         synchronized (turnThread) {
             turnThread.notify(); }
     } // end buttonClick
@@ -445,6 +605,8 @@ public class GameplayActivity extends Activity {
     public void button4Click(View view) {
         System.out.println("button4Click");
         buttonClicked=4;
+        Button button = (Button) findViewById(R.id.button1);
+        buttonClickedString=button.getText().toString();
         synchronized (turnThread) {
             turnThread.notify(); }
     } // end buttonClick
@@ -452,6 +614,8 @@ public class GameplayActivity extends Activity {
     public void button5Click(View view) {
         System.out.println("button5Click");
         buttonClicked=5;
+        Button button = (Button) findViewById(R.id.button1);
+        buttonClickedString=button.getText().toString();
         synchronized (turnThread) {
             turnThread.notify(); }
     } // end buttonClick
@@ -459,6 +623,8 @@ public class GameplayActivity extends Activity {
     public void button6Click(View view) {
         System.out.println("button6Click");
         buttonClicked=6;
+        Button button = (Button) findViewById(R.id.button1);
+        buttonClickedString=button.getText().toString();
         synchronized (turnThread) {
             turnThread.notify(); }
     } // end buttonClick
@@ -466,6 +632,8 @@ public class GameplayActivity extends Activity {
     public void button7Click(View view) {
         System.out.println("button7Click");
         buttonClicked=7;
+        Button button = (Button) findViewById(R.id.button1);
+        buttonClickedString=button.getText().toString();
         synchronized (turnThread) {
             turnThread.notify(); }
     } // end buttonClick
@@ -473,6 +641,8 @@ public class GameplayActivity extends Activity {
     public void button8Click(View view) {
         System.out.println("button8Click");
         buttonClicked=8;
+        Button button = (Button) findViewById(R.id.button1);
+        buttonClickedString=button.getText().toString();
         synchronized (turnThread) {
             turnThread.notify(); }
     } // end buttonClick
