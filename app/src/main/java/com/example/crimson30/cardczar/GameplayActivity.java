@@ -1,9 +1,13 @@
 package com.example.crimson30.cardczar;
 
 import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,6 +27,7 @@ import org.apache.http.util.EntityUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class GameplayActivity extends Activity {
     String result;   // LAMP server result
@@ -110,6 +115,7 @@ public class GameplayActivity extends Activity {
         result = "empty|"+result;
         usernames = result.split("\\|");
         numusers = usernames.length-1;
+        System.out.println("numusers = "+numusers);
         for (String value : usernames) {
             int i=0;
             i++;
@@ -128,6 +134,8 @@ public class GameplayActivity extends Activity {
         final Button button6 = (Button) findViewById(R.id.button6);
         final Button button7 = (Button) findViewById(R.id.button7);
         final Button button8 = (Button) findViewById(R.id.button8);
+
+        final Drawable originalBackground = button1.getBackground();
 
         if (dealer) {
             if (numusers>1) { button1.setText("WAIT FOR RESPONSE"); } else { button1.setVisibility(View.GONE);}
@@ -160,22 +168,74 @@ public class GameplayActivity extends Activity {
                 Bundle bundle = msg.getData();
                 String operation = bundle.getString("operation");
                 String data = bundle.getString("data");
+                int intdata = bundle.getInt("intdata");
                 if (operation.equals("displayBait")) {
                     TextView baitTextView = (TextView) findViewById(R.id.baitTextView);
                     baitTextView.setText(result);
                 } else
-                if (operation.equals("displayResponses")) {
-                    String [] responses = data.split("\\|");
-                    int numresponses = responses.length-1;
-                    if (numresponses>0) { button1.setText(responses[1]); }
-                    if (numresponses>1) { button2.setText(responses[2]); }
-                    if (numresponses>2) { button3.setText(responses[3]); }
-                    if (numresponses>3) { button4.setText(responses[4]); }
-                    if (numresponses>4) { button5.setText(responses[5]); }
-                    if (numresponses>5) { button6.setText(responses[6]); }
-                    if (numresponses>6) { button7.setText(responses[7]); }
-                    if (numresponses>7) { button8.setText(responses[8]); }
-                } else if (operation.equals("newResponse")) {
+                if (operation.equals("displayButtons")) {
+                    // Note: Data for this arrives as something like "empty|button1Text|button2Text"
+                    // The displayButtons code below breaks up the data to figure out how many buttons to display
+                    // If winner is being highlighted, winner will contain a string other than "0"
+                    String [] buttonArray = data.split("\\|");
+                    int numButtons = buttonArray.length-1;
+                    if (numButtons>0) { // BUTTON 1 DISPLAY
+                        button1.setVisibility(View.VISIBLE);
+                        button1.setText(buttonArray[1]);
+                        if (intdata==1) { button1.setBackgroundColor(Color.BLUE);} else { button1.setBackground(originalBackground); }
+                    } else { button1.setVisibility(View.GONE);
+                    } // end BUTTON 1 DISPLAY
+
+                    if (numButtons>1) { // BUTTON 2 DISPLAY
+                        button2.setVisibility(View.VISIBLE);
+                        button2.setText(buttonArray[2]);
+                        if (intdata==2) { button2.setBackgroundColor(Color.BLUE);} else { button2.setBackground(originalBackground); }
+                    }    else { button2.setVisibility(View.GONE);
+                    } // end BUTTON 2 DISPLAY
+
+                    if (numButtons>2) { // BUTTON 3 DISPLAY
+                        button3.setVisibility(View.VISIBLE);
+                        button3.setText(buttonArray[3]);
+                        if (intdata==3) { button3.setBackgroundColor(Color.BLUE);} else { button3.setBackground(originalBackground); }
+                    }    else { button3.setVisibility(View.GONE);
+                    } // end BUTTON 3 DISPLAY
+
+                    if (numButtons>3) { // BUTTON 4 DISPLAY
+                        button4.setVisibility(View.VISIBLE);
+                        button4.setText(buttonArray[4]);
+                        if (intdata==4) { button4.setBackgroundColor(Color.BLUE);} else { button4.setBackground(originalBackground); }
+                    }    else { button4.setVisibility(View.GONE);
+                    } // end BUTTON 4 DISPLAY
+
+                    if (numButtons>4) { // BUTTON 5 DISPLAY
+                        button5.setVisibility(View.VISIBLE);
+                        button5.setText(buttonArray[5]);
+                        if (intdata==5) { button5.setBackgroundColor(Color.BLUE);} else { button5.setBackground(originalBackground); }
+                    }    else { button5.setVisibility(View.GONE);
+                    } // end BUTTON 5 DISPLAY
+
+                    if (numButtons>5) { // BUTTON 6 DISPLAY
+                        button6.setVisibility(View.VISIBLE);
+                        button6.setText(buttonArray[6]);
+                        if (intdata==6) { button6.setBackgroundColor(Color.BLUE);} else { button6.setBackground(originalBackground); }
+                    }    else { button6.setVisibility(View.GONE);
+                    } // end BUTTON 6 DISPLAY
+
+                    if (numButtons>6) { // BUTTON 7 DISPLAY
+                        button7.setVisibility(View.VISIBLE);
+                        button7.setText(buttonArray[7]);
+                        if (intdata==7) { button7.setBackgroundColor(Color.BLUE);} else { button7.setBackground(originalBackground); }
+                    }    else { button7.setVisibility(View.GONE);
+                    } // end BUTTON 7 DISPLAY
+
+                    if (numButtons>7) { // BUTTON 8 DISPLAY
+                        button8.setVisibility(View.VISIBLE);
+                        button8.setText(buttonArray[8]);
+                        if (intdata==8) { button8.setBackgroundColor(Color.BLUE);} else { button8.setBackground(originalBackground); }
+                    }    else { button8.setVisibility(View.GONE);
+                    } // end BUTTON 8 DISPLAY
+
+                } else if (operation.equals("newResponse")) { // FOR JUST CHANGING BUTTON LAST CLICKED
                     if (buttonClicked==1) { button1.setText(data); } else
                     if (buttonClicked==2) { button2.setText(data); } else
                     if (buttonClicked==3) { button3.setText(data); } else
@@ -243,6 +303,7 @@ public class GameplayActivity extends Activity {
                 Bundle bundle = new Bundle();
                 bundle.putString("operation","displayBait");
                 bundle.putString("data", result);
+                bundle.putInt("intdata", 0);
                 msg.setData(bundle);
                 handler.sendMessage(msg);
 
@@ -265,6 +326,17 @@ public class GameplayActivity extends Activity {
 
 
                 if (dealer) { // DEALER CODE
+
+                    // DEALER POPULATES BUTTONS
+                    String buttonText = "empty|";
+                    for (int i = 0; i < numusers; i++) { buttonText=buttonText+"WAIT FOR RESPONSE|"; }
+                    msg = Message.obtain();
+                    handler.removeCallbacks(this);  // Clear message queue
+                    bundle.putString("operation", "displayButtons");
+                    bundle.putString("data", buttonText);
+                    bundle.putInt("intdata", 0); // intdata is not used until later (for winner highlight)
+                    msg.setData(bundle);
+                    handler.sendMessage(msg);
 
 
                     // STEP 1: WAIT FOR SUBMISSIONS TO FILL UP
@@ -295,15 +367,18 @@ public class GameplayActivity extends Activity {
                             e.printStackTrace();
                         }
 
-                        // Pad result, since display function does not use responses[0]
-                        result = "empty|"+result;
+                        // System.out.println("Data about to be passed to handler: "+result);
 
                         // When desired result, pass all responses to handler for display, move past while and to step 2
                         if (!result.equals("Submissions are neither empty nor full")) {
+                            // Pad result, since display function does not use responses[0]
+                            result = "empty|"+result;
+
                             msg = Message.obtain();
                             handler.removeCallbacks(this);  // Clear message queue
-                            bundle.putString("operation","displayResponses");
+                            bundle.putString("operation", "displayButtons");
                             bundle.putString("data", result);
+                            bundle.putInt("intdata", 0); // intdata is not used until later (for winner highlight)
                             msg.setData(bundle);
                             handler.sendMessage(msg);
                             waitForAllSubmissions=false;
@@ -416,6 +491,15 @@ public class GameplayActivity extends Activity {
 
                 } else { // !DEALER CODE
 
+                    // NOT-DEALER POPULATES BUTTONS
+                    msg = Message.obtain();
+                    handler.removeCallbacks(this);  // Clear message queue
+                    bundle.putString("operation", "displayButtons");
+                    bundle.putString("data", TextUtils.join("|", cards));
+                    bundle.putInt("intdata", 0); // intdata is not used until later (for winner highlight)
+                    msg.setData(bundle);
+                    handler.sendMessage(msg);
+
 
                     // STEP 1: WAIT FOR BUTTON (USER SUBMISSION)
                     synchronized (this) {
@@ -451,8 +535,9 @@ public class GameplayActivity extends Activity {
                     // Result from ccz_user_submit.php is replacement response (replace old card)
                     msg = Message.obtain();
                     handler.removeCallbacks(this);  // Clear message queue
-                    bundle.putString("operation","newResponse");
+                    bundle.putString("operation", "newResponse");
                     bundle.putString("data", result);
+                    bundle.putInt("intdata", 0); // intdata is not used until later (for winner highlight)
                     msg.setData(bundle);
                     handler.sendMessage(msg);
 
@@ -487,8 +572,8 @@ public class GameplayActivity extends Activity {
                         }
                     } // end while (waitForAllSubmissions)
 
-                    // STEP 4: GET RESPONSES, STORE IN LOCAL ARRAY
 
+                    // STEP 4: GET RESPONSES, STORE IN LOCAL ARRAY
                     // Note: ccz_get_users_responses.php returns "Submissions are neither empty nor full" when responses aren't all ready.
                     //       When ready, it returns the actual responses from all users.
                     // In this case, it should be full, since turnprogress was set to allresponsesin
@@ -507,7 +592,7 @@ public class GameplayActivity extends Activity {
                         e.printStackTrace();
                     }
 
-                    // Put responses in array so all users can see all responses
+                    // Put responses in array so all users can see all responses (in step 7 SHOW RESPONSES)
                     // Add blank value, so that 1st response is responses[1], not responses[0], etc.
                     // Makes it easier for developer to deal with
                     responses = "empty|"+result;
@@ -545,15 +630,32 @@ public class GameplayActivity extends Activity {
 
 
                     // STEP 6: GET WINNER
+                    // See if server is OK yet for given php file and parameter
+                    try {
+                        String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_winner_num.php";
+                        HttpClient httpclient = new DefaultHttpClient();
+                        HttpPost post = new HttpPost(url);
+                        List<NameValuePair> urlParameters = new ArrayList<>();
+                        urlParameters.add(new BasicNameValuePair("roomname", roomname));
+                        post.setEntity(new UrlEncodedFormEntity(urlParameters));
+                        HttpResponse response = httpclient.execute(post);
+                        result = EntityUtils.toString(response.getEntity());
+                        Log.d("GP !dealer step6:", result);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
 
                     // STEP 7: SHOW RESPONSES
                     msg = Message.obtain();
                     handler.removeCallbacks(this);  // Clear message queue
-                    bundle.putString("operation","displayResponses");
+                    bundle.putString("operation","displayButtons");
                     bundle.putString("data", responses);
+                    // Pass winner number to highlight when displaying
+                    bundle.putInt("intdata", Integer.valueOf(result));
                     msg.setData(bundle);
                     handler.sendMessage(msg);
+
 
 
                     // STEP 8: IF GAME OVER, THEN DO GAME OVER CODE
@@ -607,6 +709,7 @@ public class GameplayActivity extends Activity {
                             waitForDealer=false;
                         }
                     } // end while (waitForDealer)
+
 
                     // STEP 11: START OVER (Go back to step -1)
 
