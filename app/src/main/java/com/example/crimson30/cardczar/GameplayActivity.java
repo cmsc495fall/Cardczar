@@ -489,8 +489,7 @@ public class GameplayActivity extends Activity {
 
                     // STEP 4: GET RESPONSES, STORE IN LOCAL ARRAY
 
-                    // Note: ccz_get_users_responses.php returns "Submissions are neither empty nor full"
-                    //       when responses aren't all ready.
+                    // Note: ccz_get_users_responses.php returns "Submissions are neither empty nor full" when responses aren't all ready.
                     //       When ready, it returns the actual responses from all users.
                     // In this case, it should be full, since turnprogress was set to allresponsesin
                     try {
@@ -558,15 +557,60 @@ public class GameplayActivity extends Activity {
 
 
                     // STEP 8: IF GAME OVER, THEN DO GAME OVER CODE
+                    // GAME OVER CODE HERE
+
 
                     // STEP 9: CHANGE RESPONSE BACK TO "WAIT FOR RESPONSE"
-
-                    /* This is so that dealer knows to set bait */
+                    // This is so that dealer knows to set bait
+                    try {
+                        String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_change_single_response.php";
+                        HttpClient httpclient = new DefaultHttpClient();
+                        HttpPost post = new HttpPost(url);
+                        List<NameValuePair> urlParameters = new ArrayList<>();
+                        urlParameters.add(new BasicNameValuePair("roomname", roomname));
+                        // Note: user number, not username
+                        urlParameters.add(new BasicNameValuePair("user", String.valueOf(myUserNum)));
+                        post.setEntity(new UrlEncodedFormEntity(urlParameters));
+                        HttpResponse response = httpclient.execute(post);
+                        result = EntityUtils.toString(response.getEntity());
+                        Log.d("GP !dealer step9:", result);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
                     // STEP 10: WAIT FOR TURN PROGRESS TO GO TO baitset
+                    waitForDealer = true;
+                    while (waitForDealer) {
+                        try {
+                            Thread.sleep(1210);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        // See if server is OK yet for given php file and parameter
+                        try {
+                            String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_turn_progress.php";
+                            HttpClient httpclient = new DefaultHttpClient();
+                            HttpPost post = new HttpPost(url);
+                            List<NameValuePair> urlParameters = new ArrayList<>();
+                            urlParameters.add(new BasicNameValuePair("roomname", roomname));
+                            post.setEntity(new UrlEncodedFormEntity(urlParameters));
+                            HttpResponse response = httpclient.execute(post);
+                            result = EntityUtils.toString(response.getEntity());
+                            Log.d("GP !dealer step5:", result);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        // When desired result, move past while and to step 6
+                        if (result.equals("baitset")) {
+                            waitForDealer=false;
+                        }
+                    } // end while (waitForDealer)
+
+                    // STEP 11: START OVER (Go back to step -1)
 
                 }  // end if (dealer or !dealer)
-
 
             } // end while running
         } // end run()
