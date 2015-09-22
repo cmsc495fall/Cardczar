@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -114,6 +115,7 @@ public class GameplayActivity extends Activity {
         result = "empty|"+result;
         usernames = result.split("\\|");
         numusers = usernames.length-1;
+        System.out.println("numusers = "+numusers);
         for (String value : usernames) {
             int i=0;
             i++;
@@ -233,7 +235,7 @@ public class GameplayActivity extends Activity {
                     }    else { button8.setVisibility(View.GONE);
                     } // end BUTTON 8 DISPLAY
 
-                } else if (operation.equals("newResponse")) {
+                } else if (operation.equals("newResponse")) { // FOR JUST CHANGING BUTTON LAST CLICKED
                     if (buttonClicked==1) { button1.setText(data); } else
                     if (buttonClicked==2) { button2.setText(data); } else
                     if (buttonClicked==3) { button3.setText(data); } else
@@ -325,6 +327,17 @@ public class GameplayActivity extends Activity {
 
                 if (dealer) { // DEALER CODE
 
+                    // DEALER POPULATES BUTTONS
+                    String buttonText = "empty|";
+                    for (int i = 0; i < numusers; i++) { buttonText=buttonText+"WAIT FOR RESPONSE|"; }
+                    msg = Message.obtain();
+                    handler.removeCallbacks(this);  // Clear message queue
+                    bundle.putString("operation", "displayButtons");
+                    bundle.putString("data", buttonText);
+                    bundle.putInt("intdata", 0); // intdata is not used until later (for winner highlight)
+                    msg.setData(bundle);
+                    handler.sendMessage(msg);
+
 
                     // STEP 1: WAIT FOR SUBMISSIONS TO FILL UP
                     boolean waitForAllSubmissions = true;
@@ -365,7 +378,7 @@ public class GameplayActivity extends Activity {
                             handler.removeCallbacks(this);  // Clear message queue
                             bundle.putString("operation", "displayButtons");
                             bundle.putString("data", result);
-                            bundle.putInt("intdata", 0); // winner is not used until later
+                            bundle.putInt("intdata", 0); // intdata is not used until later (for winner highlight)
                             msg.setData(bundle);
                             handler.sendMessage(msg);
                             waitForAllSubmissions=false;
@@ -478,6 +491,15 @@ public class GameplayActivity extends Activity {
 
                 } else { // !DEALER CODE
 
+                    // NOT-DEALER POPULATES BUTTONS
+                    msg = Message.obtain();
+                    handler.removeCallbacks(this);  // Clear message queue
+                    bundle.putString("operation", "displayButtons");
+                    bundle.putString("data", TextUtils.join("|", cards));
+                    bundle.putInt("intdata", 0); // intdata is not used until later (for winner highlight)
+                    msg.setData(bundle);
+                    handler.sendMessage(msg);
+
 
                     // STEP 1: WAIT FOR BUTTON (USER SUBMISSION)
                     synchronized (this) {
@@ -515,7 +537,7 @@ public class GameplayActivity extends Activity {
                     handler.removeCallbacks(this);  // Clear message queue
                     bundle.putString("operation", "newResponse");
                     bundle.putString("data", result);
-                    bundle.putInt("intdata", 0);
+                    bundle.putInt("intdata", 0); // intdata is not used until later (for winner highlight)
                     msg.setData(bundle);
                     handler.sendMessage(msg);
 
@@ -550,8 +572,8 @@ public class GameplayActivity extends Activity {
                         }
                     } // end while (waitForAllSubmissions)
 
-                    // STEP 4: GET RESPONSES, STORE IN LOCAL ARRAY
 
+                    // STEP 4: GET RESPONSES, STORE IN LOCAL ARRAY
                     // Note: ccz_get_users_responses.php returns "Submissions are neither empty nor full" when responses aren't all ready.
                     //       When ready, it returns the actual responses from all users.
                     // In this case, it should be full, since turnprogress was set to allresponsesin
@@ -570,7 +592,7 @@ public class GameplayActivity extends Activity {
                         e.printStackTrace();
                     }
 
-                    // Put responses in array so all users can see all responses
+                    // Put responses in array so all users can see all responses (in step 7 SHOW RESPONSES)
                     // Add blank value, so that 1st response is responses[1], not responses[0], etc.
                     // Makes it easier for developer to deal with
                     responses = "empty|"+result;
@@ -688,11 +710,8 @@ public class GameplayActivity extends Activity {
                         }
                     } // end while (waitForDealer)
 
-                    // STEP 11: SHOW CARDS
 
-
-
-                    // STEP 12: START OVER (Go back to step -1)
+                    // STEP 11: START OVER (Go back to step -1)
 
                 }  // end if (dealer or !dealer)
 
