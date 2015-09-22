@@ -8,6 +8,10 @@ import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.ProgressBar;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -23,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static android.view.View.INVISIBLE;
+
 public class WaitingRoomActivity extends Activity {
     String result;   // LAMP server result
     String roomname; // room name (database name)
@@ -34,6 +40,33 @@ public class WaitingRoomActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_waiting_room);
+
+        final Button quitButton = (Button) findViewById(R.id.quit_button);
+
+        quitButton.setOnClickListener(
+                new Button.OnClickListener(){
+                    public void onClick(View v){
+                        //If the check for start thread is running or in a waiting mode
+                        //interrupt the thread, delete user from the database tell the user
+                        // they have quit the game and remove all input widgrts
+                        if (serverWaitThread != null && (serverWaitThread.getState() == Thread.State.RUNNABLE ||
+                                serverWaitThread.getState() == Thread.State.TIMED_WAITING)){
+                            Log.d("Thread", "Interrupting check start thread");
+                            serverWaitThread.interrupt();
+                        }
+
+                        deleteUser();
+
+                        TextView textMessage = (TextView) findViewById(R.id.waitingTextView);
+                        textMessage.setText("You Have Quit The Game");
+
+                        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
+                        progressBar.setVisibility(INVISIBLE);
+
+                        quitButton.setVisibility(INVISIBLE);
+                    }
+                }
+        );
 
         // Get vars from previous activity
         Bundle extras = getIntent().getExtras();
@@ -71,7 +104,8 @@ public class WaitingRoomActivity extends Activity {
                 try {
                     Thread.sleep(1210);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                   Log.d("Thread","Thread interrupt encountered");
+                    running = false;
                 }
 
                 // Get gamestate:started value from LAMP
@@ -99,6 +133,7 @@ public class WaitingRoomActivity extends Activity {
 
             } // end while
         } // end run()
+
     } // end userPollThread
 
     @Override
@@ -121,6 +156,26 @@ public class WaitingRoomActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /*
+    HTTP call to delete the user from the database.
+     */
+    private void deleteUser(){
+        try {
+            String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_user_quit.php";
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost post = new HttpPost(url);
+            List<NameValuePair> urlParameters = new ArrayList<>();
+            urlParameters.add(new BasicNameValuePair("roomname", roomname));
+            urlParameters.add(new BasicNameValuePair("username", username));
+            post.setEntity(new UrlEncodedFormEntity(urlParameters));
+            HttpResponse response = httpclient.execute(post);
+            result = EntityUtils.toString(response.getEntity());
+            Log.d("Result of user quit", result);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

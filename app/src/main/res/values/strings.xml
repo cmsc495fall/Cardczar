@@ -34,6 +34,7 @@
     <!-- WaitingRoom -->
     <string name="title_activity_waiting_room">WaitingRoom</string>
     <string name="waitingTextViewText">Wait for host</string>
+    <string name="quit_game">Quit Game</string>
 
     <!-- Gameplay -->
     <string name="title_activity_gameplay">GameplayActivity</string>
@@ -46,7 +47,6 @@
     <string name="button6Text">!</string>
     <string name="button7Text">!</string>
     <string name="button8Text">!</string>
-
 
 
 </resources>
