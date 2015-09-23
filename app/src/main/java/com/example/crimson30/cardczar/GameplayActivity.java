@@ -116,13 +116,13 @@ public class GameplayActivity extends Activity {
         usernames = result.split("\\|");
         numusers = usernames.length-1;
         System.out.println("numusers = "+numusers);
+        int i=0;
         for (String value : usernames) {
-            int i=0;
-            i++;
             if (value.equals(username)) {
                 myUserNum = i;
                 break;
             }
+            i++;
         }
         System.out.println("myUserNum = "+myUserNum);
 
@@ -169,7 +169,9 @@ public class GameplayActivity extends Activity {
                 String operation = bundle.getString("operation");
                 String data = bundle.getString("data");
                 int intdata = bundle.getInt("intdata");
+                System.out.println("MessageData:" + operation + "," + data + "," + intdata);
                 if (operation.equals("displayBait")) {
+                    System.out.println("in handler display Bait");
                     TextView baitTextView = (TextView) findViewById(R.id.baitTextView);
                     baitTextView.setText(data);
                 } else
@@ -281,6 +283,7 @@ public class GameplayActivity extends Activity {
         public void run() {
 
             while (running) {
+                Message msg;
 
                 // STEP -1: GET BAIT
 
@@ -298,14 +301,15 @@ public class GameplayActivity extends Activity {
                     e.printStackTrace();
                 }
 
-                Message msg = Message.obtain();
+                msg = Message.obtain();
+                Bundle bundle1 = new Bundle();
                 handler.removeCallbacks(this);  // Clear message queue
-                Bundle bundle = new Bundle();
-                bundle.putString("operation","displayBait");
-                bundle.putString("data", result);
-                bundle.putInt("intdata", 0);
-                msg.setData(bundle);
+                bundle1.putString("operation", "displayBait");
+                bundle1.putString("data", result);
+                bundle1.putInt("intdata", 0);
+                msg.setData(bundle1);
                 handler.sendMessage(msg);
+                System.out.println("sent displayBait");
 
 
                 // STEP 0: SEE IF DEALER
@@ -332,12 +336,14 @@ public class GameplayActivity extends Activity {
                     String buttonText = "empty|";
                     for (int i = 0; i < numusers; i++) { buttonText=buttonText+"WAIT FOR RESPONSE|"; }
                     msg = Message.obtain();
+                    Bundle bundle2 = new Bundle();
                     handler.removeCallbacks(this);  // Clear message queue
-                    bundle.putString("operation", "displayButtons");
-                    bundle.putString("data", buttonText);
-                    bundle.putInt("intdata", 0); // intdata is not used until later (for winner highlight)
-                    msg.setData(bundle);
+                    bundle2.putString("operation", "displayButtons");
+                    bundle2.putString("data", buttonText);
+                    bundle2.putInt("intdata", 0); // intdata is not used until later (for winner highlight)
+                    msg.setData(bundle2);
                     handler.sendMessage(msg);
+                    System.out.println("sent displayButtons1");
 
 
                     // STEP 1: WAIT FOR SUBMISSIONS TO FILL UP
@@ -376,13 +382,15 @@ public class GameplayActivity extends Activity {
                             result = "empty|"+result;
 
                             msg = Message.obtain();
+                            Bundle bundle3 = new Bundle();
                             handler.removeCallbacks(this);  // Clear message queue
-                            bundle.putString("operation", "displayButtons");
-                            bundle.putString("data", result);
-                            bundle.putInt("intdata", 0); // intdata is not used until later (for winner highlight)
-                            msg.setData(bundle);
+                            bundle3.putString("operation", "displayButtons");
+                            bundle3.putString("data", result);
+                            bundle3.putInt("intdata", 0); // intdata is not used until later (for winner highlight)
+                            msg.setData(bundle3);
                             handler.sendMessage(msg);
                             waitForAllSubmissions=false;
+                            System.out.println("sent displayButton2");
                         }
                     } // end while (waitForAllSubmissions)
 
@@ -494,11 +502,12 @@ public class GameplayActivity extends Activity {
 
                     // NOT-DEALER POPULATES BUTTONS
                     msg = Message.obtain();
+                    Bundle bundle4 = new Bundle();
                     handler.removeCallbacks(this);  // Clear message queue
-                    bundle.putString("operation", "displayButtons");
-                    bundle.putString("data", TextUtils.join("|", cards));
-                    bundle.putInt("intdata", 0); // intdata is not used until later (for winner highlight)
-                    msg.setData(bundle);
+                    bundle4.putString("operation", "displayButtons");
+                    bundle4.putString("data", TextUtils.join("|", cards));
+                    bundle4.putInt("intdata", 0); // intdata is not used until later (for winner highlight)
+                    msg.setData(bundle4);
                     handler.sendMessage(msg);
 
 
@@ -535,11 +544,12 @@ public class GameplayActivity extends Activity {
 
                     // Result from ccz_user_submit.php is replacement response (replace old card)
                     msg = Message.obtain();
+                    Bundle bundle5 = new Bundle();
                     handler.removeCallbacks(this);  // Clear message queue
-                    bundle.putString("operation", "newResponse");
-                    bundle.putString("data", result);
-                    bundle.putInt("intdata", 0); // intdata is not used until later (for winner highlight)
-                    msg.setData(bundle);
+                    bundle5.putString("operation", "newResponse");
+                    bundle5.putString("data", result);
+                    bundle5.putInt("intdata", 0); // intdata is not used until later (for winner highlight)
+                    msg.setData(bundle5);
                     handler.sendMessage(msg);
 
 
@@ -649,12 +659,13 @@ public class GameplayActivity extends Activity {
 
                     // STEP 7: SHOW RESPONSES
                     msg = Message.obtain();
+                    Bundle bundle6 = new Bundle();
                     handler.removeCallbacks(this);  // Clear message queue
-                    bundle.putString("operation","displayButtons");
-                    bundle.putString("data", responses);
+                    bundle6.putString("operation","displayButtons");
+                    bundle6.putString("data", responses);
                     // Pass winner number to highlight when displaying
-                    bundle.putInt("intdata", Integer.valueOf(result));
-                    msg.setData(bundle);
+                    bundle6.putInt("intdata", Integer.valueOf(result));
+                    msg.setData(bundle6);
                     handler.sendMessage(msg);
 
 
