@@ -138,9 +138,9 @@ public class GameplayActivity extends Activity {
         final Drawable originalBackground = button1.getBackground();
 
         if (dealer) {
-            if (numusers>1) { button1.setText("WAIT FOR RESPONSE"); } else { button1.setVisibility(View.GONE);}
-            if (numusers>2) { button2.setText("WAIT FOR RESPONSE"); } else { button2.setVisibility(View.GONE);}
-            if (numusers>3) { button3.setText("WAIT FOR RESPONSE"); } else { button3.setVisibility(View.GONE);}
+            if (numusers>1) { button1.setText("WAIT FOR RESPONSE");System.out.println("button1"); } else { button1.setVisibility(View.GONE);}
+            if (numusers>2) { button2.setText("WAIT FOR RESPONSE");System.out.println("button2"); } else { button2.setVisibility(View.GONE);}
+            if (numusers>3) { button3.setText("WAIT FOR RESPONSE");System.out.println("button3"); } else { button3.setVisibility(View.GONE);}
             if (numusers>4) { button4.setText("WAIT FOR RESPONSE"); } else { button4.setVisibility(View.GONE);}
             if (numusers>5) { button5.setText("WAIT FOR RESPONSE"); } else { button5.setVisibility(View.GONE);}
             if (numusers>6) { button6.setText("WAIT FOR RESPONSE"); } else { button6.setVisibility(View.GONE);}
@@ -430,7 +430,8 @@ public class GameplayActivity extends Activity {
                         List<NameValuePair> urlParameters = new ArrayList<>();
                         urlParameters.add(new BasicNameValuePair("roomname", roomname));
                         // Note: user number, not username
-                        urlParameters.add(new BasicNameValuePair("user", String.valueOf(buttonClicked)));
+                        //urlParameters.add(new BasicNameValuePair("user", String.valueOf(buttonClicked)));
+                        urlParameters.add(new BasicNameValuePair("response", buttonClickedString));
                         post.setEntity(new UrlEncodedFormEntity(urlParameters));
                         HttpResponse response = httpclient.execute(post);
                         result = EntityUtils.toString(response.getEntity());
