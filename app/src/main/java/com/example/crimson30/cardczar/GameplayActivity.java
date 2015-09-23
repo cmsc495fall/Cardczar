@@ -171,7 +171,7 @@ public class GameplayActivity extends Activity {
                 int intdata = bundle.getInt("intdata");
                 if (operation.equals("displayBait")) {
                     TextView baitTextView = (TextView) findViewById(R.id.baitTextView);
-                    baitTextView.setText(result);
+                    baitTextView.setText(data);
                 } else
                 if (operation.equals("displayButtons")) {
                     // Note: Data for this arrives as something like "empty|button1Text|button2Text"
@@ -324,6 +324,7 @@ public class GameplayActivity extends Activity {
                 }
                 if (myUserNum==Integer.parseInt(result)) { dealer = true; } else { dealer = false; }
 
+                System.out.println("Dealer = "+result+"; myUserNum = "+myUserNum+"; so me being dealer = "+dealer);
 
                 if (dealer) { // DEALER CODE
 
