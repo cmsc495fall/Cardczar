@@ -14,8 +14,8 @@ mysql_select_db($db_name , $link) or die("Select DB Error: ".mysql_error());
 // GET gamestate dealer (int)
 $result = mysql_query("SELECT winner FROM gamestate LIMIT 1") or die(mysql_error());
 $row = mysql_fetch_assoc($result);
-$dealer = $row[dealer];
-echo urldecode($dealer);
+$winner = $row[winner];
+echo urldecode($winner);
 
 
 // CLOSE DATABASE

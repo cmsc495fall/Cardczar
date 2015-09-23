@@ -32,7 +32,7 @@ $round = $row[round];
 $round++;
 
 // SET selectedresponse and turnprogress IN gamestate
-$query = "UPDATE gamestate SET round=$round, dealer=$user, selectedresponse='$selected_response', turnprogress='$turn_progress' WHERE id=1;";
+$query = "UPDATE gamestate SET round=$round, dealer=$user, winner=$user, selectedresponse='$selected_response', turnprogress='$turn_progress' WHERE id=1;";
 mysql_query($query, $link) or die("process winner Set selectedresponse/turnprogress error: ".mysql_error()); 
 
 echo $turn_progress;
