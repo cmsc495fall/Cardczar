@@ -1,15 +1,5 @@
 <?php
 
-// FUNCTION TAKEN FROM AMB: http://stackoverflow.com/questions/8734626/how-to-urlencode-a-multidimensional-array
-function urlencode_array($array) {
-    $out_array = array();
-    foreach($array as $key => $value) {
-    $out_array[urlencode($key)] = urlencode($value);
-    }
-return $out_array;
-}
-
-
 // LINK TO SQL
 $link = mysql_connect('localhost', 'root', 'cmsc495fall');
 if (!$link) { die('Could not connect: ' . mysql_error()); }

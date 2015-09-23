@@ -18,8 +18,13 @@ $fullOfWAIT_FOR_RESPONSE = true; // if remains true, then is true
 $hasNoWAIT_FOR_RESPONSE = true;  // if remains true, then is true
 $response_string="";
 
+// GET gamestate dealer (int) so that dealer response is skipped
+$result = mysql_query("SELECT dealer FROM gamestate LIMIT 1") or die(mysql_error());
+$row = mysql_fetch_assoc($result);
+$dealer = $row[dealer];
+
 // GET USERS (do while because for mysql_feth_array gets first user)
-$tablecontents = mysql_query("SELECT * FROM users where quit=0");
+$tablecontents = mysql_query("SELECT * FROM users WHERE id<>$dealer");
 if ($myrow = mysql_fetch_array($tablecontents))
   {
      $num = 1;

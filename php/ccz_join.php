@@ -28,7 +28,7 @@ if (connected) {
   }
 
   // ADD USER TO users
-  $query = "INSERT INTO users (username, points, quit, submission, timelastcontact) VALUES ('".$username."', 0, FALSE, 'WAIT FOR RESPONSE', ".time().");";
+  $query = "INSERT INTO users (username, points, submission, timelastcontact) VALUES ('".$username."', 0, 'WAIT FOR RESPONSE', ".time().");";
   if (mysql_query($query, $link)) {
     echo "OK";
     $inserted = TRUE;
