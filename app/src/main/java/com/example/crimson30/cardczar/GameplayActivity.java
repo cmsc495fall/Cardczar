@@ -138,9 +138,9 @@ public class GameplayActivity extends Activity {
         final Drawable originalBackground = button1.getBackground();
 
         if (dealer) {
-            if (numusers>1) { button1.setText("WAIT FOR RESPONSE");System.out.println("button1"); } else { button1.setVisibility(View.GONE);}
-            if (numusers>2) { button2.setText("WAIT FOR RESPONSE");System.out.println("button2"); } else { button2.setVisibility(View.GONE);}
-            if (numusers>3) { button3.setText("WAIT FOR RESPONSE");System.out.println("button3"); } else { button3.setVisibility(View.GONE);}
+            if (numusers>1) { button1.setText("WAIT FOR RESPONSE"); } else { button1.setVisibility(View.GONE);}
+            if (numusers>2) { button2.setText("WAIT FOR RESPONSE"); } else { button2.setVisibility(View.GONE);}
+            if (numusers>3) { button3.setText("WAIT FOR RESPONSE"); } else { button3.setVisibility(View.GONE);}
             if (numusers>4) { button4.setText("WAIT FOR RESPONSE"); } else { button4.setVisibility(View.GONE);}
             if (numusers>5) { button5.setText("WAIT FOR RESPONSE"); } else { button5.setVisibility(View.GONE);}
             if (numusers>6) { button6.setText("WAIT FOR RESPONSE"); } else { button6.setVisibility(View.GONE);}
@@ -169,7 +169,6 @@ public class GameplayActivity extends Activity {
                 String operation = bundle.getString("operation");
                 String data = bundle.getString("data");
                 int intdata = bundle.getInt("intdata");
-                System.out.println("MessageData:" + operation + "," + data + "," + intdata);
                 if (operation.equals("displayBait")) {
                     System.out.println("in handler display Bait");
                     TextView baitTextView = (TextView) findViewById(R.id.baitTextView);
@@ -180,6 +179,7 @@ public class GameplayActivity extends Activity {
                     // The displayButtons code below breaks up the data to figure out how many buttons to display
                     // If winner is being highlighted, winner will contain a string other than "0"
                     String [] buttonArray = data.split("\\|");
+                    System.out.println("numbutton=" + buttonArray.length);
                     int numButtons = buttonArray.length-1;
                     if (numButtons>0) { // BUTTON 1 DISPLAY
                         button1.setVisibility(View.VISIBLE);
@@ -334,7 +334,7 @@ public class GameplayActivity extends Activity {
 
                     // DEALER POPULATES BUTTONS
                     String buttonText = "empty|";
-                    for (int i = 0; i < numusers; i++) { buttonText=buttonText+"WAIT FOR RESPONSE|"; }
+                    for (int i = 1; i < numusers; i++) { buttonText=buttonText+"WAIT FOR RESPONSE|"; }
                     msg = Message.obtain();
                     Bundle bundle2 = new Bundle();
                     handler.removeCallbacks(this);  // Clear message queue
@@ -374,8 +374,6 @@ public class GameplayActivity extends Activity {
                             e.printStackTrace();
                         }
 
-                        // System.out.println("Data about to be passed to handler: "+result);
-
                         // When desired result, pass all responses to handler for display, move past while and to step 2
                         if (!result.equals("Submissions are neither empty nor full")) {
                             // Pad result, since display function does not use responses[0]
@@ -412,7 +410,7 @@ public class GameplayActivity extends Activity {
                     }
 
 
-                    // STEP 3: WAIT FOR BUTTON
+                    // STEP 3: WAIT FOR BUTTON CLICK
                     synchronized (this) {
                         try {
                             wait();
@@ -445,6 +443,22 @@ public class GameplayActivity extends Activity {
                     //  #############
                     // GAME OVER CODE
                     // ##############
+                    try {
+                        String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_turn_progress.php";
+                        HttpClient httpclient = new DefaultHttpClient();
+                        HttpPost post = new HttpPost(url);
+                        List<NameValuePair> urlParameters = new ArrayList<>();
+                        urlParameters.add(new BasicNameValuePair("roomname", roomname));
+                        post.setEntity(new UrlEncodedFormEntity(urlParameters));
+                        HttpResponse response = httpclient.execute(post);
+                        result = EntityUtils.toString(response.getEntity());
+                        Log.d("GP dealer step5:", result);
+                        if (result.equals("gameover")){
+                            System.out.println("Game Over");
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
                 } else { // !DEALER CODE
 
@@ -457,6 +471,61 @@ public class GameplayActivity extends Activity {
                     bundle4.putInt("intdata", 0); // intdata is not used until later (for winner highlight)
                     msg.setData(bundle4);
                     handler.sendMessage(msg);
+
+                    //Step 0: Wait until bait has been set as determined by turnrprogress,
+                    //get the bait, and then send a message to the handler to displaybait
+                    boolean baitNotSet = true;
+                    while (baitNotSet) {
+                        try {
+                            Thread.sleep(1210);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        // See if server is OK yet for given php file and parameter
+                        try {
+                            String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_turn_progress.php";
+                            HttpClient httpclient = new DefaultHttpClient();
+                            HttpPost post = new HttpPost(url);
+                            List<NameValuePair> urlParameters = new ArrayList<>();
+                            urlParameters.add(new BasicNameValuePair("roomname", roomname));
+                            post.setEntity(new UrlEncodedFormEntity(urlParameters));
+                            HttpResponse response = httpclient.execute(post);
+                            result = EntityUtils.toString(response.getEntity());
+                            Log.d("GP !dealer step0:", result);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        // When desired result, move past while and to step 4
+                        if (result.equals("baitset")) {
+                            baitNotSet=false;
+                        }
+                    } // end while (baitNotSet)
+
+                    try {
+                        String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_bait.php";
+                        HttpClient httpclient = new DefaultHttpClient();
+                        HttpPost post = new HttpPost(url);
+                        List<NameValuePair> urlParameters = new ArrayList<>();
+                        urlParameters.add(new BasicNameValuePair("roomname", roomname));
+                        post.setEntity(new UrlEncodedFormEntity(urlParameters));
+                        HttpResponse response = httpclient.execute(post);
+                        result = EntityUtils.toString(response.getEntity());
+                        Log.d("GP !dealer step 0:", "got bait - " + result);
+                        msg = Message.obtain();
+                        Bundle bundle8 = new Bundle();
+                        handler.removeCallbacks(this);  // Clear message queue
+                        bundle8.putString("operation", "displayBait");
+                        bundle8.putString("data", result);
+                        bundle8.putInt("intdata", 0);
+                        msg.setData(bundle8);
+                        handler.sendMessage(msg);
+                        System.out.println("!dealer step 0 sent displayBait");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
 
 
                     // STEP 1: WAIT FOR BUTTON (USER SUBMISSION)
@@ -471,6 +540,7 @@ public class GameplayActivity extends Activity {
 
                     // STEP 2: SUBMIT RESPONSE TO SERVER AND DRAW CARD
                     try {
+                        System.out.println("sending response:" + buttonClickedString);
                         String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_user_submit.php";
                         HttpClient httpclient = new DefaultHttpClient();
                         HttpPost post = new HttpPost(url);
@@ -589,7 +659,7 @@ public class GameplayActivity extends Activity {
 
 
                     // STEP 6: GET WINNER
-                    // See if server is OK yet for given php file and parameter
+                    //
                     String winner = "-1";
                     try {
                         String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_winner_num.php";
@@ -606,22 +676,26 @@ public class GameplayActivity extends Activity {
                         e.printStackTrace();
                     }
 
-
-                    // STEP 7: SHOW RESPONSES
-                    msg = Message.obtain();
-                    Bundle bundle6 = new Bundle();
-                    handler.removeCallbacks(this);  // Clear message queue
-                    bundle6.putString("operation","displayButtons");
-                    bundle6.putString("data", responses);
-                    // Pass winner number to highlight when displaying
-                    bundle6.putInt("intdata", Integer.valueOf(result));
-                    msg.setData(bundle6);
-                    handler.sendMessage(msg);
-
-
-
-                    // STEP 8: IF GAME OVER, THEN DO GAME OVER CODE
+                    // STEP 6A: IF GAME OVER, THEN DO GAME OVER CODE
                     // GAME OVER CODE HERE
+                    try {
+                        String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_turn_progress.php";
+                        HttpClient httpclient = new DefaultHttpClient();
+                        HttpPost post = new HttpPost(url);
+                        List<NameValuePair> urlParameters = new ArrayList<>();
+                        urlParameters.add(new BasicNameValuePair("roomname", roomname));
+                        post.setEntity(new UrlEncodedFormEntity(urlParameters));
+                        HttpResponse response = httpclient.execute(post);
+                        result = EntityUtils.toString(response.getEntity());
+                        Log.d("GP !dealer step6A:", result);
+                        if (result.equals("gameover")){
+                            System.out.println("Game Over");
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    //STEP:6B If this player is the winner than set the new bait question
                     System.out.println("winner=" + winner);
                     if (myUserNum == Integer.parseInt(winner)) {
                         try {
@@ -640,8 +714,22 @@ public class GameplayActivity extends Activity {
                         }
                     }
 
-                    // STEP 9: CHANGE RESPONSE BACK TO "WAIT FOR RESPONSE"
-                    // This is so that dealer knows to set bait
+
+                    // STEP 7: SHOW RESPONSES
+                    //msg = Message.obtain();
+                    //Bundle bundle6 = new Bundle();
+                    //handler.removeCallbacks(this);  // Clear message queue
+                    //bundle6.putString("operation","displayButtons");
+                   // bundle6.putString("data", responses);
+                    // Pass winner number to highlight when displaying
+                   // bundle6.putInt("intdata", Integer.valueOf(result));
+                   // msg.setData(bundle6);
+                   // handler.sendMessage(msg);
+                   // System.out.println("!dealer step 7");
+
+
+
+                    // STEP 8: CHANGE RESPONSE BACK TO "WAIT FOR RESPONSE"
                     try {
                         String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_change_single_response.php";
                         HttpClient httpclient = new DefaultHttpClient();
@@ -657,40 +745,6 @@ public class GameplayActivity extends Activity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
-                    // STEP 10: WAIT FOR TURN PROGRESS TO GO TO baitset
-                    waitForDealer = true;
-                    while (waitForDealer) {
-                        try {
-                            Thread.sleep(1210);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
-                        // See if server is OK yet for given php file and parameter
-                        try {
-                            String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_turn_progress.php";
-                            HttpClient httpclient = new DefaultHttpClient();
-                            HttpPost post = new HttpPost(url);
-                            List<NameValuePair> urlParameters = new ArrayList<>();
-                            urlParameters.add(new BasicNameValuePair("roomname", roomname));
-                            post.setEntity(new UrlEncodedFormEntity(urlParameters));
-                            HttpResponse response = httpclient.execute(post);
-                            result = EntityUtils.toString(response.getEntity());
-                            Log.d("GP !dealer step5:", result);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-                        // When desired result, move past while and to step 6
-                        if (result.equals("baitset")) {
-                            waitForDealer=false;
-                        }
-                    } // end while (waitForDealer)
-
-
-                    // STEP 11: START OVER (Go back to step -1)
-
                 }  // end if (dealer or !dealer)
 
             } // end while running
@@ -712,7 +766,7 @@ public class GameplayActivity extends Activity {
     public void button2Click(View view) {
         System.out.println("button2Click");
         buttonClicked=2;
-        Button button = (Button) findViewById(R.id.button1);
+        Button button = (Button) findViewById(R.id.button2);
         buttonClickedString=button.getText().toString();
         synchronized (turnThread) {
             turnThread.notify(); }
@@ -721,7 +775,7 @@ public class GameplayActivity extends Activity {
     public void button3Click(View view) {
         System.out.println("button3Click");
         buttonClicked=3;
-        Button button = (Button) findViewById(R.id.button1);
+        Button button = (Button) findViewById(R.id.button3);
         buttonClickedString=button.getText().toString();
         synchronized (turnThread) {
             turnThread.notify(); }
@@ -730,7 +784,7 @@ public class GameplayActivity extends Activity {
     public void button4Click(View view) {
         System.out.println("button4Click");
         buttonClicked=4;
-        Button button = (Button) findViewById(R.id.button1);
+        Button button = (Button) findViewById(R.id.button4);
         buttonClickedString=button.getText().toString();
         synchronized (turnThread) {
             turnThread.notify(); }
@@ -739,7 +793,7 @@ public class GameplayActivity extends Activity {
     public void button5Click(View view) {
         System.out.println("button5Click");
         buttonClicked=5;
-        Button button = (Button) findViewById(R.id.button1);
+        Button button = (Button) findViewById(R.id.button5);
         buttonClickedString=button.getText().toString();
         synchronized (turnThread) {
             turnThread.notify(); }
@@ -748,7 +802,7 @@ public class GameplayActivity extends Activity {
     public void button6Click(View view) {
         System.out.println("button6Click");
         buttonClicked=6;
-        Button button = (Button) findViewById(R.id.button1);
+        Button button = (Button) findViewById(R.id.button6);
         buttonClickedString=button.getText().toString();
         synchronized (turnThread) {
             turnThread.notify(); }
@@ -757,7 +811,7 @@ public class GameplayActivity extends Activity {
     public void button7Click(View view) {
         System.out.println("button7Click");
         buttonClicked=7;
-        Button button = (Button) findViewById(R.id.button1);
+        Button button = (Button) findViewById(R.id.button7);
         buttonClickedString=button.getText().toString();
         synchronized (turnThread) {
             turnThread.notify(); }
@@ -766,7 +820,7 @@ public class GameplayActivity extends Activity {
     public void button8Click(View view) {
         System.out.println("button8Click");
         buttonClicked=8;
-        Button button = (Button) findViewById(R.id.button1);
+        Button button = (Button) findViewById(R.id.button8);
         buttonClickedString=button.getText().toString();
         synchronized (turnThread) {
             turnThread.notify(); }
