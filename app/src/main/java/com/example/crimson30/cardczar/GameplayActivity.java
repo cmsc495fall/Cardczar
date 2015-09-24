@@ -448,36 +448,36 @@ public class GameplayActivity extends Activity {
 
 
                     // STEP 6: WAIT FOR ALL SUBMISSIONS TO EMPTY
-                    waitForAllSubmissions=true;
-                    while (waitForAllSubmissions) {
-                        try {
-                            Thread.sleep(1210);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                   // waitForAllSubmissions=true;
+                   // while (waitForAllSubmissions) {
+                   //     try {
+                   //         Thread.sleep(1210);
+                   //     } catch (InterruptedException e) {
+                   //         e.printStackTrace();
+                   //     }
 
                         // See if server is OK yet for given php file and parameter
-                        try {
-                            String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_users_responses.php";
-                            HttpClient httpclient = new DefaultHttpClient();
-                            HttpPost post = new HttpPost(url);
-                            List<NameValuePair> urlParameters = new ArrayList<>();
-                            urlParameters.add(new BasicNameValuePair("roomname", roomname));
-                            urlParameters.add(new BasicNameValuePair("action", "waitforallempty"));
-                            post.setEntity(new UrlEncodedFormEntity(urlParameters));
-                            HttpResponse response = httpclient.execute(post);
-                            result = EntityUtils.toString(response.getEntity());
-                            Log.d("GP dealer step6:", result);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                  //      try {
+                  //          String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_users_responses.php";
+                  //          HttpClient httpclient = new DefaultHttpClient();
+                  //          HttpPost post = new HttpPost(url);
+                  //          List<NameValuePair> urlParameters = new ArrayList<>();
+                 //           urlParameters.add(new BasicNameValuePair("roomname", roomname));
+                 //           urlParameters.add(new BasicNameValuePair("action", "waitforallempty"));
+                  //          post.setEntity(new UrlEncodedFormEntity(urlParameters));
+                  //          HttpResponse response = httpclient.execute(post);
+                  //          result = EntityUtils.toString(response.getEntity());
+                  //          Log.d("GP dealer step6:", result);
+                  //      } catch (IOException e) {
+                  //          e.printStackTrace();
+                  //      }
 
-                        if (!result.equals("Submissions are neither empty nor full")) {
-                            System.out.println("Dealer moving to set bait");
-                            waitForAllSubmissions=false;
-                        }
+                  //      if (!result.equals("Submissions are neither empty nor full")) {
+                  //          System.out.println("Dealer moving to set bait");
+                  //          waitForAllSubmissions=false;
+                  //      }
 
-                    }  // end while waitForAllSubmissions
+                 //   }  // end while waitForAllSubmissions
 
 
                     // STEP 7: SET BAIT
