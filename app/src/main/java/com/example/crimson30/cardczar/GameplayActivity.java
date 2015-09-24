@@ -446,59 +446,6 @@ public class GameplayActivity extends Activity {
                     // GAME OVER CODE
                     // ##############
 
-
-                    // STEP 6: WAIT FOR ALL SUBMISSIONS TO EMPTY
-                   // waitForAllSubmissions=true;
-                   // while (waitForAllSubmissions) {
-                   //     try {
-                   //         Thread.sleep(1210);
-                   //     } catch (InterruptedException e) {
-                   //         e.printStackTrace();
-                   //     }
-
-                        // See if server is OK yet for given php file and parameter
-                  //      try {
-                  //          String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_users_responses.php";
-                  //          HttpClient httpclient = new DefaultHttpClient();
-                  //          HttpPost post = new HttpPost(url);
-                  //          List<NameValuePair> urlParameters = new ArrayList<>();
-                 //           urlParameters.add(new BasicNameValuePair("roomname", roomname));
-                 //           urlParameters.add(new BasicNameValuePair("action", "waitforallempty"));
-                  //          post.setEntity(new UrlEncodedFormEntity(urlParameters));
-                  //          HttpResponse response = httpclient.execute(post);
-                  //          result = EntityUtils.toString(response.getEntity());
-                  //          Log.d("GP dealer step6:", result);
-                  //      } catch (IOException e) {
-                  //          e.printStackTrace();
-                  //      }
-
-                  //      if (!result.equals("Submissions are neither empty nor full")) {
-                  //          System.out.println("Dealer moving to set bait");
-                  //          waitForAllSubmissions=false;
-                  //      }
-
-                 //   }  // end while waitForAllSubmissions
-
-
-                    // STEP 7: SET BAIT
-                    try {
-                        String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_set_bait.php";
-                        HttpClient httpclient = new DefaultHttpClient();
-                        HttpPost post = new HttpPost(url);
-                        List<NameValuePair> urlParameters = new ArrayList<>();
-                        urlParameters.add(new BasicNameValuePair("roomname", roomname));
-                        urlParameters.add(new BasicNameValuePair("turnprogress", "baitset"));
-                        post.setEntity(new UrlEncodedFormEntity(urlParameters));
-                        HttpResponse response = httpclient.execute(post);
-                        result = EntityUtils.toString(response.getEntity());
-                        Log.d("GP dealer step7:", result);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-
-                    // STEP 8: START OVER (as !dealer)
-
                 } else { // !DEALER CODE
 
                     // NOT-DEALER POPULATES BUTTONS
@@ -643,6 +590,7 @@ public class GameplayActivity extends Activity {
 
                     // STEP 6: GET WINNER
                     // See if server is OK yet for given php file and parameter
+                    String winner = "-1";
                     try {
                         String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_winner_num.php";
                         HttpClient httpclient = new DefaultHttpClient();
@@ -652,6 +600,7 @@ public class GameplayActivity extends Activity {
                         post.setEntity(new UrlEncodedFormEntity(urlParameters));
                         HttpResponse response = httpclient.execute(post);
                         result = EntityUtils.toString(response.getEntity());
+                        winner = result;
                         Log.d("GP !dealer step6:", result);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -673,7 +622,23 @@ public class GameplayActivity extends Activity {
 
                     // STEP 8: IF GAME OVER, THEN DO GAME OVER CODE
                     // GAME OVER CODE HERE
-
+                    System.out.println("winner=" + winner);
+                    if (myUserNum == Integer.parseInt(winner)) {
+                        try {
+                            String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_set_bait.php";
+                            HttpClient httpclient = new DefaultHttpClient();
+                            HttpPost post = new HttpPost(url);
+                            List<NameValuePair> urlParameters = new ArrayList<>();
+                            urlParameters.add(new BasicNameValuePair("roomname", roomname));
+                            urlParameters.add(new BasicNameValuePair("turnprogress", "baitset"));
+                            post.setEntity(new UrlEncodedFormEntity(urlParameters));
+                            HttpResponse response = httpclient.execute(post);
+                            result = EntityUtils.toString(response.getEntity());
+                            Log.d("GP dealer step7:", result);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
 
                     // STEP 9: CHANGE RESPONSE BACK TO "WAIT FOR RESPONSE"
                     // This is so that dealer knows to set bait
