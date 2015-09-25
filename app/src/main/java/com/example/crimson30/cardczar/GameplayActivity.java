@@ -173,8 +173,7 @@ public class GameplayActivity extends Activity {
                     System.out.println("in handler display Bait");
                     TextView baitTextView = (TextView) findViewById(R.id.baitTextView);
                     baitTextView.setText(data);
-                } else
-                if (operation.equals("displayButtons")) {
+                } else if (operation.equals("displayButtons")) {
                     // Note: Data for this arrives as something like "empty|button1Text|button2Text"
                     // The displayButtons code below breaks up the data to figure out how many buttons to display
                     // If winner is being highlighted, winner will contain a string other than "0"
@@ -247,6 +246,9 @@ public class GameplayActivity extends Activity {
                     if (buttonClicked==7) { button7.setText(data); } else
                     if (buttonClicked==8) { button8.setText(data); }
 
+                } else if (operation.equals("displayWinner")){
+                    TextView winnerTextView = (TextView) findViewById(R.id.winnerText);
+                    winnerTextView.setText(data);
                 }
             } // end handleMessage()
         }; // end handler
@@ -286,7 +288,7 @@ public class GameplayActivity extends Activity {
                 Message msg;
 
                 // STEP -1: GET BAIT
-
+                //Get the bait from the database and send a message to the handle so that it will be displayed on the screen
                 try {
                     String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_bait.php";
                     HttpClient httpclient = new DefaultHttpClient();
@@ -302,17 +304,16 @@ public class GameplayActivity extends Activity {
                 }
 
                 msg = Message.obtain();
-                Bundle bundle1 = new Bundle();
+                Bundle gpDisplayBaitBundle = new Bundle();
                 handler.removeCallbacks(this);  // Clear message queue
-                bundle1.putString("operation", "displayBait");
-                bundle1.putString("data", result);
-                bundle1.putInt("intdata", 0);
-                msg.setData(bundle1);
+                gpDisplayBaitBundle.putString("operation", "displayBait");
+                gpDisplayBaitBundle.putString("data", result);
+                gpDisplayBaitBundle.putInt("intdata", 0);
+                msg.setData(gpDisplayBaitBundle);
                 handler.sendMessage(msg);
-                System.out.println("sent displayBait");
-
 
                 // STEP 0: SEE IF DEALER
+                //Get the current dealer's user id from the database and see if this user is the dealer
                 try {
                     String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_dealer_num.php";
                     HttpClient httpclient = new DefaultHttpClient();
@@ -333,20 +334,22 @@ public class GameplayActivity extends Activity {
                 if (dealer) { // DEALER CODE
 
                     // DEALER POPULATES BUTTONS
+                    //Send message to the handler to populate the dealer's buttons with gdefault 'WAITING FOR RESPONSE' text
                     String buttonText = "empty|";
                     for (int i = 1; i < numusers; i++) { buttonText=buttonText+"WAIT FOR RESPONSE|"; }
                     msg = Message.obtain();
-                    Bundle bundle2 = new Bundle();
+                    Bundle dealerDisplayDefaultButtonBundle = new Bundle();
                     handler.removeCallbacks(this);  // Clear message queue
-                    bundle2.putString("operation", "displayButtons");
-                    bundle2.putString("data", buttonText);
-                    bundle2.putInt("intdata", 0); // intdata is not used until later (for winner highlight)
-                    msg.setData(bundle2);
+                    dealerDisplayDefaultButtonBundle.putString("operation", "displayButtons");
+                    dealerDisplayDefaultButtonBundle.putString("data", buttonText);
+                    dealerDisplayDefaultButtonBundle.putInt("intdata", 0); // intdata is not used until later (for winner highlight)
+                    msg.setData(dealerDisplayDefaultButtonBundle);
                     handler.sendMessage(msg);
-                    System.out.println("sent displayButtons1");
-
 
                     // STEP 1: WAIT FOR SUBMISSIONS TO FILL UP
+                    //Keep querying the database to see if all the users have submitted their responses. If not sleep for awhile.
+                    //If there is a responss other than "Submissions are neither empty nor full" than all the answers are
+                    //in so break the loop and proceed to the next step in the game
                     boolean waitForAllSubmissions = true;
                     while (waitForAllSubmissions) {
                         try {
@@ -380,15 +383,14 @@ public class GameplayActivity extends Activity {
                             result = "empty|"+result;
 
                             msg = Message.obtain();
-                            Bundle bundle3 = new Bundle();
+                            Bundle dealerDisplayUserButtonBundle = new Bundle();
                             handler.removeCallbacks(this);  // Clear message queue
-                            bundle3.putString("operation", "displayButtons");
-                            bundle3.putString("data", result);
-                            bundle3.putInt("intdata", 0); // intdata is not used until later (for winner highlight)
-                            msg.setData(bundle3);
+                            dealerDisplayUserButtonBundle.putString("operation", "displayButtons");
+                            dealerDisplayUserButtonBundle.putString("data", result);
+                            dealerDisplayUserButtonBundle.putInt("intdata", 0); // intdata is not used until later (for winner highlight)
+                            msg.setData(dealerDisplayUserButtonBundle);
                             handler.sendMessage(msg);
                             waitForAllSubmissions=false;
-                            System.out.println("sent displayButton2");
                         }
                     } // end while (waitForAllSubmissions)
 
@@ -410,7 +412,7 @@ public class GameplayActivity extends Activity {
                     }
 
 
-                    // STEP 3: WAIT FOR BUTTON CLICK
+                    // STEP 3: WAIT FOR DEALER TO PICK WINNING RESPONSE
                     synchronized (this) {
                         try {
                             wait();
@@ -421,6 +423,9 @@ public class GameplayActivity extends Activity {
 
 
                     // STEP 4: PROCESS WINNER
+                    //This will update the database to give the winning user another point. It will also update the game state
+                    //information in the database to set the winning response and user, increment the round, set the dealer
+                    //to be the round winner and set turn progress to winnerpicked
                     try {
                         String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_process_winner.php";
                         HttpClient httpclient = new DefaultHttpClient();
@@ -428,7 +433,6 @@ public class GameplayActivity extends Activity {
                         List<NameValuePair> urlParameters = new ArrayList<>();
                         urlParameters.add(new BasicNameValuePair("roomname", roomname));
                         // Note: user number, not username
-                        //urlParameters.add(new BasicNameValuePair("user", String.valueOf(buttonClicked)));
                         urlParameters.add(new BasicNameValuePair("response", buttonClickedString));
                         post.setEntity(new UrlEncodedFormEntity(urlParameters));
                         HttpResponse response = httpclient.execute(post);
@@ -437,6 +441,59 @@ public class GameplayActivity extends Activity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+
+                    //Get the round, winner and winning response from the database to display to the user
+                    String[] winnerData;
+                    String winner = "-1";
+                    String winningResponse = "Not set";
+                    int round = -1;
+                    try {
+                        String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_winner.php";
+                        HttpClient httpclient = new DefaultHttpClient();
+                        HttpPost post = new HttpPost(url);
+                        List<NameValuePair> urlParameters = new ArrayList<>();
+                        urlParameters.add(new BasicNameValuePair("roomname", roomname));
+                        post.setEntity(new UrlEncodedFormEntity(urlParameters));
+                        HttpResponse response = httpclient.execute(post);
+                        result = EntityUtils.toString(response.getEntity());
+                        Log.d("GP !dealer step6:", result);
+                        winnerData = result.split("\\|");
+                        round = Integer.parseInt(winnerData[0]) -1;
+                        winner = winnerData[1];
+                        winningResponse = winnerData[2];
+                        Log.d("GP !dealer step6:", result);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    //Get the this user's points from the databas to display to the user
+                    String userPoints = "-1";
+                    try {
+                        String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_user_points.php";
+                        HttpClient httpclient = new DefaultHttpClient();
+                        HttpPost post = new HttpPost(url);
+                        List<NameValuePair> urlParameters = new ArrayList<>();
+                        urlParameters.add(new BasicNameValuePair("roomname", roomname));
+                        urlParameters.add(new BasicNameValuePair("user", Integer.toString(myUserNum)));
+                        post.setEntity(new UrlEncodedFormEntity(urlParameters));
+                        HttpResponse response = httpclient.execute(post);
+                        result = EntityUtils.toString(response.getEntity());
+                        userPoints = result;
+                        Log.d("GP !dealer user points:", result);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    //Send a message to the handler so the previous rounds winning repsonse and this user's points are displayed
+                    msg = Message.obtain();
+                    Bundle dealerWinnerBundle = new Bundle();
+                    handler.removeCallbacks(this);  // Clear message queue
+                    dealerWinnerBundle.putString("operation", "displayWinner");
+                    dealerWinnerBundle.putString("data", "Round " + round + " winner: " + winningResponse + ". Your points:  " + userPoints);
+                    //Pass winner number to highlight when displaying
+                    dealerWinnerBundle.putInt("intdata", 0);
+                    msg.setData(dealerWinnerBundle);
+                    handler.sendMessage(msg);
 
 
                     // STEP 5: PROCESS GAME OVER
@@ -463,13 +520,14 @@ public class GameplayActivity extends Activity {
                 } else { // !DEALER CODE
 
                     // NOT-DEALER POPULATES BUTTONS
+                    //Displays the users current set of cards
                     msg = Message.obtain();
-                    Bundle bundle4 = new Bundle();
+                    Bundle notDealerDefaultButtonBundle = new Bundle();
                     handler.removeCallbacks(this);  // Clear message queue
-                    bundle4.putString("operation", "displayButtons");
-                    bundle4.putString("data", TextUtils.join("|", cards));
-                    bundle4.putInt("intdata", 0); // intdata is not used until later (for winner highlight)
-                    msg.setData(bundle4);
+                    notDealerDefaultButtonBundle.putString("operation", "displayButtons");
+                    notDealerDefaultButtonBundle.putString("data", TextUtils.join("|", cards));
+                    notDealerDefaultButtonBundle.putInt("intdata", 0); // intdata is not used until later (for winner highlight)
+                    msg.setData(notDealerDefaultButtonBundle);
                     handler.sendMessage(msg);
 
                     //Step 0: Wait until bait has been set as determined by turnrprogress,
@@ -514,12 +572,12 @@ public class GameplayActivity extends Activity {
                         result = EntityUtils.toString(response.getEntity());
                         Log.d("GP !dealer step 0:", "got bait - " + result);
                         msg = Message.obtain();
-                        Bundle bundle8 = new Bundle();
+                        Bundle notDealerDisplayBaitBundle = new Bundle();
                         handler.removeCallbacks(this);  // Clear message queue
-                        bundle8.putString("operation", "displayBait");
-                        bundle8.putString("data", result);
-                        bundle8.putInt("intdata", 0);
-                        msg.setData(bundle8);
+                        notDealerDisplayBaitBundle.putString("operation", "displayBait");
+                        notDealerDisplayBaitBundle.putString("data", result);
+                        notDealerDisplayBaitBundle.putInt("intdata", 0);
+                        msg.setData(notDealerDisplayBaitBundle);
                         handler.sendMessage(msg);
                         System.out.println("!dealer step 0 sent displayBait");
                     } catch (IOException e) {
@@ -528,7 +586,7 @@ public class GameplayActivity extends Activity {
 
 
 
-                    // STEP 1: WAIT FOR BUTTON (USER SUBMISSION)
+                    // STEP 1: WAIT FOR THE USER TO SELECT THEIR RESPONSE
                     synchronized (this) {
                         try {
                             wait();
@@ -538,9 +596,8 @@ public class GameplayActivity extends Activity {
                     }
 
 
-                    // STEP 2: SUBMIT RESPONSE TO SERVER AND DRAW CARD
+                    // STEP 2: SUBMIT RESPONSE TO SERVER AND DRAW NEW CARD
                     try {
-                        System.out.println("sending response:" + buttonClickedString);
                         String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_user_submit.php";
                         HttpClient httpclient = new DefaultHttpClient();
                         HttpPost post = new HttpPost(url);
@@ -560,14 +617,15 @@ public class GameplayActivity extends Activity {
                     // Set local array to result for new card (replace old/submitted card)
                     cards[buttonClicked]=result;
 
+                    //Send mewly drawn card to the handler so the new card will be displayed
                     // Result from ccz_user_submit.php is replacement response (replace old card)
                     msg = Message.obtain();
-                    Bundle bundle5 = new Bundle();
+                    Bundle notDealerNewCardBundle = new Bundle();
                     handler.removeCallbacks(this);  // Clear message queue
-                    bundle5.putString("operation", "newResponse");
-                    bundle5.putString("data", result);
-                    bundle5.putInt("intdata", 0); // intdata is not used until later (for winner highlight)
-                    msg.setData(bundle5);
+                    notDealerNewCardBundle.putString("operation", "newResponse");
+                    notDealerNewCardBundle.putString("data", result);
+                    notDealerNewCardBundle.putInt("intdata", 0); // intdata is not used until later (for winner highlight)
+                    msg.setData(notDealerNewCardBundle);
                     handler.sendMessage(msg);
 
 
@@ -659,10 +717,13 @@ public class GameplayActivity extends Activity {
 
 
                     // STEP 6: GET WINNER
-                    //
+                    // Get the previous round, winning user and wining response from the database to display to the user
+                    String[] winnerData;
                     String winner = "-1";
+                    String winningResponse = "Not set";
+                    int round = -1;
                     try {
-                        String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_winner_num.php";
+                        String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_winner.php";
                         HttpClient httpclient = new DefaultHttpClient();
                         HttpPost post = new HttpPost(url);
                         List<NameValuePair> urlParameters = new ArrayList<>();
@@ -670,11 +731,44 @@ public class GameplayActivity extends Activity {
                         post.setEntity(new UrlEncodedFormEntity(urlParameters));
                         HttpResponse response = httpclient.execute(post);
                         result = EntityUtils.toString(response.getEntity());
-                        winner = result;
+                        Log.d("GP !dealer step6:", result);
+                        winnerData = result.split("\\|");
+                        round = Integer.parseInt(winnerData[0]) -1;
+                        winner = winnerData[1];
+                        winningResponse = winnerData[2];
                         Log.d("GP !dealer step6:", result);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+
+                    //Get this user's points from the database to display to the user
+                    String userPoints = "-1";
+                    try {
+                        String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_user_points.php";
+                        HttpClient httpclient = new DefaultHttpClient();
+                        HttpPost post = new HttpPost(url);
+                        List<NameValuePair> urlParameters = new ArrayList<>();
+                        urlParameters.add(new BasicNameValuePair("roomname", roomname));
+                        urlParameters.add(new BasicNameValuePair("user", Integer.toString(myUserNum)));
+                        post.setEntity(new UrlEncodedFormEntity(urlParameters));
+                        HttpResponse response = httpclient.execute(post);
+                        result = EntityUtils.toString(response.getEntity());
+                        userPoints = result;
+                        Log.d("GP !dealer user points:", result);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    //Send a message to the handled to display the winning response and this user's response
+                    msg = Message.obtain();
+                    Bundle notDealerWinnerBundle = new Bundle();
+                    handler.removeCallbacks(this);  // Clear message queue
+                    notDealerWinnerBundle.putString("operation", "displayWinner");
+                    notDealerWinnerBundle.putString("data", "Round " + round + " winner: " + winningResponse + ". Your points:  " + userPoints);
+                     //Pass winner number to highlight when displaying
+                    notDealerWinnerBundle.putInt("intdata", 0);
+                    msg.setData(notDealerWinnerBundle);
+                    handler.sendMessage(msg);
 
                     // STEP 6A: IF GAME OVER, THEN DO GAME OVER CODE
                     // GAME OVER CODE HERE
@@ -696,7 +790,6 @@ public class GameplayActivity extends Activity {
                     }
 
                     //STEP:6B If this player is the winner than set the new bait question
-                    System.out.println("winner=" + winner);
                     if (myUserNum == Integer.parseInt(winner)) {
                         try {
                             String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_set_bait.php";
@@ -713,21 +806,6 @@ public class GameplayActivity extends Activity {
                             e.printStackTrace();
                         }
                     }
-
-
-                    // STEP 7: SHOW RESPONSES
-                    //msg = Message.obtain();
-                    //Bundle bundle6 = new Bundle();
-                    //handler.removeCallbacks(this);  // Clear message queue
-                    //bundle6.putString("operation","displayButtons");
-                   // bundle6.putString("data", responses);
-                    // Pass winner number to highlight when displaying
-                   // bundle6.putInt("intdata", Integer.valueOf(result));
-                   // msg.setData(bundle6);
-                   // handler.sendMessage(msg);
-                   // System.out.println("!dealer step 7");
-
-
 
                     // STEP 8: CHANGE RESPONSE BACK TO "WAIT FOR RESPONSE"
                     try {

@@ -47,6 +47,7 @@
     <string name="button6Text">!</string>
     <string name="button7Text">!</string>
     <string name="button8Text">!</string>
+    <string name="winnerText">Winner is:</string>
 
 
 </resources>

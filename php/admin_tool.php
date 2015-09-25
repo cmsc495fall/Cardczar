@@ -141,6 +141,29 @@ $db_name = $_SERVER['QUERY_STRING']
   <td>
   ccz_process_winner.php<br>
   <form action="ccz_process_winner.php" method="post" target="_top">
+  Room: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<INPUT size="30" name="roomname" value="<?php echo $db_name;?>"><br>
+  Chosen response: <INPUT size="30" name="response">
+  <br>
+  <input type="submit" name="submit" value="Submit" />
+  </form>
+  </td>
+
+ </tr>
+
+ <tr>
+
+  <td>
+  ccz_get_winning_response.php<br>
+  <form action="ccz_get_winning_response.php" method="post" target="_top">
+  Room: <INPUT size="30" name="roomname" value="<?php echo $db_name;?>">
+  <br>
+  <input type="submit" name="submit" value="Submit" />
+  </form>
+  </td>
+
+  <td>
+  ccz_change_single_response.php<br>
+  <form action="ccz_change_single_response.php" method="post" target="_top">
   Room: &nbsp;<INPUT size="30" name="roomname" value="<?php echo $db_name;?>"><br>
   User: 
   <select name="user">
@@ -158,20 +181,33 @@ $db_name = $_SERVER['QUERY_STRING']
   <input type="submit" name="submit" value="Submit" />
   </form>
   </td>
-
- </tr>
-
- <tr>
-
-  <td>
-  ccz_get_winner_num.php<br>
-  <form action="ccz_get_winner_num.php" method="post" target="_top">
-  Room: <INPUT size="30" name="roomname" value="<?php echo $db_name;?>">
+   <td>
+  ccz_get_winner.php<br>
+  <form action="ccz_get_winner.php" method="post" target="_top">
+  Room: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<INPUT size="30" name="roomname" value="<?php echo $db_name;?>"><br>
   <br>
   <input type="submit" name="submit" value="Submit" />
   </form>
   </td>
-
+  <td>
+    ccz_get_user_points.php<br>
+    <form action="ccz_get_user_points.php" method="post" target="_top">
+    Room: &nbsp;<INPUT size="30" name="roomname" value="<?php echo $db_name;?>"><br>
+    User:
+    <select name="user">
+    <option value="1" selected>1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+    <option value="6">6</option>
+    <option value="7">7</option>
+    <option value="8">8</option>
+    </select>
+    <br>
+    <input type="submit" name="submit" value="Submit" />
+    </form>
+    </td>
 
  </tr>
 
@@ -201,6 +237,17 @@ $db_name = $_SERVER['QUERY_STRING']
        <input type="submit" name="submit" value="Submit" />
        </form>
    </td>
+
+  <td>
+  ccz_test.php<br>
+  <form action="ccz_test.php" method="post" target="_top">
+  Room: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<INPUT size="30" name="roomname" value="<?php echo $db_name;?>"><br>
+  Hostname: <INPUT size="30" name="username">
+  <br>
+  <input type="submit" name="submit" value="Submit" />
+  </form>
+  </td>
+
  </tr>
 
 </table>

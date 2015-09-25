@@ -14,10 +14,10 @@ mysql_select_db($db_name , $link) or die("Select DB Error: ".mysql_error());
 $tablecontents = mysql_query("SELECT * FROM gamestate");
 if ($myrow = mysql_fetch_array($tablecontents))
 
-  {  echo "gamestate<table border=1><tr><td>id</td><td>started</td><td>timecreated</td><td>round</td><td>numusers</td><td>dealer</td><td>host</td><td>activebait</td><td>selectedresponse</td><td>turnprogress</td></tr>";
+  {  echo "gamestate<table border=1><tr><td>id</td><td>started</td><td>timecreated</td><td>round</td><td>numusers</td><td>dealer</td><td>host</td><td>winner</td><td>activebait</td><td>selectedresponse</td><td>turnprogress</td></tr>";
      $num = 1;
      do
-        { echo "<tr><td>".$myrow["id"]."</td><td>".$myrow["started"]."</td><td>".$myrow["timecreated"]."</td><td>".$myrow["round"]."</td><td>".$myrow["numusers"]."</td><td>".$myrow["dealer"]."</td><td>".$myrow["host"]."</td><td>".$myrow["activebait"]."</td><td>".$myrow["selectedresponse"]."</td><td>".$myrow["turnprogress"]."</td></tr>";
+        { echo "<tr><td>".$myrow["id"]."</td><td>".$myrow["started"]."</td><td>".$myrow["timecreated"]."</td><td>".$myrow["round"]."</td><td>".$myrow["numusers"]."</td><td>".$myrow["dealer"]."</td><td>".$myrow["host"]."</td><td>".$myrow["winner"]."</td><td>".$myrow["activebait"]."</td><td>".$myrow["selectedresponse"]."</td><td>".$myrow["turnprogress"]."</td></tr>";
           $num++;
         } 
      while ($myrow = mysql_fetch_array($tablecontents));

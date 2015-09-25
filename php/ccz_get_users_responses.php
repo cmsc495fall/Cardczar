@@ -29,7 +29,7 @@ if ($myrow = mysql_fetch_array($tablecontents))
   {
      $num = 1;
      do
-        { $response_string=$response_string.$myrow["submission"]."|";
+        { $response_string=$response_string.urldecode($myrow["submission"])."|";
           if ($myrow["submission"] == "WAIT FOR RESPONSE") { $hasNoWAIT_FOR_RESPONSE = false; }
           if ($myrow["submission"] != "WAIT FOR RESPONSE") { $fullOfWAIT_FOR_RESPONSE = false; }
           $num++;

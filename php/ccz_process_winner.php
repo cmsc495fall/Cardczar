@@ -7,18 +7,19 @@ if (!$link) { die('Could not connect: ' . mysql_error()); }
 // PULL POST DATA
 // $db_name = $_SERVER['QUERY_STRING'];
 $db_name = urlencode($_POST["roomname"]);
-$user = intval($_POST["user"]);
+$response = urlencode($_POST["response"]);
 
 // SELECT THAT DB
 mysql_select_db($db_name , $link) or die("process winner Select DB Error: ".mysql_error());
 
 // GET user values
-$contents = mysql_query("SELECT * FROM users WHERE id=$user") or die("process winner Select from users Error: ".mysql_error());
+$contents = mysql_query("SELECT * FROM users WHERE submission='$response'") or die("process winner Select from users Error: ".mysql_error());
 $row = mysql_fetch_assoc($contents);
 $selected_response = $row[submission];
 $points = intval($row[points]);
+$user = intval($row[id]);
 $points++;
-if ($points==2) { $turn_progress = "gameover"; } else { $turn_progress = "winnerpicked"; }
+if ($points==5) { $turn_progress = "gameover"; } else { $turn_progress = "winnerpicked"; }
 
 // SET points in users
 $query = "UPDATE users SET points=$points WHERE id=$user;";

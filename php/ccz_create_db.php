@@ -4,7 +4,7 @@
 function urlencode_array($array) {
     $out_array = array();
     foreach($array as $key => $value) {
-    $out_array[urlencode($key)] = urlencode($value);
+    $out_array[urlencode($key)] = urlencode(str_replace(array("\r", "\n"), "", $value));
     }
 return $out_array;
 }
