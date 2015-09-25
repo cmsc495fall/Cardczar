@@ -49,5 +49,9 @@
     <string name="button8Text">!</string>
     <string name="winnerText">Winner is:</string>
 
+    <!-- QuitGame -->
+    <string name="title_activity_quit_game">Quit</string>
+    <string name="quitMessage">You have now Quit the game. You may not rejoin the game.</string>
+
 
 </resources>

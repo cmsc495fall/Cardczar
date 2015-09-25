@@ -1,6 +1,7 @@
 package com.example.crimson30.cardczar;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -13,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.apache.http.HttpResponse;
@@ -28,6 +30,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static android.view.View.INVISIBLE;
 
 public class GameplayActivity extends Activity {
     String result;   // LAMP server result
@@ -50,6 +54,29 @@ public class GameplayActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gameplay);
+
+        final Button quitButton = (Button) findViewById(R.id.quit_button);
+        quitButton.setOnClickListener(
+                new Button.OnClickListener() {
+                    public void onClick(View v) {
+                        //If the check for start thread is running or in a waiting mode
+                        //interrupt the thread, delete user from the database tell the user
+                        // they have quit the game and remove all input widgrts
+                        if (turnThread != null && (turnThread.getState() == Thread.State.RUNNABLE ||
+                                turnThread.getState() == Thread.State.TIMED_WAITING)) {
+                            Log.d("Thread", "Interrupting check start thread");
+                            turnThread.interrupt();
+                        }
+
+                        deleteUser();
+
+                        Intent quitIntent = new Intent(getApplicationContext(), QuitGame.class);
+                        Bundle extras = new Bundle();
+                        quitIntent.putExtras(extras);
+                        startActivity(quitIntent);
+                    }
+                }
+        );
 
         // Get vars from previous activity
         // SET DEALER
@@ -355,7 +382,9 @@ public class GameplayActivity extends Activity {
                         try {
                             Thread.sleep(1210);
                         } catch (InterruptedException e) {
-                            e.printStackTrace();
+                            Log.d("Thread","Thread interrupt encountered");
+                            running = false;
+                            break;
                         }
 
                         // See if server is OK yet for given php file and parameter
@@ -393,6 +422,8 @@ public class GameplayActivity extends Activity {
                             waitForAllSubmissions=false;
                         }
                     } // end while (waitForAllSubmissions)
+
+                    if (!running) continue;
 
 
                     // STEP 2: SET TURNPROGRESS TO allreponsesin (don't use underscores... URLencoding, remember?)
@@ -537,7 +568,9 @@ public class GameplayActivity extends Activity {
                         try {
                             Thread.sleep(1210);
                         } catch (InterruptedException e) {
-                            e.printStackTrace();
+                            Log.d("Thread","Thread interrupt encountered");
+                            running = false;
+                            break;
                         }
 
                         // See if server is OK yet for given php file and parameter
@@ -560,6 +593,8 @@ public class GameplayActivity extends Activity {
                             baitNotSet=false;
                         }
                     } // end while (baitNotSet)
+
+                    if (!running) continue;
 
                     try {
                         String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_bait.php";
@@ -591,9 +626,12 @@ public class GameplayActivity extends Activity {
                         try {
                             wait();
                         } catch (InterruptedException e) {
-                            e.printStackTrace();
+                            Log.d("Thread","Thread interrupt encountered");
+                            running = false;
                         }
                     }
+
+                    if (!running) continue;
 
 
                     // STEP 2: SUBMIT RESPONSE TO SERVER AND DRAW NEW CARD
@@ -635,7 +673,9 @@ public class GameplayActivity extends Activity {
                         try {
                             Thread.sleep(1210);
                         } catch (InterruptedException e) {
-                            e.printStackTrace();
+                            Log.d("Thread","Thread interrupt encountered");
+                            running = false;
+                            break;
                         }
 
                         // See if server is OK yet for given php file and parameter
@@ -658,6 +698,8 @@ public class GameplayActivity extends Activity {
                             waitForAllSubmissions=false;
                         }
                     } // end while (waitForAllSubmissions)
+
+                    if (!running) continue;
 
 
                     // STEP 4: GET RESPONSES, STORE IN LOCAL ARRAY
@@ -691,7 +733,9 @@ public class GameplayActivity extends Activity {
                         try {
                             Thread.sleep(1210);
                         } catch (InterruptedException e) {
-                            e.printStackTrace();
+                            Log.d("Thread","Thread interrupt encountered");
+                            running = false;
+                            break;
                         }
 
                         // See if server is OK yet for given php file and parameter
@@ -714,6 +758,7 @@ public class GameplayActivity extends Activity {
                             waitForDealer=false;
                         }
                     } // end while (waitForDealer)
+                    if (!running) continue;
 
 
                     // STEP 6: GET WINNER
@@ -904,4 +949,23 @@ public class GameplayActivity extends Activity {
             turnThread.notify(); }
     } // end buttonClick
 
+    /*
+    HTTP call to delete the user from the database.
+     */
+    private void deleteUser(){
+        try {
+            String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_user_quit.php";
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost post = new HttpPost(url);
+            List<NameValuePair> urlParameters = new ArrayList<>();
+            urlParameters.add(new BasicNameValuePair("roomname", roomname));
+            urlParameters.add(new BasicNameValuePair("username", username));
+            post.setEntity(new UrlEncodedFormEntity(urlParameters));
+            HttpResponse response = httpclient.execute(post);
+            result = EntityUtils.toString(response.getEntity());
+            Log.d("Result of user quit", result);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -8,7 +8,7 @@
 
     <Button
         android:layout_width="160dp"
-        android:layout_height="80dp"
+        android:layout_height="70dp"
         android:text="@string/button1Text"
         android:id="@+id/button1"
         android:onClick="button1Click"
@@ -17,7 +17,7 @@
 
     <Button
         android:layout_width="160dp"
-        android:layout_height="80dp"
+        android:layout_height="70dp"
         android:text="@string/button2Text"
         android:id="@+id/button2"
         android:onClick="button2Click"
@@ -26,7 +26,7 @@
 
     <Button
         android:layout_width="160dp"
-        android:layout_height="80dp"
+        android:layout_height="70dp"
         android:text="@string/button3Text"
         android:id="@+id/button3"
         android:onClick="button3Click"
@@ -36,7 +36,7 @@
 
     <Button
         android:layout_width="160dp"
-        android:layout_height="80dp"
+        android:layout_height="70dp"
         android:text="@string/button4Text"
         android:id="@+id/button4"
         android:onClick="button4Click"
@@ -45,7 +45,7 @@
 
     <Button
         android:layout_width="160dp"
-        android:layout_height="80dp"
+        android:layout_height="70dp"
         android:text="@string/button5Text"
         android:id="@+id/button5"
         android:onClick="button5Click"
@@ -55,7 +55,7 @@
 
     <Button
         android:layout_width="160dp"
-        android:layout_height="80dp"
+        android:layout_height="70dp"
         android:text="@string/button6Text"
         android:id="@+id/button6"
         android:onClick="button6Click"
@@ -64,7 +64,7 @@
 
     <Button
         android:layout_width="160dp"
-        android:layout_height="80dp"
+        android:layout_height="70dp"
         android:text="@string/button7Text"
         android:id="@+id/button7"
         android:onClick="button7Click"
@@ -74,7 +74,7 @@
 
     <Button
         android:layout_width="160dp"
-        android:layout_height="80dp"
+        android:layout_height="70dp"
         android:text="@string/button8Text"
         android:id="@+id/button8"
         android:onClick="button8Click"
@@ -91,12 +91,21 @@
         android:layout_centerHorizontal="true" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="260dp"
+        android:layout_height="80dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/winnerText"
         android:id="@+id/winnerText"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentStart="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:text="@string/quit_game"
+        android:id="@+id/quit_button"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

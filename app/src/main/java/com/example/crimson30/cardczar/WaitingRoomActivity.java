@@ -57,13 +57,10 @@ public class WaitingRoomActivity extends Activity {
 
                         deleteUser();
 
-                        TextView textMessage = (TextView) findViewById(R.id.waitingTextView);
-                        textMessage.setText("You Have Quit The Game");
-
-                        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
-                        progressBar.setVisibility(INVISIBLE);
-
-                        quitButton.setVisibility(INVISIBLE);
+                        Intent quitIntent = new Intent(getApplicationContext(), QuitGame.class);
+                        Bundle extras = new Bundle();
+                        quitIntent.putExtras(extras);
+                        startActivity(quitIntent);
                     }
                 }
         );
