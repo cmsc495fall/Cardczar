@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -63,6 +64,7 @@ public class HostStartActivity extends Activity {
 
         EditText roomnameEditText = (EditText) findViewById(R.id.roomnameEditText);
         EditText hostnameEditText = (EditText) findViewById(R.id.hostnameEditText);
+        TextView serverStatusTextView = (TextView) findViewById(R.id.serverStatusTextView);
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -91,7 +93,9 @@ public class HostStartActivity extends Activity {
             extras.putString("username",hostnameEditText.getText().toString());
             roomIntent.putExtras(extras);
             startActivity(roomIntent);
-        } // end if
+        }  else {
+        serverStatusTextView.setText(result);
+    }
     } // end intentToRoom()
 
 }
