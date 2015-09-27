@@ -54,4 +54,14 @@
         android:layout_below="@+id/hostnameEditText"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="63dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/serverTextViewText"
+        android:id="@+id/serverStatusTextView"
+        android:layout_below="@+id/roomStartButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="44dp" />
 </RelativeLayout>

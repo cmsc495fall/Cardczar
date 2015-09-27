@@ -15,6 +15,7 @@
     <string name="hostnameTextViewText">Enter your username</string>
     <string name="hostnameEditTextText">host</string>
     <string name="hostStartButtonText">Start Room</string>
+    <string name="serverTextViewText">No status from server</string>
 
     <!-- UserStart -->
     <string name="title_activity_user_start">User Start</string>
@@ -56,6 +57,7 @@
     <!-- Game Over-->
     <string name="title_activity_game_over">Game Over</string>
     <string name="restartButtonText">New Button</string>
+
 
 
 </resources>
