@@ -40,6 +40,9 @@ public class RoomActivity extends Activity {
         Bundle extras = getIntent().getExtras();
         roomname = extras.getString("roomname");
         username = extras.getString("username");
+
+        // Change app bar title
+        getActionBar().setTitle("Room = " + roomname);
     }
 
     @Override
