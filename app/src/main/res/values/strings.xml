@@ -53,5 +53,9 @@
     <string name="title_activity_quit_game">Quit</string>
     <string name="quitMessage">You have now Quit the game. You may not rejoin the game.</string>
 
+    <!-- Game Over-->
+    <string name="title_activity_game_over">Game Over</string>
+    <string name="restartButtonText">New Button</string>
+
 
 </resources>

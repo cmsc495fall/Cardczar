@@ -6,12 +6,14 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.StrictMode;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import org.apache.http.HttpResponse;
@@ -27,6 +29,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class GameplayActivity extends Activity {
@@ -522,7 +525,8 @@ public class GameplayActivity extends Activity {
                         result = EntityUtils.toString(response.getEntity());
                         Log.d("GP dealer step5:", result);
                         if (result.equals("gameover")){
-                            System.out.println("Game Over");
+                            Log.i("Dealer:", "Game Over");
+                            intentToGameOver();
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -803,7 +807,8 @@ public class GameplayActivity extends Activity {
                         result = EntityUtils.toString(response.getEntity());
                         Log.d("GP !dealer step6A:", result);
                         if (result.equals("gameover")){
-                            System.out.println("Game Over");
+                            Log.i("!Dealer:", "Game Over");
+                            intentToGameOver();
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -957,4 +962,23 @@ public class GameplayActivity extends Activity {
             e.printStackTrace();
         }
     }
+
+    /**
+     * The method will stop the game thread from running and take the user
+     * to the game over display
+     */
+    public void intentToGameOver() {
+        Log.d("Thread", "Gameover, Interrupting turn thread");
+        synchronized (turnThread) {
+            turnThread.interrupt();
+            turnThread.running=false;
+        }
+
+        Intent gameoverIntent = new Intent(this, GameOver.class);
+        Bundle extras = new Bundle();
+        extras.putString("roomname", roomname);
+        gameoverIntent.putExtras(extras);
+        startActivity(gameoverIntent);
+    }
+
 }

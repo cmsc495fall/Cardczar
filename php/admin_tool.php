@@ -249,5 +249,15 @@ $db_name = $_SERVER['QUERY_STRING']
   </td>
 
  </tr>
+ <tr>
+    <td>
+        ccz_get_winning_username.php<br>
+        <form action="ccz_get_winning_username.php" method="post" target="_top">
+             Room: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<INPUT size="30" name="roomname" value="<?php echo $db_name;?>"><br>
+             <br>
+             <input type="submit" name="submit" value="Submit" />
+        </form>
+    </td>
+ </tr>
 
 </table>
