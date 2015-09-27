@@ -74,7 +74,6 @@ public class RoomActivity extends Activity {
         StrictMode.setThreadPolicy(policy);
 
         // CHECK FOR VALID NUMBER OF USERS
-        refreshList(view);
         System.out.print("Number of users = "+numusers);
         if (numusers > 2 && numusers < 10) {
 
@@ -106,7 +105,7 @@ public class RoomActivity extends Activity {
 
         } else { // wrong number of users
             TextView statusTextView = (TextView) findViewById(R.id.statusTextView);
-            statusTextView.setText("  Need 3 to 9 users");
+            statusTextView.setText("  3-9 users ("+numusers+")");
         } // end if (numusers > 3 && numusers < 10)
 
     } // end intentToGameplay
@@ -128,6 +127,9 @@ public class RoomActivity extends Activity {
             result = EntityUtils.toString(response.getEntity());
             Log.d("Result of user list", result);
         } catch (IOException e) { e.printStackTrace(); }
+
+        // Get number of users to check before game start
+        numusers =  result.split("\\|").length;
 
        // Update ListView with users
         List<String> userList = new ArrayList<>(Arrays.asList(result.split("\\|")));
