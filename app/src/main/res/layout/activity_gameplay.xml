@@ -105,6 +105,7 @@
         android:layout_height="80dp"
         android:text="@string/quit_game"
         android:id="@+id/quit_button"
+        android:onClick="quitButtonClick"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true" />
 

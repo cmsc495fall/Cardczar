@@ -2,8 +2,6 @@ package com.example.crimson30.cardczar;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.apache.http.HttpResponse;
@@ -27,11 +24,10 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-import static android.view.View.INVISIBLE;
 
 public class GameplayActivity extends Activity {
     String result;   // LAMP server result
@@ -40,7 +36,7 @@ public class GameplayActivity extends Activity {
     Boolean host;     // if role="host", then user can boot other users
     Boolean dealer;
     String [] cards;
-    String [] usernames;
+    String [] users;
     String responses;
     int numusers;
     int myUserNum;
@@ -55,29 +51,7 @@ public class GameplayActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gameplay);
 
-        final Button quitButton = (Button) findViewById(R.id.quit_button);
-        quitButton.setOnClickListener(
-                new Button.OnClickListener() {
-                    public void onClick(View v) {
-                        //If the check for start thread is running or in a waiting mode
-                        //interrupt the thread, delete user from the database tell the user
-                        // they have quit the game and remove all input widgrts
-                        if (turnThread != null && (turnThread.getState() == Thread.State.RUNNABLE ||
-                                turnThread.getState() == Thread.State.TIMED_WAITING)) {
-                            Log.d("Thread", "Interrupting check start thread");
-                            turnThread.interrupt();
-                        }
-
-                        deleteUser();
-
-                        Intent quitIntent = new Intent(getApplicationContext(), QuitGame.class);
-                        Bundle extras = new Bundle();
-                        quitIntent.putExtras(extras);
-                        startActivity(quitIntent);
-                    }
-                }
-        );
-
+        // onCreate step 1:
         // Get vars from previous activity
         // SET DEALER
         Bundle extras = getIntent().getExtras();
@@ -86,6 +60,7 @@ public class GameplayActivity extends Activity {
         host = extras.getBoolean("host");
         if (host) { dealer=true; } else { dealer=false; }
 
+        // onCreate step 2:
         // SET BAIT
         if (dealer) {
             // SET BAIT
@@ -105,6 +80,7 @@ public class GameplayActivity extends Activity {
             }
         } // end if (SET BAIT)
 
+        // onCreate step 3:
         // Draw 8
         try {
             String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_draw_eight.php";
@@ -124,6 +100,7 @@ public class GameplayActivity extends Activity {
         result = "empty|"+result;
         cards = result.split("\\|");
 
+        // onCreate step 4:
         // Get list of users from LAMP
         try {
             String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_user_list.php";
@@ -139,17 +116,25 @@ public class GameplayActivity extends Activity {
 
         // Add blank value, so that 1st card is usernames[1], not usernames[0], etc.
         // Makes it easier for developer to deal with
-        result = "empty|"+result;
-        usernames = result.split("\\|");
-        numusers = usernames.length-1;
+        result = "0 empty|"+result;
+        users = result.split("\\|");
+        numusers = users.length-1;
         System.out.println("numusers = "+numusers);
-        int i=0;
-        for (String value : usernames) {
-            if (value.equals(username)) {
-                myUserNum = i;
+        String [] substrings;
+
+        for (String value : users) {
+
+            substrings = value.split(" ");
+            try {
+                substrings[1]=java.net.URLDecoder.decode(substrings[1], "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Substrings[0] = "+substrings[0]+", substrings[1] = "+substrings[1]);
+            if (substrings[1].equals(username)) {
+                myUserNum = Integer.parseInt(substrings[0]);
                 break;
             }
-            i++;
         }
         System.out.println("myUserNum = "+myUserNum);
 
@@ -185,6 +170,7 @@ public class GameplayActivity extends Activity {
             button8.setText(cards[8]);
         }
 
+        // onCreate step 5:
         turnThread=new Turn();
         turnThread.start();
 
@@ -195,7 +181,6 @@ public class GameplayActivity extends Activity {
                 Bundle bundle = msg.getData();
                 String operation = bundle.getString("operation");
                 String data = bundle.getString("data");
-                int intdata = bundle.getInt("intdata");
                 if (operation.equals("displayBait")) {
                     System.out.println("in handler display Bait");
                     TextView baitTextView = (TextView) findViewById(R.id.baitTextView);
@@ -210,56 +195,56 @@ public class GameplayActivity extends Activity {
                     if (numButtons>0) { // BUTTON 1 DISPLAY
                         button1.setVisibility(View.VISIBLE);
                         button1.setText(buttonArray[1]);
-                        if (intdata==1) { button1.setBackgroundColor(Color.BLUE);} else { button1.setBackground(originalBackground); }
+                        // if (intdata==1) { button1.setBackgroundColor(Color.BLUE);} else { button1.setBackground(originalBackground); }
                     } else { button1.setVisibility(View.GONE);
                     } // end BUTTON 1 DISPLAY
 
                     if (numButtons>1) { // BUTTON 2 DISPLAY
                         button2.setVisibility(View.VISIBLE);
                         button2.setText(buttonArray[2]);
-                        if (intdata==2) { button2.setBackgroundColor(Color.BLUE);} else { button2.setBackground(originalBackground); }
+                        // if (intdata==2) { button2.setBackgroundColor(Color.BLUE);} else { button2.setBackground(originalBackground); }
                     }    else { button2.setVisibility(View.GONE);
                     } // end BUTTON 2 DISPLAY
 
                     if (numButtons>2) { // BUTTON 3 DISPLAY
                         button3.setVisibility(View.VISIBLE);
                         button3.setText(buttonArray[3]);
-                        if (intdata==3) { button3.setBackgroundColor(Color.BLUE);} else { button3.setBackground(originalBackground); }
+                        // if (intdata==3) { button3.setBackgroundColor(Color.BLUE);} else { button3.setBackground(originalBackground); }
                     }    else { button3.setVisibility(View.GONE);
                     } // end BUTTON 3 DISPLAY
 
                     if (numButtons>3) { // BUTTON 4 DISPLAY
                         button4.setVisibility(View.VISIBLE);
                         button4.setText(buttonArray[4]);
-                        if (intdata==4) { button4.setBackgroundColor(Color.BLUE);} else { button4.setBackground(originalBackground); }
+                        // if (intdata==4) { button4.setBackgroundColor(Color.BLUE);} else { button4.setBackground(originalBackground); }
                     }    else { button4.setVisibility(View.GONE);
                     } // end BUTTON 4 DISPLAY
 
                     if (numButtons>4) { // BUTTON 5 DISPLAY
                         button5.setVisibility(View.VISIBLE);
                         button5.setText(buttonArray[5]);
-                        if (intdata==5) { button5.setBackgroundColor(Color.BLUE);} else { button5.setBackground(originalBackground); }
+                        // if (intdata==5) { button5.setBackgroundColor(Color.BLUE);} else { button5.setBackground(originalBackground); }
                     }    else { button5.setVisibility(View.GONE);
                     } // end BUTTON 5 DISPLAY
 
                     if (numButtons>5) { // BUTTON 6 DISPLAY
                         button6.setVisibility(View.VISIBLE);
                         button6.setText(buttonArray[6]);
-                        if (intdata==6) { button6.setBackgroundColor(Color.BLUE);} else { button6.setBackground(originalBackground); }
+                        // if (intdata==6) { button6.setBackgroundColor(Color.BLUE);} else { button6.setBackground(originalBackground); }
                     }    else { button6.setVisibility(View.GONE);
                     } // end BUTTON 6 DISPLAY
 
                     if (numButtons>6) { // BUTTON 7 DISPLAY
                         button7.setVisibility(View.VISIBLE);
                         button7.setText(buttonArray[7]);
-                        if (intdata==7) { button7.setBackgroundColor(Color.BLUE);} else { button7.setBackground(originalBackground); }
+                        // if (intdata==7) { button7.setBackgroundColor(Color.BLUE);} else { button7.setBackground(originalBackground); }
                     }    else { button7.setVisibility(View.GONE);
                     } // end BUTTON 7 DISPLAY
 
                     if (numButtons>7) { // BUTTON 8 DISPLAY
                         button8.setVisibility(View.VISIBLE);
                         button8.setText(buttonArray[8]);
-                        if (intdata==8) { button8.setBackgroundColor(Color.BLUE);} else { button8.setBackground(originalBackground); }
+                        // if (intdata==8) { button8.setBackgroundColor(Color.BLUE);} else { button8.setBackground(originalBackground); }
                     }    else { button8.setVisibility(View.GONE);
                     } // end BUTTON 8 DISPLAY
 
@@ -335,7 +320,6 @@ public class GameplayActivity extends Activity {
                 handler.removeCallbacks(this);  // Clear message queue
                 gpDisplayBaitBundle.putString("operation", "displayBait");
                 gpDisplayBaitBundle.putString("data", result);
-                gpDisplayBaitBundle.putInt("intdata", 0);
                 msg.setData(gpDisplayBaitBundle);
                 handler.sendMessage(msg);
 
@@ -369,7 +353,6 @@ public class GameplayActivity extends Activity {
                     handler.removeCallbacks(this);  // Clear message queue
                     dealerDisplayDefaultButtonBundle.putString("operation", "displayButtons");
                     dealerDisplayDefaultButtonBundle.putString("data", buttonText);
-                    dealerDisplayDefaultButtonBundle.putInt("intdata", 0); // intdata is not used until later (for winner highlight)
                     msg.setData(dealerDisplayDefaultButtonBundle);
                     handler.sendMessage(msg);
 
@@ -416,7 +399,6 @@ public class GameplayActivity extends Activity {
                             handler.removeCallbacks(this);  // Clear message queue
                             dealerDisplayUserButtonBundle.putString("operation", "displayButtons");
                             dealerDisplayUserButtonBundle.putString("data", result);
-                            dealerDisplayUserButtonBundle.putInt("intdata", 0); // intdata is not used until later (for winner highlight)
                             msg.setData(dealerDisplayUserButtonBundle);
                             handler.sendMessage(msg);
                             waitForAllSubmissions=false;
@@ -521,8 +503,6 @@ public class GameplayActivity extends Activity {
                     handler.removeCallbacks(this);  // Clear message queue
                     dealerWinnerBundle.putString("operation", "displayWinner");
                     dealerWinnerBundle.putString("data", "Round " + round + " winner: " + winningResponse + ". Your points:  " + userPoints);
-                    //Pass winner number to highlight when displaying
-                    dealerWinnerBundle.putInt("intdata", 0);
                     msg.setData(dealerWinnerBundle);
                     handler.sendMessage(msg);
 
@@ -557,7 +537,6 @@ public class GameplayActivity extends Activity {
                     handler.removeCallbacks(this);  // Clear message queue
                     notDealerDefaultButtonBundle.putString("operation", "displayButtons");
                     notDealerDefaultButtonBundle.putString("data", TextUtils.join("|", cards));
-                    notDealerDefaultButtonBundle.putInt("intdata", 0); // intdata is not used until later (for winner highlight)
                     msg.setData(notDealerDefaultButtonBundle);
                     handler.sendMessage(msg);
 
@@ -611,7 +590,6 @@ public class GameplayActivity extends Activity {
                         handler.removeCallbacks(this);  // Clear message queue
                         notDealerDisplayBaitBundle.putString("operation", "displayBait");
                         notDealerDisplayBaitBundle.putString("data", result);
-                        notDealerDisplayBaitBundle.putInt("intdata", 0);
                         msg.setData(notDealerDisplayBaitBundle);
                         handler.sendMessage(msg);
                         System.out.println("!dealer step 0 sent displayBait");
@@ -662,7 +640,6 @@ public class GameplayActivity extends Activity {
                     handler.removeCallbacks(this);  // Clear message queue
                     notDealerNewCardBundle.putString("operation", "newResponse");
                     notDealerNewCardBundle.putString("data", result);
-                    notDealerNewCardBundle.putInt("intdata", 0); // intdata is not used until later (for winner highlight)
                     msg.setData(notDealerNewCardBundle);
                     handler.sendMessage(msg);
 
@@ -810,8 +787,6 @@ public class GameplayActivity extends Activity {
                     handler.removeCallbacks(this);  // Clear message queue
                     notDealerWinnerBundle.putString("operation", "displayWinner");
                     notDealerWinnerBundle.putString("data", "Round " + round + " winner: " + winningResponse + ". Your points:  " + userPoints);
-                     //Pass winner number to highlight when displaying
-                    notDealerWinnerBundle.putInt("intdata", 0);
                     msg.setData(notDealerWinnerBundle);
                     handler.sendMessage(msg);
 
@@ -948,6 +923,20 @@ public class GameplayActivity extends Activity {
         synchronized (turnThread) {
             turnThread.notify(); }
     } // end buttonClick
+
+    public void quitButtonClick(View view) {
+        Button quitButton = (Button) findViewById(R.id.quit_button);
+        Log.d("Thread", "Interrupting turn thread");
+        synchronized (turnThread) {
+            turnThread.interrupt();
+            turnThread.running=false; }
+        deleteUser();
+
+        Intent quitIntent = new Intent(getApplicationContext(), QuitGame.class);
+        Bundle extras = new Bundle();
+        quitIntent.putExtras(extras);
+        startActivity(quitIntent);
+    } // end quitButtonClick
 
     /*
     HTTP call to delete the user from the database.
