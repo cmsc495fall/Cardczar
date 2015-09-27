@@ -62,7 +62,7 @@ public class GameOver extends Activity {
     /**
      * The method will change atop the game from running and take the user to the game over screen
      */
-    public void intentToRestartStart() {
+    public void intentToRestartStart(View view) {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
