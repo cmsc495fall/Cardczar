@@ -27,6 +27,20 @@ if (connected) {
      die("Username '$username' has already been taken. Choose another username");
   }
 
+  $result = mysql_query("SELECT count(*) from users");
+  $row = mysql_fetch_assoc($result);
+  $usercount = $row['count(*)'];
+  if ($usercount == 6){
+    die("Room $db_name is alreay full. Please join another room");
+  }
+
+  $result = mysql_query("SELECT started from gamestate");
+  $row = mysql_fetch_assoc($result);
+  if ($row[started]){
+     die("The game has already started so you will not be able to join. Please join another room");
+  }
+
+
   // ADD USER TO users
   $query = "INSERT INTO users (username, points, submission, timelastcontact) VALUES ('".$username."', 0, 'WAIT FOR RESPONSE', ".time().");";
   if (mysql_query($query, $link)) {

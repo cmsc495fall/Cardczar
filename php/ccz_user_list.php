@@ -16,7 +16,7 @@ $tablecontents = mysql_query("SELECT * FROM users");
 if ($myrow = mysql_fetch_array($tablecontents))
   {  $num = 1;
      do
-        { echo $myrow["username"]."|";
+        { echo $num." ".$myrow["username"]."|";  // DO NOT URLDECODE HERE!
           $num++;
         } 
      while ($myrow = mysql_fetch_array($tablecontents));
