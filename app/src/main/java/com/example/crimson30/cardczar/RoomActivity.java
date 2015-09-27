@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -30,6 +31,7 @@ public class RoomActivity extends Activity {
     String result;   // LAMP server result
     String roomname; // room name (database name)
     String username;
+    int numusers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,28 +73,41 @@ public class RoomActivity extends Activity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        // Call appropriate PHP file to prepare LAMP server for gameplay
-        try {
-            String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_start.php";
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost post = new HttpPost(url);
-            List<NameValuePair> urlParameters = new ArrayList<>();
-            urlParameters.add(new BasicNameValuePair("roomname",roomname));
-            post.setEntity(new UrlEncodedFormEntity(urlParameters));
-            HttpResponse response = httpclient.execute(post);
-            result = EntityUtils.toString(response.getEntity());
-            Log.d("RoomA start result:", result);
-        } catch (IOException e) { e.printStackTrace(); }
+        // CHECK FOR VALID NUMBER OF USERS
+        refreshList(view);
+        System.out.print("Number of users = "+numusers);
+        if (numusers > 2 && numusers < 10) {
 
-        // If server result=OK, intend to Gameplay
-        if (Objects.equals(result, "OK")) {
-            Intent roomIntent = new Intent(this, GameplayActivity.class);
-            Bundle extras = new Bundle();
-            extras.putString("roomname", roomname);
-            extras.putString("username", username);
-            extras.putBoolean("host", true);
-            roomIntent.putExtras(extras);
-            startActivity(roomIntent); }
+            // Call appropriate PHP file to prepare LAMP server for gameplay
+            try {
+                String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_start.php";
+                HttpClient httpclient = new DefaultHttpClient();
+                HttpPost post = new HttpPost(url);
+                List<NameValuePair> urlParameters = new ArrayList<>();
+                urlParameters.add(new BasicNameValuePair("roomname", roomname));
+                post.setEntity(new UrlEncodedFormEntity(urlParameters));
+                HttpResponse response = httpclient.execute(post);
+                result = EntityUtils.toString(response.getEntity());
+                Log.d("RoomA start result:", result);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            // If server result=OK, intend to Gameplay
+            if (Objects.equals(result, "OK")) {
+                Intent roomIntent = new Intent(this, GameplayActivity.class);
+                Bundle extras = new Bundle();
+                extras.putString("roomname", roomname);
+                extras.putString("username", username);
+                extras.putBoolean("host", true);
+                roomIntent.putExtras(extras);
+                startActivity(roomIntent);
+            } // end if server result=OK
+
+        } else { // wrong number of users
+            TextView statusTextView = (TextView) findViewById(R.id.statusTextView);
+            statusTextView.setText("  Need 3 to 9 users");
+        } // end if (numusers > 3 && numusers < 10)
 
     } // end intentToGameplay
 
