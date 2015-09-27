@@ -619,6 +619,7 @@ public class GameplayActivity extends Activity {
                         e.printStackTrace();
                     }
 
+                    if (!running) continue;
 
                     // STEP 8A: WAIT FOR ALL SUBMISSIONS TO EMPTY (FULL OF WAIT FOR RESPONSE)
                     waitForAllSubmissions=true;
@@ -832,6 +833,26 @@ public class GameplayActivity extends Activity {
                     } // end while (waitForDealer)
                     if (!running) continue;
 
+                    // STEP 5C: IF GAME OVER, THEN DO GAME OVER CODE
+                    // GAME OVER CODE HERE
+                    try {
+                        String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_turn_progress.php";
+                        HttpClient httpclient = new DefaultHttpClient();
+                        HttpPost post = new HttpPost(url);
+                        List<NameValuePair> urlParameters = new ArrayList<>();
+                        urlParameters.add(new BasicNameValuePair("roomname", roomname));
+                        post.setEntity(new UrlEncodedFormEntity(urlParameters));
+                        HttpResponse response = httpclient.execute(post);
+                        result = EntityUtils.toString(response.getEntity());
+                        Log.d("GP !dealer step5C:", result);
+                        if (result.equals("gameover")){
+                            Log.i("!Dealer:", "Game Over");
+                            intentToGameOver();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
 
                     // STEP 6: GET WINNER
                     // Get the previous round, winning user and wining response from the database to display to the user
@@ -884,26 +905,6 @@ public class GameplayActivity extends Activity {
                     notDealerWinnerBundle.putString("data", "Round " + round + " winner: " + winningResponse + ". Your points:  " + userPoints);
                     msg.setData(notDealerWinnerBundle);
                     handler.sendMessage(msg);
-
-                    // STEP 7: IF GAME OVER, THEN DO GAME OVER CODE
-                    // GAME OVER CODE HERE
-                    try {
-                        String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_turn_progress.php";
-                        HttpClient httpclient = new DefaultHttpClient();
-                        HttpPost post = new HttpPost(url);
-                        List<NameValuePair> urlParameters = new ArrayList<>();
-                        urlParameters.add(new BasicNameValuePair("roomname", roomname));
-                        post.setEntity(new UrlEncodedFormEntity(urlParameters));
-                        HttpResponse response = httpclient.execute(post);
-                        result = EntityUtils.toString(response.getEntity());
-                        Log.d("GP !dealer step6A:", result);
-                        if (result.equals("gameover")){
-                            Log.i("!Dealer:", "Game Over");
-                            intentToGameOver();
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
 
                     // STEP 8: CHANGE RESPONSE BACK TO "WAIT FOR RESPONSE"
                     try {

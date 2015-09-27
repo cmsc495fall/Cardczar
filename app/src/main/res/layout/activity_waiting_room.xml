@@ -32,7 +32,6 @@
         android:layout_height="wrap_content"
         android:text="@string/quit_game"
         android:id="@+id/quit_button"
-        android:layout_marginTop="90dp"
-        android:layout_below="@+id/waitingTextView"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>
