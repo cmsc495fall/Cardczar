@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Cardczar</string>
+    <string name="app_name">Card Czar</string>
 
     <string name="hello_world">This is the default for new activities.  Don\'t delete.</string>
 
@@ -9,7 +9,7 @@
     <string name="hostButtonText">Host Game</string>
 
     <!-- HostStart -->
-    <string name="title_activity_host_start">HostStartActivity</string>
+    <string name="title_activity_host_start">Host Start</string>
     <string name="roomnameTextViewText">Choose a room name. \n You\'ll need to give this to users. </string>
     <string name="roomnameEditTextText">r12345678</string>
     <string name="hostnameTextViewText">Enter your username</string>
@@ -17,7 +17,7 @@
     <string name="hostStartButtonText">Start Room</string>
 
     <!-- UserStart -->
-    <string name="title_activity_user_start">UserStartActivity</string>
+    <string name="title_activity_user_start">User Start</string>
     <string name="roomJoinTextViewText">Enter room name</string>
     <string name="roomJoinEditTextText">r12345678</string>
     <string name="usernameTextViewText">Enter your username</string>
@@ -26,7 +26,7 @@
     <string name="roomStatusTextViewText">No status from server</string>
 
     <!-- Room -->
-    <string name="title_activity_room">RoomActivity</string>
+    <string name="title_activity_room">Room name = </string>
     <string name="userListTextViewText">User list here.</string>
     <string name="refreshUsersButtonText">Refresh</string>
     <string name="gameStartButtonText">Start</string>
