@@ -37,7 +37,7 @@
     <string name="quit_game">Quit Game</string>
 
     <!-- Gameplay -->
-    <string name="title_activity_gameplay">GameplayActivity</string>
+    <string name="title_activity_gameplay">Round 1</string>
     <string name="baitTextViewText">!</string>
     <string name="button1Text">!</string>
     <string name="button2Text">!</string>

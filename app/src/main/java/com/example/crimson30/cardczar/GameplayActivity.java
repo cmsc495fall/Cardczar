@@ -41,6 +41,7 @@ public class GameplayActivity extends Activity {
     int numusers;
     int myUserNum;
     int buttonClicked;
+    int round;
     String buttonClickedString;
     Turn turnThread;
     Handler handler; // handler for GUI activities
@@ -58,6 +59,7 @@ public class GameplayActivity extends Activity {
         roomname = extras.getString("roomname");
         username = extras.getString("username");
         host = extras.getBoolean("host");
+        round = 0;
         if (host) { dealer=true; } else { dealer=false; }
 
         // onCreate step 2:
@@ -261,7 +263,9 @@ public class GameplayActivity extends Activity {
                 } else if (operation.equals("displayWinner")){
                     TextView winnerTextView = (TextView) findViewById(R.id.winnerText);
                     winnerTextView.setText(data);
-                }
+                } else if (operation.equals("updateAppBarTitle")){
+                    getActionBar().setTitle("Round " + round);
+            }
             } // end handleMessage()
         }; // end handler
     }
@@ -355,6 +359,20 @@ public class GameplayActivity extends Activity {
                 gpDisplayBaitBundle.putString("data", result);
                 msg.setData(gpDisplayBaitBundle);
                 handler.sendMessage(msg);
+
+
+                // STEP -1E: CHANGE ACTION BAR TITLE
+                round++;
+
+                msg = Message.obtain();
+                Bundle actionBarBundle = new Bundle();
+                handler.removeCallbacks(this);  // Clear message queue
+                actionBarBundle.putString("operation", "updateAppBarTitle");
+                actionBarBundle.putString("data", "N/A");
+                msg.setData(actionBarBundle);
+                handler.sendMessage(msg);
+
+
 
                 /* ALTERNATE CODE (IN CASE ABOVE HAS ISSUES)
 
