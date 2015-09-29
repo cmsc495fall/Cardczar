@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class HostStartActivity extends Activity {
 
@@ -66,6 +68,18 @@ public class HostStartActivity extends Activity {
         EditText hostnameEditText = (EditText) findViewById(R.id.hostnameEditText);
         TextView serverStatusTextView = (TextView) findViewById(R.id.serverStatusTextView);
 
+        String pattern = "\\w+";
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher((roomnameEditText.getText()));
+        if (!m.matches()){
+            Log.d("Room start error", "No match found");
+            serverStatusTextView.setText("The roomname can only contain the characters a-z,A-Z,0-9,_");
+            return;
+        }else{
+            System.out.println(m.group(0));
+        }
+
+
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
@@ -93,9 +107,9 @@ public class HostStartActivity extends Activity {
             extras.putString("username",hostnameEditText.getText().toString());
             roomIntent.putExtras(extras);
             startActivity(roomIntent);
-        }  else {
-        serverStatusTextView.setText(result);
-    }
+        } else {
+            serverStatusTextView.setText(result);
+        }
     } // end intentToRoom()
 
 }

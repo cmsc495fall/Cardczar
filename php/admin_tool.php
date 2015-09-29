@@ -123,6 +123,15 @@ $db_name = $_SERVER['QUERY_STRING']
   </td>
 
   <td>
+  ccz_get_turn_progress.php<br>
+  <form action="ccz_get_turn_progress.php" method="post" target="_top">
+  Room: <INPUT size="30" name="roomname" value="<?php echo $db_name;?>">
+  <br>
+  <input type="submit" name="submit" value="Submit" />
+  </form>
+  </td>
+
+  <td>
   ccz_set_turn_progress.php<br>
   <form action="ccz_set_turn_progress.php" method="post" target="_top">
   Room: &nbsp;<INPUT size="30" name="roomname" value="<?php echo $db_name;?>"><br>
@@ -138,6 +147,10 @@ $db_name = $_SERVER['QUERY_STRING']
   </form>
   </td>
 
+ </tr>
+
+ <tr>
+
   <td>
   ccz_process_winner.php<br>
   <form action="ccz_process_winner.php" method="post" target="_top">
@@ -147,10 +160,6 @@ $db_name = $_SERVER['QUERY_STRING']
   <input type="submit" name="submit" value="Submit" />
   </form>
   </td>
-
- </tr>
-
- <tr>
 
   <td>
   ccz_get_winning_response.php<br>
@@ -181,6 +190,7 @@ $db_name = $_SERVER['QUERY_STRING']
   <input type="submit" name="submit" value="Submit" />
   </form>
   </td>
+
    <td>
   ccz_get_winner.php<br>
   <form action="ccz_get_winner.php" method="post" target="_top">
@@ -189,6 +199,12 @@ $db_name = $_SERVER['QUERY_STRING']
   <input type="submit" name="submit" value="Submit" />
   </form>
   </td>
+
+
+ </tr>
+
+ <tr>
+
   <td>
     ccz_get_user_points.php<br>
     <form action="ccz_get_user_points.php" method="post" target="_top">
@@ -209,9 +225,6 @@ $db_name = $_SERVER['QUERY_STRING']
     </form>
     </td>
 
- </tr>
-
- <tr>
   <td>
   ccz_user_quit.php<br>
   <form action="ccz_user_quit.php" method="post" target="_top">
@@ -221,6 +234,8 @@ $db_name = $_SERVER['QUERY_STRING']
   <input type="submit" name="submit" value="Submit" />
   </form>
   </td>
+
+
    <td>
     ccz_get_user_count.php<br>
     <form action="ccz_get_user_count.php" method="post" target="_top">
@@ -229,6 +244,8 @@ $db_name = $_SERVER['QUERY_STRING']
     <input type="submit" name="submit" value="Submit" />
     </form>
     </td>
+
+
    <td>
        ccz_delete_db.php<br>
        <form action="ccz_delete_db.php" method="post" target="_top">
@@ -238,17 +255,10 @@ $db_name = $_SERVER['QUERY_STRING']
        </form>
    </td>
 
-  <td>
-  ccz_test.php<br>
-  <form action="ccz_test.php" method="post" target="_top">
-  Room: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<INPUT size="30" name="roomname" value="<?php echo $db_name;?>"><br>
-  Hostname: <INPUT size="30" name="username">
-  <br>
-  <input type="submit" name="submit" value="Submit" />
-  </form>
-  </td>
+
 
  </tr>
+
  <tr>
     <td>
         ccz_get_winning_username.php<br>

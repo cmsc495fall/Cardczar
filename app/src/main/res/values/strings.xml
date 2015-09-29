@@ -10,7 +10,7 @@
 
     <!-- HostStart -->
     <string name="title_activity_host_start">Host Start</string>
-    <string name="roomnameTextViewText">Choose a room name. \n You\'ll need to give this to users. </string>
+    <string name="roomnameTextViewText">Choose a room name. The roomname can only contain the characters a-z, A-Z ,0-9 or _.\n You\'ll need to give this to users. </string>
     <string name="roomnameEditTextText">r12345678</string>
     <string name="hostnameTextViewText">Enter your username</string>
     <string name="hostnameEditTextText">host</string>
