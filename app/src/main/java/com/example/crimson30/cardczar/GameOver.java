@@ -23,20 +23,43 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+/**
+ * File: GameOver
+ * Author: Group 2 - Card Czar
+ * Date: October 4, 2015
+ * Class: CMSC495 6381
+ * Instructor: Paul Comitz
+ * Problem: Card Czar Android App
+ * Purpose: The class will handle the functionality when a Card Czar game is completed. The class will display
+ *          to the player that the game is over, who won the game and let them go back to the main
+ *          game page to start a new game.
+ * Status: Ready
+ * Notes: None
+ */
 
 public class GameOver extends Activity {
-    String result;   // LAMP server result
-    String roomname; // room name (database name)
-    String winningUser; //Name of user who won the game
+    /** Holds the response that comes back from the middleware when database interactions are preformed**/
+    String result;
+    /** The name of the room for the game. It represents the game being played and is also used to as the database name to hold game information**/
+    String roomname;
+    /** The name of the user who won the game and will be diaplayed to the user**/
+    String winningUser;
 
     @Override
+    /**
+     * This method is called on creation of the activity. It will display the specified layout to the user
+     * and perform some inistial data retrieval and setup
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Specify the activity game over layout
         setContentView(R.layout.activity_game_over);
 
+        //Get the bundle with information passed from the previous activity
         Bundle extras = getIntent().getExtras();
         roomname = extras.getString("roomname");
 
+        //Make an HTTP call to the database to get the name of the user that one the game
         try {
             String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_winning_username.php";
             HttpClient httpclient = new DefaultHttpClient();
@@ -52,6 +75,8 @@ public class GameOver extends Activity {
             e.printStackTrace();
         }
 
+        //Create the message that will be displayed to the user and set the text view
+        //in the layout to the message
         TextView gameoverMessage = (TextView) findViewById(R.id.gameOverText);
         StringBuilder displayMessage = new StringBuilder("CONGRATULATIONS, " + winningUser + "\n");
         displayMessage.append("won the game!!!\n\n\n");
@@ -60,7 +85,7 @@ public class GameOver extends Activity {
     }
 
     /**
-     * The method will change atop the game from running and take the user to the game over screen
+     * The method will send the user to main activity when the start new button is clicked.
      */
     public void intentToRestartStart(View view) {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -72,6 +97,9 @@ public class GameOver extends Activity {
     }
 
     @Override
+    /**
+     * THe method is required by the interface. It currently has no unique functionslity for the app
+     */
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_game_over, menu);
@@ -79,6 +107,9 @@ public class GameOver extends Activity {
     }
 
     @Override
+    /**
+     * THe method is required by the interface. It currently has no unique functionslity for the app
+     */
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
