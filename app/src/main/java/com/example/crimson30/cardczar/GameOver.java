@@ -53,8 +53,8 @@ public class GameOver extends Activity {
         }
 
         TextView gameoverMessage = (TextView) findViewById(R.id.gameOverText);
-        StringBuilder displayMessage = new StringBuilder("CONGRATULATIONS " + winningUser + "\n");
-        displayMessage.append("you won the game!!!\n\n\n");
+        StringBuilder displayMessage = new StringBuilder("CONGRATULATIONS, " + winningUser + "\n");
+        displayMessage.append("won the game!!!\n\n\n");
         displayMessage.append("Game Over");
         gameoverMessage.setText(displayMessage.toString());
     }
