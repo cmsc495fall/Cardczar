@@ -48,7 +48,7 @@ public class GameplayActivity extends Activity {
     String result;
     /** The name of the room for the game. It represents the game being played and is also used to as the database name to hold game information**/
     String roomname;
-    /** The anme of the user playing the game **/
+    /** The name of the user playing the game **/
     String username;
     /** True if this used is the game host, false otherwise **/
     Boolean host;
@@ -73,7 +73,7 @@ public class GameplayActivity extends Activity {
     /** The text of the button that was clicked either for the response card played ot thw winning response picked **/
     String buttonClickedString;
 
-    /** The thread that runs during the dame and handles game play after initial set up **/
+    /** The thread that runs during the game and handles game play after initial set up **/
     Turn turnThread;
     /** Processes messages sent during the game that updates the display the user sees **/
     Handler handler;
@@ -228,7 +228,7 @@ public class GameplayActivity extends Activity {
         turnThread=new Turn();
         turnThread.start();
 
-        //The handle will recieve messages sent but the Turn thread and update the widgets on the view
+        //The handler will recieve messages sent but the Turn thread and update the widgets on the view
         //depending on the date in the message
         handler=new Handler(){
             @Override
@@ -1117,7 +1117,7 @@ public class GameplayActivity extends Activity {
     } // end quitButtonClick
 
     /**
-     * The method will make an HTTP call htat deletes this user from the database
+     * The method will make an HTTP call that deletes this user from the database
      */
     private void deleteUser(){
         try {

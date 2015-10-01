@@ -25,15 +25,34 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * File: UserStartActivity
+ * Author: Group 2 - Card Czar
+ * Date: October 4, 2015
+ * Class: CMSC495 6381
+ * Instructor: Paul Comitz
+ * Problem: Card Czar Android App
+ * Purpose: The class will handle the functionality when a user chooses to join a game.
+ * Status: Ready
+ * Notes: None
+ */
 public class UserStartActivity extends Activity {
+    /** Holds the response that comes back from the middleware when database interactions are preformed**/
     String result;
 
+    /**
+     * This method is called on creation of the activity. It will display the specified layout to the user
+     * and perform some initial data retrieval and setup
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_start);
     }
 
+    /**
+     * THe method is required by the interface. It currently has no unique functionslity for the app
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -41,6 +60,9 @@ public class UserStartActivity extends Activity {
         return true;
     }
 
+    /**
+     * THe method is required by the interface. It currently has no unique functionslity for the app
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -56,8 +78,12 @@ public class UserStartActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * The method will direct the user to the waiting room activity if they click the Join Game button
+     * @param view
+     */
     public void intentToWaitingRoom(View view) {
-
+        //Get the text that the user entered on the screen
         EditText roomJoinEditText = (EditText) findViewById(R.id.roomJoinEditText);
         EditText usernameEditText = (EditText) findViewById(R.id.usernameEditText);
         TextView roomStatusTextView = (TextView) findViewById(R.id.roomStatusTextView);
@@ -65,7 +91,7 @@ public class UserStartActivity extends Activity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        // Call appropriate PHP file to join game
+        // Call appropriate PHP file to add the user to the users table in the database
         try {
             String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_join.php";
             HttpClient httpclient = new DefaultHttpClient();
@@ -79,7 +105,7 @@ public class UserStartActivity extends Activity {
             Log.d("Result of join request", result);
         } catch (IOException e) { e.printStackTrace(); }
 
-        // If server result=OK, intend to WaitingRoom
+        // If the user was successfully added to the database then direct the user to the waiting room activity
         if (Objects.equals(result, "OK")) {
             Intent roomIntent = new Intent(this, WaitingRoomActivity.class);
             Bundle extras = new Bundle();

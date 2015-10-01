@@ -25,29 +25,52 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * File: WaitingRoomActivity
+ * Author: Group 2 - Card Czar
+ * Date: October 4, 2015
+ * Class: CMSC495 6381
+ * Instructor: Paul Comitz
+ * Problem: Card Czar Android App
+ * Purpose: The class will handle the functionality of checking if the game as started and then
+ *          direct the user to the game.
+ * Status: Ready
+ * Notes: None
+ */
 public class WaitingRoomActivity extends Activity {
-    String result;   // LAMP server result
-    String roomname; // room name (database name)
+    /** Holds the response that comes back from the middleware when database interactions are preformed**/
+    String result;
+    /** The name of the room for the game. It represents the game being played and is also used to as the database name to hold game information**/
+    String roomname;
+    /** The name of the user playing the game **/
     String username;
+    /** Thread that runs and continually checks whether the game has started. **/
     Thread serverWaitThread;   // thread auto-checks server for game start
+    /** Processes messages sent while waiting for the game to start and updates the display the user sees **/
     Handler handler; // handler intends to GameplayActivity
 
+
+     /**
+     *  This method is called on creation of the activity. It will display the specified layout to the user
+     * and perform some initial data retrieval and setup
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_waiting_room);
 
+        // Get a reference to the guit button in the view
         final Button quitButton = (Button) findViewById(R.id.quit_button);
 
+        /** Handled for the quit button */
         quitButton.setOnClickListener(
                 new Button.OnClickListener(){
                     public void onClick(View v){
                         //If the check for start thread is running or in a waiting mode
                         //interrupt the thread, delete user from the database tell the user
-                        // they have quit the game and remove all input widgrts
+                        //and direct them to the quit game activity
                         if (serverWaitThread != null && (serverWaitThread.getState() == Thread.State.RUNNABLE ||
                                 serverWaitThread.getState() == Thread.State.TIMED_WAITING)){
-                            Log.d("Thread", "Interrupting check start thread");
                             serverWaitThread.interrupt();
                         }
 
@@ -61,14 +84,17 @@ public class WaitingRoomActivity extends Activity {
                 }
         );
 
-        // Get vars from previous activity
+        // Get variables from previous activity
         Bundle extras = getIntent().getExtras();
         roomname = extras.getString("roomname");
         username = extras.getString("username");
 
+        //Create and start the thread that will wait for the game to start
         serverWaitThread=new Thread(new CheckStartThread());
         serverWaitThread.start();
 
+        //The handler will receive amessage sent when the thread detects the game has started and
+        //will direct the user to the game play activity
         handler=new Handler(){
             @Override
              public void handleMessage(Message msg) {
@@ -84,10 +110,13 @@ public class WaitingRoomActivity extends Activity {
 
     } // end onCreate()
 
-    // When host starts game, gamestate:started in SQL is set to true
-    // Every 1.21 seconds, this thread checks to see if the host has started game
-    // When gamestate:started = true, this method calls the handler that intends Gameplay
+    /**
+     * This class is a thread that, when it is running, will continually check the database to
+     * see if the game has started. Once the game has started the thread will stop running and
+     * send a message to the handler.
+     */
     class CheckStartThread implements Runnable {
+       /** Set to true and should stay true until the game start is detected */
         private volatile boolean running = true;
 
         @Override
@@ -97,11 +126,11 @@ public class WaitingRoomActivity extends Activity {
                 try {
                     Thread.sleep(1210);
                 } catch (InterruptedException e) {
-                   Log.d("Thread","Thread interrupt encountered");
+                    Log.d("Thread","Thread interrupt encountered");
                     running = false;
                 }
 
-                // Get gamestate:started value from LAMP
+                // Query the database to see if the game has started
                 try {
                     String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_check_start.php";
                     HttpClient httpclient = new DefaultHttpClient();
@@ -116,7 +145,7 @@ public class WaitingRoomActivity extends Activity {
                     e.printStackTrace();
                 }
 
-                // If gamestate:started is true, send message to handler and stop thread
+                // If the game has started, send message to handler and stop thread
                 Message msg = Message.obtain();
                 if (Objects.equals(result, "OK")) {
                     handler.removeCallbacks(this);  // Clear message queue
@@ -129,6 +158,9 @@ public class WaitingRoomActivity extends Activity {
 
     } // end userPollThread
 
+    /**
+     * THe method is required by the interface. It currently has no unique functionslity for the app
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -136,6 +168,9 @@ public class WaitingRoomActivity extends Activity {
         return true;
     }
 
+    /**
+     * THe method is required by the interface. It currently has no unique functionslity for the app
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -151,8 +186,8 @@ public class WaitingRoomActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    /*
-    HTTP call to delete the user from the database.
+    /**
+     * The method will make an HTTP call that deletes this user from the database
      */
     private void deleteUser(){
         try {
