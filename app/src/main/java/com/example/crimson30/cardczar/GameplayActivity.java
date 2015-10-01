@@ -1110,7 +1110,7 @@ public class GameplayActivity extends Activity {
         deleteUser();
 
         //Go to the quit game activity
-        Intent quitIntent = new Intent(getApplicationContext(), QuitGame.class);
+        Intent quitIntent = new Intent(getApplicationContext(), QuitGameActivity.class);
         Bundle extras = new Bundle();
         quitIntent.putExtras(extras);
         startActivity(quitIntent);

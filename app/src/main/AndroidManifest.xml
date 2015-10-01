@@ -39,7 +39,7 @@
             android:label="@string/title_activity_waiting_room" >
         </activity>
         <activity
-            android:name=".QuitGame"
+            android:name=".QuitGameActivity"
             android:label="@string/title_activity_quit_game" >
         </activity>
         <activity

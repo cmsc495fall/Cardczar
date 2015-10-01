@@ -10,8 +10,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
-import android.widget.ProgressBar;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -26,8 +24,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import static android.view.View.INVISIBLE;
 
 public class WaitingRoomActivity extends Activity {
     String result;   // LAMP server result
@@ -57,7 +53,7 @@ public class WaitingRoomActivity extends Activity {
 
                         deleteUser();
 
-                        Intent quitIntent = new Intent(getApplicationContext(), QuitGame.class);
+                        Intent quitIntent = new Intent(getApplicationContext(), QuitGameActivity.class);
                         Bundle extras = new Bundle();
                         quitIntent.putExtras(extras);
                         startActivity(quitIntent);
