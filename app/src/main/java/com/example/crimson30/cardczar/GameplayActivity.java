@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * File: GameOverActivity
+ * File: GameplayActivity
  * Author: Group 2 - Card Czar
  * Date: October 4, 2015
  * Class: CMSC495 6381

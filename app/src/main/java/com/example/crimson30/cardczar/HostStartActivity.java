@@ -29,17 +29,34 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * File: HostStartActivity
+ * Author: Group 2 - Card Czar
+ * Date: October 4, 2015
+ * Class: CMSC495 6381
+ * Instructor: Paul Comitz
+ * Problem: Card Czar Android App
+ * Purpose: The class will handle the functionality when a Card Czar player decides to host a new gane
+ * Status: Ready
+ * Notes: None
+ */
 public class HostStartActivity extends Activity {
-
+    /** Holds the response that comes back from the middleware when database interactions are preformed**/
     String result;
 
+    /**
+     * This method is called on creation of the activity. It will display the specified layout to the user
+     * and perform some initial data retrieval and setup
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_host_start);
-
     }
 
+    /**
+     * THe method is required by the interface. It currently has no unique functionslity for the app
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -47,6 +64,9 @@ public class HostStartActivity extends Activity {
         return true;
     }
 
+    /**
+     * THe method is required by the interface. It currently has no unique functionslity for the app
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -62,12 +82,21 @@ public class HostStartActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * The method will capture the game/room information entered by the user, bundle
+     * the information to send to the next activity and direct the user to the room activity.
+     * @param view
+     */
     public void intentToRoom(View view) {
-
+        //Get the user entered information
         EditText roomnameEditText = (EditText) findViewById(R.id.roomnameEditText);
         EditText hostnameEditText = (EditText) findViewById(R.id.hostnameEditText);
         TextView serverStatusTextView = (TextView) findViewById(R.id.serverStatusTextView);
 
+        //The roomname will be used to create the database and can only contain
+        //certain information. Use a regular expression match to ensure the
+        //roomname contains no illegal characters. If ti does display an error message
+        //to the user and stay on this sctivity
         String pattern = "\\w+";
         Pattern r = Pattern.compile(pattern);
         Matcher m = r.matcher((roomnameEditText.getText()));
@@ -83,7 +112,8 @@ public class HostStartActivity extends Activity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        // Tell LAMP to make database
+        // Make an HTTP call that will create the database, create the game tables in the
+        //database, and populate the tables with their initial values
         try {
             String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_create_db.php";
             HttpClient httpclient = new DefaultHttpClient();
@@ -99,7 +129,7 @@ public class HostStartActivity extends Activity {
             Log.d("Result of create_db", result);
         } catch (IOException e) { e.printStackTrace(); }
 
-        // If server result=OK, intend to Room
+        // If server result=OK, direct the user to the room activity
         if (Objects.equals(result, "OK")) {
             Intent roomIntent = new Intent(this, RoomActivity.class);
             Bundle extras = new Bundle();
