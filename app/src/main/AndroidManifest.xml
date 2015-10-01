@@ -43,7 +43,7 @@
             android:label="@string/title_activity_quit_game" >
         </activity>
         <activity
-            android:name=".GameOver"
+            android:name=".GameOverActivity"
             android:label="@string/title_activity_game_over" >
         </activity>
     </application>

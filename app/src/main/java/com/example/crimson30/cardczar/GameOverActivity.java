@@ -23,8 +23,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
 /**
- * File: GameOver
+ * File: GameOverActivity
  * Author: Group 2 - Card Czar
  * Date: October 4, 2015
  * Class: CMSC495 6381
@@ -37,7 +38,7 @@ import java.util.Objects;
  * Notes: None
  */
 
-public class GameOver extends Activity {
+public class GameOverActivity extends Activity {
     /** Holds the response that comes back from the middleware when database interactions are preformed**/
     String result;
     /** The name of the room for the game. It represents the game being played and is also used to as the database name to hold game information**/
@@ -48,7 +49,7 @@ public class GameOver extends Activity {
     @Override
     /**
      * This method is called on creation of the activity. It will display the specified layout to the user
-     * and perform some inistial data retrieval and setup
+     * and perform some initial data retrieval and setup
      */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,7 +71,7 @@ public class GameOver extends Activity {
             HttpResponse response = httpclient.execute(post);
             result = EntityUtils.toString(response.getEntity());
             winningUser = result;
-            Log.d("GameOver winner:", result);
+            Log.d("GameOverActivity winner:", result);
         } catch (IOException e) {
             e.printStackTrace();
         }
