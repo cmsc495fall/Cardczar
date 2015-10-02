@@ -31,18 +31,17 @@ import java.util.Objects;
  * Date: October 4, 2015
  * Class: CMSC495 6381
  * Instructor: Paul Comitz
- * Problem: Card Czar Android App
+ * Project: Card Czar Android App
  * Purpose: The class will handle the functionality when a user chooses to join a game.
  * Status: Ready
  * Notes: None
  */
 public class UserStartActivity extends Activity {
-    /** Holds the response that comes back from the middleware when database interactions are preformed**/
+    /** Holds the response that comes back from the middleware when database interactions are performed**/
     String result;
 
     /**
-     * This method is called on creation of the activity. It will display the specified layout to the user
-     * and perform some initial data retrieval and setup
+     * This method is called on creation of the activity.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +50,7 @@ public class UserStartActivity extends Activity {
     }
 
     /**
-     * THe method is required by the interface. It currently has no unique functionslity for the app
+     * The method is required by the interface. It currently has no unique functionality for the app
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -61,7 +60,7 @@ public class UserStartActivity extends Activity {
     }
 
     /**
-     * THe method is required by the interface. It currently has no unique functionslity for the app
+     * The method is required by the interface. It currently has no unique functionality for the app
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

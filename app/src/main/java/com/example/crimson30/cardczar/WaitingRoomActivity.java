@@ -31,14 +31,14 @@ import java.util.Objects;
  * Date: October 4, 2015
  * Class: CMSC495 6381
  * Instructor: Paul Comitz
- * Problem: Card Czar Android App
+ * Project: Card Czar Android App
  * Purpose: The class will handle the functionality of checking if the game as started and then
  *          direct the user to the game.
  * Status: Ready
  * Notes: None
  */
 public class WaitingRoomActivity extends Activity {
-    /** Holds the response that comes back from the middleware when database interactions are preformed**/
+    /** Holds the response that comes back from the middleware when database interactions are performed**/
     String result;
     /** The name of the room for the game. It represents the game being played and is also used to as the database name to hold game information**/
     String roomname;
@@ -93,7 +93,7 @@ public class WaitingRoomActivity extends Activity {
         serverWaitThread=new Thread(new CheckStartThread());
         serverWaitThread.start();
 
-        //The handler will receive amessage sent when the thread detects the game has started and
+        //The handler will receive a message sent when the thread detects the game has started and
         //will direct the user to the game play activity
         handler=new Handler(){
             @Override
@@ -159,7 +159,7 @@ public class WaitingRoomActivity extends Activity {
     } // end userPollThread
 
     /**
-     * THe method is required by the interface. It currently has no unique functionslity for the app
+     * The method is required by the interface. It currently has no unique functionality for the app
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -169,7 +169,7 @@ public class WaitingRoomActivity extends Activity {
     }
 
     /**
-     * THe method is required by the interface. It currently has no unique functionslity for the app
+     * The method is required by the interface. It currently has no unique functionality for the app
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

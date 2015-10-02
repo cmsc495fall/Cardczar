@@ -34,8 +34,8 @@ import java.util.List;
  * Date: October 4, 2015
  * Class: CMSC495 6381
  * Instructor: Paul Comitz
- * Problem: Card Czar Android App
- * Purpose: The class handles the game play between pleyers. The game play will dertmine who the dealer is for each
+ * Project: Card Czar Android App
+ * Purpose: The class handles the game play between players. The game play will determine who the dealer is for each
  *          round of the game, determine the view (dealer or non-dealer) that the user will see, handle when a round
  *          winner is picked (save winner, add a point to the winner's total, advance to the next round), and get the
  *          bait for the next round or handle game over when a user wins game.
@@ -54,7 +54,7 @@ public class GameplayActivity extends Activity {
     Boolean host;
     /** True if this user is the dealer for the round, false otherwise **/
     Boolean dealer;
-    /** The repsonse cards that the user is holding and can play during each round.
+    /** The response cards that the user is holding and can play during each round.
      *  As a card is played a new one will be drawn
      */
     String [] cards;
@@ -64,18 +64,18 @@ public class GameplayActivity extends Activity {
     String responses;
     /** Number of users playing the game **/
     int numusers;
-    /** The user id, from the users table in the database, for his user **/
+    /** The user id, from the users table in the database, for this user **/
     int myUserNum;
     /** The button clicked either for the response card played or the winning response picked **/
     int buttonClicked;
-    /** THe round currently being played**/
+    /** The round currently being played**/
     int round;
-    /** The text of the button that was clicked either for the response card played ot thw winning response picked **/
+    /** The text of the button that was clicked either for the response card played or the winning response picked **/
     String buttonClickedString;
 
     /** The thread that runs during the game and handles game play after initial set up **/
     Turn turnThread;
-    /** Processes messages sent during the game that updates the display the user sees **/
+    /** Processes messages for GUI updates by handing messages to UI thread **/
     Handler handler;
 
 
@@ -101,7 +101,7 @@ public class GameplayActivity extends Activity {
         if (host) { dealer=true; } else { dealer=false; }
 
         //INITIAL GAMEPLAY SETUP: Step 2
-        //If the user is the dealer get the set the bait question in the database
+        //If the user is the dealer set the bait question in the database
         if (dealer) {
             // Draw the first bait question from the database and store it in the gamestate table
             try {
@@ -122,7 +122,7 @@ public class GameplayActivity extends Activity {
 
         //INITIAL GAMEPLAY SETUP: Step 3
         // Every player will draw their initial 8 response cards from the database and store
-        // them in the cards array variable
+        // them in the cards array variable (local storage cuts down on web queries)
         try {
             String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_draw_eight.php";
             HttpClient httpclient = new DefaultHttpClient();
@@ -142,9 +142,9 @@ public class GameplayActivity extends Activity {
         cards = result.split("\\|");
 
         //INITIAL GAMEPLAY SETUP: Step 4
-        // Every users will get the list of user playing the game from the database
+        // Every user will get the list of users playing the game from the database
         // and store them in the users array variable. The numusers variable is set
-        // based of the number of user returned. The myUserNum varaible is determined
+        // based of the number of users returned. The myUserNum variable is determined
         // from the list of users returned and the user's username
         try {
             String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_user_list.php";
@@ -166,7 +166,8 @@ public class GameplayActivity extends Activity {
         System.out.println("numusers = "+numusers);
         String [] substrings;
 
-        //Loop through the list of user and see if one of them matches this user's username
+        // DETERMINE USER NUMBER
+        //Loop through the list of users and see if one of them matches this user's username
         //if so the index in the array is the user id number
         for (String value : users) {
 
@@ -186,7 +187,7 @@ public class GameplayActivity extends Activity {
 
 
         //INITIAL GAMEPLAY SETUP: Step 5
-        //Get a reference to the buttons on in the view and set their text
+        //Get a reference to the buttons in the view and set their text
         //depending on whether the user is the deal or the player
         final Button button1 = (Button) findViewById(R.id.button1);
         final Button button2 = (Button) findViewById(R.id.button2);
@@ -197,9 +198,7 @@ public class GameplayActivity extends Activity {
         final Button button7 = (Button) findViewById(R.id.button7);
         final Button button8 = (Button) findViewById(R.id.button8);
 
-        final Drawable originalBackground = button1.getBackground();
-
-        //If the user is the dealer, set the text for all the buttons to "WAIT FOR REPSONSE". There should only be
+        //If the user is the dealer, set the text for all the buttons to "WAIT FOR RESPONSE". There should only be
         //enough buttons for all the players in the game minus the dealer. If the user is not the dealer than their
         //response cards, from the cards array variable, will be used to set the buttons' text.
         if (dealer) {
@@ -228,12 +227,12 @@ public class GameplayActivity extends Activity {
         turnThread=new Turn();
         turnThread.start();
 
-        //The handler will recieve messages sent but the Turn thread and update the widgets on the view
-        //depending on the date in the message
+        //The handler will receive messages sent but the Turn thread and update the widgets on the view
+        //depending on the data in the message
         handler=new Handler(){
             @Override
             public void handleMessage(Message msg) {
-                //When a message is recieved get the bundle holding the data to be processed. From the
+                //When a message is received get the bundle holding the data to be processed. From the
                 //bundle retrieve the operation and data information
                 Bundle bundle = msg.getData();
                 String operation = bundle.getString("operation");
@@ -246,12 +245,11 @@ public class GameplayActivity extends Activity {
                     TextView baitTextView = (TextView) findViewById(R.id.baitTextView);
                     baitTextView.setText(data);
                 //If the operation is to display the buttons then the data is a pipe delimited list string where
-                //where each delimited value is the text for one of the buttons on the screen. The number of buttons
+                //each delimited value is the text for one of the buttons on the screen. The number of buttons
                 //that will be displayed is based on the number of delimited values in the data string
                 } else if (operation.equals("displayButtons")) {
                     // Note: Data for this arrives as something like "empty|button1Text|button2Text"
                     // The displayButtons code below breaks up the data to figure out how many buttons to display
-                    // If winner is being highlighted, winner will contain a string other than "0"
                     String [] buttonArray = data.split("\\|");
                     int numButtons = buttonArray.length-1;
                     if (numButtons>0) { // BUTTON 1 DISPLAY
@@ -309,9 +307,8 @@ public class GameplayActivity extends Activity {
                     } else {
                         button8.setVisibility(View.GONE);
                     } // end BUTTON 8 DISPLAY
-                //If the operation is new response the set the button that was clicked by
-                //the user to be unclicked and set the text for that button to the newly
-                //drawn response card
+                //If the operation is new response then set the button that was clicked by
+                //the user tothe text for that button to the newly drawn response card
                 } else if (operation.equals("newResponse")) { // FOR JUST CHANGING BUTTON LAST CLICKED
                     if (buttonClicked==1) { button1.setText(data); } else
                     if (buttonClicked==2) { button2.setText(data); } else
@@ -321,13 +318,13 @@ public class GameplayActivity extends Activity {
                     if (buttonClicked==6) { button6.setText(data); } else
                     if (buttonClicked==7) { button7.setText(data); } else
                     if (buttonClicked==8) { button8.setText(data); }
-                //IF the operation is to display the winner than the data contains information about
+                //If the operation is to display the winner, then the data contains information about
                 //what response card won the round and this user's current point total. Display this
                 //information in the winnnerTextView widget in the view
                 } else if (operation.equals("displayWinner")){
                     TextView winnerTextView = (TextView) findViewById(R.id.winnerText);
                     winnerTextView.setText(data);
-                //If the operation is to update the application title then update the title bar
+                //If the operation is to update the application title, then update the title bar
                 //to display the current round
                 } else if (operation.equals("updateAppBarTitle")){
                     getActionBar().setTitle("Round " + round);
@@ -338,7 +335,7 @@ public class GameplayActivity extends Activity {
 
     @Override
     /**
-     * THe method is required by the interface. It currently has no unique functionslity for the app
+     * The method is required by the interface. It currently has no unique functionality for the app
      */
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -348,7 +345,7 @@ public class GameplayActivity extends Activity {
 
     @Override
     /**
-     * THe method is required by the interface. It currently has no unique functionslity for the app
+     * The method is required by the interface. It currently has no unique functionality for the app
      */
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -387,7 +384,7 @@ public class GameplayActivity extends Activity {
                 //to display the bait
 
                 //The user will wait until the bait question has been set. The user will query the
-                //the database for the bait eabout every second until the bait is set.
+                //the database for the bait about every second until the bait is set.
                 boolean baitNotSet = true;
                 while (baitNotSet) {
                     //if the bait has not been set sleep for about 1 second
@@ -414,7 +411,7 @@ public class GameplayActivity extends Activity {
                         e.printStackTrace();
                     }
 
-                    //If turn progress inicated the bait has been set then
+                    //If turn progress indicated the bait has been set then
                     //set the variable to stop the wait loop from running
                     if (result.equals("baitset")) {
                         baitNotSet=false;
@@ -436,7 +433,7 @@ public class GameplayActivity extends Activity {
                     e.printStackTrace();
                 }
 
-                //Send the bait question in a message to the handle to be displayed
+                //Send the bait question in a message to the handler to be displayed
                 msg = Message.obtain();
                 Bundle gpDisplayBaitBundle = new Bundle();
                 handler.removeCallbacks(this);  // Clear message queue
@@ -447,7 +444,7 @@ public class GameplayActivity extends Activity {
 
 
                 //GAMEPLAY All: Step 2
-                //Increment the round and send a message to the handled to update the title bar
+                //Increment the round and send a message to the handler to update the title bar
                 //with the round information
                 round++;
 
@@ -477,12 +474,12 @@ public class GameplayActivity extends Activity {
                 if (myUserNum==Integer.parseInt(result)) { dealer = true; } else { dealer = false; }
                 System.out.println("Dealer = "+result+"; myUserNum = "+myUserNum+"; so me being dealer = "+dealer);
 
-                //If the user is the deal one set op steps will be followed. If the user is not
-                //the dealler than another set of steps will be followed
+                //If the user is the dealer one set of steps will be followed (the code immediately below).
+                // If the user is not the dealer than another set of steps will be followed (over 250 lines down)
                 if (dealer) { // DEALER CODE
                     //GAMEPLAY DEALER: Step 1
                     //Send a message to the handler so that all the dealer's button will display "WAIT FOR RESPONSE".
-                    //This is the default until all the users have submitted their reponses to the bait question
+                    //This is the default until all the users have submitted their responses to the bait question
                     String buttonText = "empty|";
                     for (int i = 1; i < numusers; i++) {
                         buttonText=buttonText+"WAIT FOR RESPONSE|";
@@ -528,9 +525,9 @@ public class GameplayActivity extends Activity {
                         }
 
                         // STEP 2B: DISPLAY RESPONSES
-                        // Send a message to the handled with the users' responses so they will be
+                        // Send a message to the handler with the users' responses so they will be
                         // displayed as the text of the button widgets on the dealer's view
-                        if (!result.equals("Submissions are neither empty nor full")) {
+                        if (!result.equals("Submissions are not desired state (empty or full)")) {
                             // Pad result, since display function does not use responses[0]
                             result = "empty|"+result;
 
@@ -551,7 +548,7 @@ public class GameplayActivity extends Activity {
 
 
                     //GAMEPLAY DEALER: Step 3
-                    //Update the database. Set turnprogress in the gamestate table to allresponses in
+                    //Update the database. Set turnprogress in the gamestate table to allresponsesin
                     try {
                         String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_set_turn_progress.php";
                         HttpClient httpclient = new DefaultHttpClient();
@@ -688,11 +685,11 @@ public class GameplayActivity extends Activity {
                     //GAMEPLAY DEALER: Step 8
                     //After the round is over query the database to get all the user's responses. Wait
                     //until all the responses have been set to the default. Then get the next
-                    //bait qustion and set it the gamestate table
+                    //bait question and set activebait in the gamestate table
 
-                    // STEP 8: wAIT FOR USER'S SUBNISSION TO BE RESET
-                    //Keep querying the submissions in the users table until all submisions
-                    //habve been reset, Sleep for about 1 second between queries
+                    // STEP 8: WAIT FOR USER'S SUBMISSIONS TO BE RESET
+                    //Keep querying the submissions in the users table until all submissions
+                    //have been reset, Sleep for about 1 second between queries
                     waitForAllSubmissions=true;
                     while (waitForAllSubmissions) {
                         try {
@@ -719,7 +716,7 @@ public class GameplayActivity extends Activity {
                             e.printStackTrace();
                         }
 
-                        if (!result.equals("Submissions are neither empty nor full")) {
+                        if (!result.equals("Submissions are not desired state (empty or full)")) {
                             System.out.println("Dealer moving to set bait");
                             waitForAllSubmissions=false;
                         }
@@ -746,7 +743,7 @@ public class GameplayActivity extends Activity {
                 } else { // NON-DEALER CODE
                     //GAMEPLAY NON-DEALER: STEP 1
                     //Send a message to the handler to set the player's buttons
-                    //to display their response cards, stored in the cards array variable
+                    //to display their response cards stored in the cards array variable
                     msg = Message.obtain();
                     Bundle notDealerDefaultButtonBundle = new Bundle();
                     handler.removeCallbacks(this);  // Clear message queue
@@ -761,7 +758,7 @@ public class GameplayActivity extends Activity {
 
 
                     //GAMEPLAY NON-DEALER: STEP 2
-                    //User select their repsonse card to the bati question
+                    //User select their response card to the bait question
 
                     //STEP 2A: Wait for user to select response card
                     synchronized (this) {
@@ -777,7 +774,7 @@ public class GameplayActivity extends Activity {
                     //and go back to the beginning of the loop
                     if (!running) continue;
 
-                    // STEP 2B: Store the user's response in the users table and get the next reponse
+                    // STEP 2B: Store the user's response in the users table and get the next response
                     // card from the table.
                     try {
                         String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_user_submit.php";
@@ -800,8 +797,7 @@ public class GameplayActivity extends Activity {
                     // the newly drawn response from step 2B
                     cards[buttonClicked]=result;
 
-                    // STEP 2D: send a message to the handle to unclick the user's reponse
-                    // button and set the text to the new reponse card
+                    // STEP 2D: send a message to the handler to set the text to the new reponse card
                     msg = Message.obtain();
                     Bundle notDealerNewCardBundle = new Bundle();
                     handler.removeCallbacks(this);  // Clear message queue
@@ -812,7 +808,7 @@ public class GameplayActivity extends Activity {
 
                     //GAMEPLAY NON-DEALER: STEP 3
                     // Wait until all users have submitted their responses. Query the database about
-                    // ever 1 seconds to check if all responses have been submitted.
+                    // every second to check if all responses have been submitted.
                     boolean waitForAllSubmissions = true;
                     while (waitForAllSubmissions) {
                         try {
@@ -823,8 +819,8 @@ public class GameplayActivity extends Activity {
                             break;
                         }
 
-                        // Query the databse to get turn progress and see if it indicats all
-                        // response ahve been submitted
+                        // Query the database to get turn progress and see if it indicates all
+                        // response have been submitted
                         try {
                             String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_turn_progress.php";
                             HttpClient httpclient = new DefaultHttpClient();
@@ -849,8 +845,8 @@ public class GameplayActivity extends Activity {
                     if (!running) continue;
 
                     //GAMEPLAY NON-DEALER: STEP 4
-                    //Get all the users' response. These will be displayed with a future enhancement to the game
-                    // Note: ccz_get_users_responses.php returns "Submissions are neither empty nor full" when responses aren't all ready.
+                    //Get all the users' responses. These will be displayed with a future enhancement to the game
+                    // Note: ccz_get_users_responses.php returns "Submissions are not desired state (empty or full)" when responses aren't all ready.
                     //       When ready, it returns the actual responses from all users.
                     // In this case, it should be full, since turnprogress was set to allresponsesin
                     try {
@@ -874,9 +870,9 @@ public class GameplayActivity extends Activity {
                     responses = "empty|"+result;
 
                     //GAMEPLAY NON-DEALER: STEP 5
-                    //Wait for the dealer to pick the wining response, indicated by the turn progress. Turn
+                    //Wait for the dealer to pick the winning response, indicated by the turn progress. Turn
                     //progress will either be winner picked or game over. Turn progress will be queried about
-                    //every 1 seconds until the appropriate reposnse is returned.
+                    //every second until the appropriate response is returned.
                     boolean waitForDealer = true;
                     while (waitForDealer) {
                         try {
@@ -887,7 +883,7 @@ public class GameplayActivity extends Activity {
                             break;
                         }
 
-                        //Query the databse to get the turn progress
+                        //Query the database to get the turn progress
                         try {
                             String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_turn_progress.php";
                             HttpClient httpclient = new DefaultHttpClient();
@@ -964,7 +960,7 @@ public class GameplayActivity extends Activity {
                     }
 
                     // STEP 7B: DISPLAY WINNER
-                    //Get the this user's points from the database to display to the user
+                    //Get this user's points from the database to display to the user
                     String userPoints = "-1";
                     try {
                         String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_user_points.php";
@@ -993,7 +989,8 @@ public class GameplayActivity extends Activity {
                     handler.sendMessage(msg);
 
                     //GAMEPLAY NON-DEALER: STEP 8
-                    // Set this user response submission to the defaul value in the users table
+                    // Set this user response submission to the default value (WAIT FOR RESPONSE) in the users table
+                    // This serves to 1. Signal the dealer to proceed, 2. show WAIT FOR RESPONSE to new dealer
                     try {
                         String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_change_single_response.php";
                         HttpClient httpclient = new DefaultHttpClient();
@@ -1018,7 +1015,7 @@ public class GameplayActivity extends Activity {
 
 
     /**
-     * There is a button click bethod for each button. Each method will get the button number and the button's text balue
+     * There is a button click method for each button. Each method will get the button number and the button's text value
      */
     public void button1Click(View view) {
         System.out.println("button1Click");
@@ -1094,14 +1091,14 @@ public class GameplayActivity extends Activity {
     } // end buttonClick
 
     /**
-     * If the guit button is clicked it will stop the Turn thread from running, delete the user
+     * If the quit button is clicked it will stop the Turn thread from running, delete the user
      * from the database and direct the user to the quit game activity
      * @param view
      */
     public void quitButtonClick(View view) {
         Button quitButton = (Button) findViewById(R.id.quit_button);
 
-        //INterrupt the Turn thread and stop it running
+        //Interrupt the Turn thread and stop it running
         Log.d("Thread", "Interrupting turn thread");
         synchronized (turnThread) {
             turnThread.interrupt();
@@ -1137,7 +1134,7 @@ public class GameplayActivity extends Activity {
     }
 
     /**
-     * The method will stop the Turn thread from running and direct the user
+     * This method will stop the Turn thread from running and direct the user
      * to the game over activity
      */
     public void intentToGameOver() {

@@ -14,7 +14,7 @@ import android.view.View;
  * Date: October 4, 2015
  * Class: CMSC495 6381
  * Instructor: Paul Comitz
- * Problem: Card Czar Android App
+ * Project: Card Czar Android App
  * Purpose: The class will handle the functionality when a Card Czar starts the app
  * Status: Ready
  * Notes: None
@@ -23,8 +23,7 @@ import android.view.View;
 public class MainActivity extends Activity {
 
     /**
-     * This method is called on creation of the activity. It will display the specified layout to the user
-     * and perform some initial data retrieval and setup
+     * This method is called on creation of the activity.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +32,7 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * THe method is required by the interface. It currently has no unique functionslity for the app
+     * The method is required by the interface. It currently has no unique functionality for the app
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -43,7 +42,7 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * THe method is required by the interface. It currently has no unique functionslity for the app
+     * The method is required by the interface. It currently has no unique functionality for the app
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

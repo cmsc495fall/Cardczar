@@ -35,18 +35,17 @@ import java.util.regex.Pattern;
  * Date: October 4, 2015
  * Class: CMSC495 6381
  * Instructor: Paul Comitz
- * Problem: Card Czar Android App
- * Purpose: The class will handle the functionality when a Card Czar player decides to host a new gane
+ * Project: Card Czar Android App
+ * Purpose: The class will handle the functionality when a Card Czar player decides to host a new game
  * Status: Ready
  * Notes: None
  */
 public class HostStartActivity extends Activity {
-    /** Holds the response that comes back from the middleware when database interactions are preformed**/
+    /** Holds the response that comes back from the middleware when database interactions are performed**/
     String result;
 
     /**
-     * This method is called on creation of the activity. It will display the specified layout to the user
-     * and perform some initial data retrieval and setup
+     * This method is called on creation of the activity.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +54,7 @@ public class HostStartActivity extends Activity {
     }
 
     /**
-     * THe method is required by the interface. It currently has no unique functionslity for the app
+     * The method is required by the interface. It currently has no unique functionality for the app
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -65,7 +64,7 @@ public class HostStartActivity extends Activity {
     }
 
     /**
-     * THe method is required by the interface. It currently has no unique functionslity for the app
+     * The method is required by the interface. It currently has no unique functionality for the app
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -95,7 +94,7 @@ public class HostStartActivity extends Activity {
 
         //The roomname will be used to create the database and can only contain
         //certain information. Use a regular expression match to ensure the
-        //roomname contains no illegal characters. If ti does display an error message
+        //roomname contains no illegal characters. If it does display an error message
         //to the user and stay on this sctivity
         String pattern = "\\w+";
         Pattern r = Pattern.compile(pattern);

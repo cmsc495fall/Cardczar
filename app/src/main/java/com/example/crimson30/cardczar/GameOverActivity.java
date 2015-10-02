@@ -30,8 +30,8 @@ import java.util.Objects;
  * Date: October 4, 2015
  * Class: CMSC495 6381
  * Instructor: Paul Comitz
- * Problem: Card Czar Android App
- * Purpose: The class will handle the functionality when a Card Czar game is completed. The class will display
+ * Project: Card Czar Android App
+ * Purpose: This class will handle the functionality when a Card Czar game is completed. The class will display
  *          to the player that the game is over, who won the game and let them go back to the main
  *          game page to start a new game.
  * Status: Ready
@@ -39,11 +39,11 @@ import java.util.Objects;
  */
 
 public class GameOverActivity extends Activity {
-    /** Holds the response that comes back from the middleware when database interactions are preformed**/
+    /** Holds the response that comes back from the middleware when database interactions are performed**/
     String result;
     /** The name of the room for the game. It represents the game being played and is also used to as the database name to hold game information**/
     String roomname;
-    /** The name of the user who won the game and will be diaplayed to the user**/
+    /** The name of the user who won the game and will be displayed to the user**/
     String winningUser;
 
     @Override
@@ -60,7 +60,7 @@ public class GameOverActivity extends Activity {
         Bundle extras = getIntent().getExtras();
         roomname = extras.getString("roomname");
 
-        //Make an HTTP call to the database to get the name of the user that one the game
+        //Make an HTTP call to the database to get the name of the user that won the game
         try {
             String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_winning_username.php";
             HttpClient httpclient = new DefaultHttpClient();
@@ -99,7 +99,7 @@ public class GameOverActivity extends Activity {
 
     @Override
     /**
-     * THe method is required by the interface. It currently has no unique functionslity for the app
+     * The method is required by the interface. It currently has no unique functionality for the app
      */
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -109,7 +109,7 @@ public class GameOverActivity extends Activity {
 
     @Override
     /**
-     * THe method is required by the interface. It currently has no unique functionslity for the app
+     * The method is required by the interface. It currently has no unique functionality for the app
      */
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will

@@ -33,7 +33,7 @@ import java.util.Objects;
  * Date: October 4, 2015
  * Class: CMSC495 6381
  * Instructor: Paul Comitz
- * Problem: Card Czar Android App
+ * Project: Card Czar Android App
  * Purpose: The class will handle the functionality when a user has hosted a game and is waiting for enough users
  *          to join and start a game
  * Status: Ready
@@ -44,7 +44,7 @@ public class RoomActivity extends Activity {
     String result;
     /** The name of the room for the game. It represents the game being played and is also used to as the database name to hold game information**/
     String roomname;
-    /** The anme of the user playing the game **/
+    /** The name of the user playing the game **/
     String username;
     /** The number of users currently in the game */
     int numusers;
@@ -68,7 +68,7 @@ public class RoomActivity extends Activity {
     }
 
     /**
-     * THe method is required by the interface. It currently has no unique functionslity for the app
+     * The method is required by the interface. It currently has no unique functionality for the app
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -78,7 +78,7 @@ public class RoomActivity extends Activity {
     }
 
     /**
-     * THe method is required by the interface. It currently has no unique functionslity for the app
+     * The method is required by the interface. It currently has no unique functionality for the app
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -122,7 +122,7 @@ public class RoomActivity extends Activity {
                 e.printStackTrace();
             }
 
-            // If server result=OK, direct the user to the game play acitivity
+            // If server result=OK, direct the user to the game play activity
             if (Objects.equals(result, "OK")) {
                 Intent roomIntent = new Intent(this, GameplayActivity.class);
                 Bundle extras = new Bundle();
@@ -132,7 +132,7 @@ public class RoomActivity extends Activity {
                 roomIntent.putExtras(extras);
                 startActivity(roomIntent);
             } // end if server result=OK
-        //If the there are enough playes or to many players than display an error to the user
+        //If the there aren't enough players or too many players than display an error to the user
         } else { // wrong number of users
             TextView statusTextView = (TextView) findViewById(R.id.statusTextView);
             statusTextView.setText("  3-9 users ("+numusers+")");
