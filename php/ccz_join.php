@@ -1,68 +1,75 @@
 <?php
 
-// LINK TO SQL
-$link = mysql_connect('localhost', 'root', 'cmsc495fall');
-if (!$link) { die('Could not connect: ' . mysql_error()); }
-
 // GET POST DATA
 $db_name = urlencode($_POST["roomname"]);
 $username = urlencode($_POST["username"]);
 
+// LINK TO SQL
+$link = mysqli_connect('localhost', 'root', 'cmsc495fall');
+if (!$link) { die('Could not connect: ' . mysqli_connect_error()); }
+
+
 // SELECT DB
-if (mysql_select_db($db_name, $link)) {
+if (mysqli_select_db($link, $db_name)) {
     $connected = TRUE;
 } else {
-    echo 'Error selecting database: '.mysql_error();
+    echo 'Error selecting database: '.mysqli_error();
     $connected = FALSE;
 }
 
 // UPDATE TABLES
 if (connected) {
 
- //Check to see if the user already exists
- $result = mysql_query("SELECT count(*) from users where username='$username'");
- $row = mysql_fetch_assoc($result);
+ // Check to see if the user already exists
+ $prepared_statment = mysqli_prepare($link, "SELECT count(*) from users where username=?");
+ mysqli_stmt_bind_param($prepared_statment, 's', $u);
+ $u = $username;
+ mysqli_stmt_execute($prepared_statment);
+ $result = mysqli_stmt_get_result($prepared_statment);
+ $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+
  $usercount = $row['count(*)'];
  if ($usercount > 0){
      die("Username '$username' has already been taken. Choose another username");
   }
 
-  $result = mysql_query("SELECT count(*) from users");
-  $row = mysql_fetch_assoc($result);
+  $query = "SELECT count(*) from users";
+  $result = mysqli_query($link, $query);
+  $row = mysqli_fetch_assoc($result);
   $usercount = $row['count(*)'];
   if ($usercount == 6){
     die("Room $db_name is alreay full. Please join another room");
   }
 
-  $result = mysql_query("SELECT started from gamestate");
-  $row = mysql_fetch_assoc($result);
+  $query = "SELECT started from gamestate";
+  $result = mysqli_query($link, $query);
+  $row = mysqli_fetch_assoc($result);
   if ($row[started]){
      die("The game has already started so you will not be able to join. Please join another room");
   }
 
-
   // ADD USER TO users
-  $query = "INSERT INTO users (username, points, submission, timelastcontact) VALUES ('".$username."', 0, 'WAIT FOR RESPONSE', ".time().");";
-  if (mysql_query($query, $link)) {
-    echo "OK";
-    $inserted = TRUE;
-  } else {
-      echo 'Error: ' . mysql_error() . "\n";
-      $inserted = FALSE;
-  }
+  $prepared_statment = mysqli_prepare($link, "INSERT INTO users (username, points, submission) VALUES (?, ?, ?)");
+  mysqli_stmt_bind_param($prepared_statment, 'sis', $u, $p, $s);
+  $u = $username;
+  $p = 0;
+  $s = "WAIT FOR RESPONSE";
+  if (mysqli_stmt_execute($prepared_statment)) { echo "OK"; $inserted = true; }
+  mysqli_stmt_close($prepared_statment);
 
   // INCREMENT NUMUSERS IN gamestate
   if ($inserted) {
-    $tablecontents = mysql_query("SELECT * FROM gamestate");
-    if ($myrow = mysql_fetch_array($tablecontents))
+  $query = "SELECT * FROM gamestate";
+  $result = mysqli_query($link, $query);
+    if ($myrow = mysqli_fetch_array($result))
         $numusers = $myrow["numusers"];
         $numusers++;
         $query = "UPDATE gamestate SET numusers=".$numusers." WHERE id=1;  ";
-        mysql_query($query, $link) or die("Update DB Error: ".mysql_error());
+        mysqli_query($link, $query) or die("Update DB Error: ".mysqli_error());
   }
 }
 
 // CLOSE DATABASE
-mysql_close($link);
+mysqli_close($link);
 
 ?>

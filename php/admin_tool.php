@@ -49,6 +49,23 @@ $db_name = $_SERVER['QUERY_STRING']
  </tr>
 
  <tr>
+  <td>
+  ccz_get_dealer_num.php<br>
+  <form action="ccz_get_dealer_num.php" method="post" target="_top">
+  Room: <INPUT size="30" name="roomname" value="<?php echo $db_name;?>">
+  <br>
+  <input type="submit" name="submit" value="Submit" />
+  </form>
+  </td>
+
+  <td>
+  ccz_get_bait.php<br>
+  <form action="ccz_get_bait.php" method="post" target="_top">
+  Room: <INPUT size="30" name="roomname" value="<?php echo $db_name;?>">
+  <br>
+  <input type="submit" name="submit" value="Submit" />
+  </form>
+  </td>
 
   <td>
   ccz_set_bait.php<br>
@@ -74,7 +91,9 @@ $db_name = $_SERVER['QUERY_STRING']
   <input type="submit" name="submit" value="Submit" />
   </form>
   </td>
+ </tr>
 
+ <tr>
   <td>
   ccz_user_list.php<br>
   <form action="ccz_user_list.php" method="post" target="_top">
@@ -83,19 +102,6 @@ $db_name = $_SERVER['QUERY_STRING']
   <input type="submit" name="submit" value="Submit" />
   </form>
   </td>
-
-  <td>
-  ccz_get_bait.php<br>
-  <form action="ccz_get_bait.php" method="post" target="_top">
-  Room: <INPUT size="30" name="roomname" value="<?php echo $db_name;?>">
-  <br>
-  <input type="submit" name="submit" value="Submit" />
-  </form>
-  </td>
-
- </tr>
-
- <tr>
 
   <td>
   ccz_get_users_responses.php<br>
@@ -131,6 +137,9 @@ $db_name = $_SERVER['QUERY_STRING']
   </form>
   </td>
 
+ </tr>
+
+ <tr>
   <td>
   ccz_set_turn_progress.php<br>
   <form action="ccz_set_turn_progress.php" method="post" target="_top">
@@ -146,10 +155,6 @@ $db_name = $_SERVER['QUERY_STRING']
   <input type="submit" name="submit" value="Submit" />
   </form>
   </td>
-
- </tr>
-
- <tr>
 
   <td>
   ccz_process_winner.php<br>
@@ -190,7 +195,9 @@ $db_name = $_SERVER['QUERY_STRING']
   <input type="submit" name="submit" value="Submit" />
   </form>
   </td>
+ </tr>
 
+ <tr>
    <td>
   ccz_get_winner.php<br>
   <form action="ccz_get_winner.php" method="post" target="_top">
@@ -199,11 +206,6 @@ $db_name = $_SERVER['QUERY_STRING']
   <input type="submit" name="submit" value="Submit" />
   </form>
   </td>
-
-
- </tr>
-
- <tr>
 
   <td>
     ccz_get_user_points.php<br>
@@ -235,17 +237,6 @@ $db_name = $_SERVER['QUERY_STRING']
   </form>
   </td>
 
-
-   <td>
-    ccz_get_user_count.php<br>
-    <form action="ccz_get_user_count.php" method="post" target="_top">
-    Room: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<INPUT size="30" name="roomname" value="<?php echo $db_name;?>"><br>
-    <br>
-    <input type="submit" name="submit" value="Submit" />
-    </form>
-    </td>
-
-
    <td>
        ccz_delete_db.php<br>
        <form action="ccz_delete_db.php" method="post" target="_top">
@@ -254,15 +245,21 @@ $db_name = $_SERVER['QUERY_STRING']
        <input type="submit" name="submit" value="Submit" />
        </form>
    </td>
-
-
-
  </tr>
 
  <tr>
     <td>
         ccz_get_winning_username.php<br>
         <form action="ccz_get_winning_username.php" method="post" target="_top">
+             Room: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<INPUT size="30" name="roomname" value="<?php echo $db_name;?>"><br>
+             <br>
+             <input type="submit" name="submit" value="Submit" />
+        </form>
+    </td>
+
+    <td>
+        ccz_get_winner_num.php<br>
+        <form action="ccz_get_winner_num.php" method="post" target="_top">
              Room: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<INPUT size="30" name="roomname" value="<?php echo $db_name;?>"><br>
              <br>
              <input type="submit" name="submit" value="Submit" />

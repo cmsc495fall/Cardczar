@@ -1,33 +1,35 @@
 <?php
 
-// LINK TO SQL
-$link = mysql_connect('localhost', 'root', 'cmsc495fall');
-if (!$link) { die('Could not connect: ' . mysql_error()); }
-
 // PULL POST DATA
-// $db_name = $_SERVER['QUERY_STRING'];
 $db_name = urlencode($_POST["roomname"]);
 $username = urlencode($_POST["username"]);
 $submission = urlencode($_POST["submission"]);
 
+// LINK TO SQL
+$link = mysqli_connect('localhost', 'root', 'cmsc495fall');
+if (!$link) { die('Could not connect: ' . mysqli_connect_error()); }
 
 // SELECT THAT DB
-mysql_select_db($db_name , $link) or die("Select DB Error: ".mysql_error());
-
+mysqli_select_db($link, $db_name) or die("Select DB Error: ".mysqli_error());
 
 // SET submission IN users
-$query = "UPDATE users SET submission='$submission' WHERE username='$username';";
-mysql_query($query, $link) or die("User submit--Set submission error: ".mysql_error()); 
+$prepared_statment = mysqli_prepare($link, "UPDATE users SET submission=? WHERE username=?;");
+mysqli_stmt_bind_param($prepared_statment, 'ss', $s, $u);
+$s = $submission;
+$u = $username;
+mysqli_stmt_execute($prepared_statment);
+mysqli_stmt_close($prepared_statment);
 
 // GET new response, ECHO, then delete from responses
-$result = mysql_query("SELECT text FROM responses LIMIT 1") or die(mysql_error());
-$row = mysql_fetch_assoc($result);
+$query = "SELECT text FROM responses LIMIT 1";
+$result = mysqli_query($link, $query);
+$row = mysqli_fetch_assoc($result);
 $response_text = $row[text];
 echo urldecode($response_text);
 $query = "DELETE FROM responses where text = '$response_text'";
-mysql_query($query, $link) or die("User submit--get new card error: ".mysql_error());
+mysqli_query($link, $query) or die("User submit--get new card error: ".mysqli_error());
 
 // CLOSE DATABASE
-mysql_close($link);
+mysqli_close($link);
 
 ?>

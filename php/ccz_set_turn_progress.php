@@ -1,22 +1,25 @@
 <?php
 
-// LINK TO SQL
-$link = mysql_connect('localhost', 'root', 'cmsc495fall');
-if (!$link) { die('Could not connect: ' . mysql_error()); }
-
 // PULL POST DATA
-//$db_name = $_SERVER['QUERY_STRING'];
 $db_name = urlencode($_POST["roomname"]);
-$turnprogress = urlencode($_POST["turnprogress"]);
+$turn_progress = urlencode($_POST["turnprogress"]);
+
+// LINK TO SQL
+$link = mysqli_connect('localhost', 'root', 'cmsc495fall');
+if (!$link) { die('Could not connect: ' . mysqli_connect_error()); }
 
 // SELECT THAT DB
-mysql_select_db($db_name , $link) or die("set turn progress Select DB Error: ".mysql_error());
+mysqli_select_db($link, $db_name) or die("set turn progress Select DB Error: ".mysqli_error());
 
 // SET turnprogress IN GAMESTATE
-$query = "UPDATE gamestate SET turnprogress='$turnprogress' WHERE id=1;";
-mysql_query($query, $link) or die("set turnprogress error: ".mysql_error()); 
+$prepared_statment = mysqli_prepare($link, "UPDATE gamestate SET turnprogress=? WHERE id=1;");
+mysqli_stmt_bind_param($prepared_statment, 's', $t);
+$t = $turn_progress;
+mysqli_stmt_execute($prepared_statment);
+mysqli_stmt_close($prepared_statment);
+
 
 // CLOSE DATABASE
-mysql_close($link);
+mysqli_close($link);
 
 ?>

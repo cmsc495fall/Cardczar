@@ -1,17 +1,17 @@
 <?php
 
-// LINK TO SQL
-$link = mysql_connect('localhost', 'root', 'cmsc495fall');
-if (!$link) { die('Could not connect: ' . mysql_error()); }
-
 // GET POST DATA
 $db_name = urlencode($_POST["roomname"]);
 
+// LINK TO SQL
+$link = mysqli_connect('localhost', 'root', 'cmsc495fall');
+if (!$link) { die('Could not connect: ' . mysqli_connect_error()); }
+
 // Delete DB
 $query = 'DROP DATABASE '.$db_name;
-mysql_query($query, $link) or die("Delete DB Error: ".mysql_error());
+mysqli_query($link, $query) or die("Delete DB Error: ".mysqli_error());
 
 // CLOSE DATABASE
-mysql_close($link);
+mysqli_close($link);
 
 ?>

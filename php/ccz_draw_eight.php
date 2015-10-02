@@ -1,28 +1,28 @@
 <?php
 
-// LINK TO SQL
-$link = mysql_connect('localhost', 'root', 'cmsc495fall');
-if (!$link) { die('Could not connect: ' . mysql_error()); }
-
 // PULL POST DATA
-// $db_name = $_SERVER['QUERY_STRING'];
 $db_name = urlencode($_POST["roomname"]);
 
-// SELECT THAT DB
-mysql_select_db($db_name , $link) or die("draw eight Select DB Error: ".mysql_error());
+// LINK TO SQL
+$link = mysqli_connect('localhost', 'root', 'cmsc495fall');
+if (!$link) { die('Could not connect: ' . mysqli_connect_error()); }
 
-$tablecontents = mysql_query("SELECT * FROM responses");
+// SELECT THAT DB
+mysqli_select_db($link, $db_name) or die("draw eight Select DB Error: ".mysqli_error());
+
+$query = "SELECT * FROM responses";
+$tablecontents = mysqli_query($link, $query);
 
 for ($i = 1; $i <= 8; $i++) {
-  if ($myrow = mysql_fetch_array($tablecontents)) {
+  if ($myrow = mysqli_fetch_array($tablecontents)) {
     $response_text = $myrow[text];
     echo urldecode($response_text)."|";
     $query = "DELETE FROM responses where text = '$response_text'";
-    mysql_query($query, $link) or die("draw eight Delete row error: ".mysql_error()); 
+    mysqli_query($link, $query) or die("draw eight Delete row error: ".mysqli_error()); 
   }  else  { echo "Select rows error"; }
 } // end for
 
 // CLOSE DATABASE
-mysql_close($link);
+mysqli_close($link);
 
 ?>

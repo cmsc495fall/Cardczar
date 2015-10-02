@@ -1,30 +1,30 @@
 <?php
 
-// LINK TO SQL
-$link = mysql_connect('localhost', 'root', 'cmsc495fall');
-if (!$link) { die('Could not connect: ' . mysql_error()); }
-
 // PULL POST DATA
-// $db_name = $_SERVER['QUERY_STRING'];
 $db_name = urlencode($_POST["roomname"]);
 
+// LINK TO SQL
+$link = mysqli_connect('localhost', 'root', 'cmsc495fall');
+if (!$link) { die('Could not connect: ' . mysqli_connect_error()); }
+
 // SELECT THAT DB
-mysql_select_db($db_name , $link) or die("user list Select DB Error: ".mysql_error());
+mysqli_select_db($link, $db_name) or die("user list Select DB Error: ".mysqli_error());
 
 // GET USERS (do while because for mysql_fetch_array gets first user)
-$tablecontents = mysql_query("SELECT * FROM users");
-if ($myrow = mysql_fetch_array($tablecontents))
+$query = "SELECT * FROM users";
+$tablecontents = mysqli_query($link, $query);
+if ($myrow = mysqli_fetch_array($tablecontents))
   {  $num = 1;
      do
-        { echo $num." ".$myrow["username"]."|";  // DO NOT URLDECODE HERE!
+        { echo $num." ".$myrow["username"]."|";  // DON'T URLDECODE HERE! (done in app because spaces)
           $num++;
         } 
-     while ($myrow = mysql_fetch_array($tablecontents));
+     while ($myrow = mysqli_fetch_array($tablecontents));
   } 
   else  { echo "User list SELECT * FROM users Error"; }
 
 // CLOSE DATABASE
-mysql_close($link);
+mysqli_close($link);
 
 
 ?>
