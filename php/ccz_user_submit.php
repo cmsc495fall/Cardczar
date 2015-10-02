@@ -1,18 +1,21 @@
+<!-- This PHP file is for changing the user response submission in the database
+     and echoing a new response to the user (to refill their hand) -->
+
 <?php
 
-// PULL POST DATA
+// GET POST DATA FROM APACHE (DATA PASSED FROM APP) AND URLENCODE IT
 $db_name = urlencode($_POST["roomname"]);
 $username = urlencode($_POST["username"]);
 $submission = urlencode($_POST["submission"]);
 
-// LINK TO SQL
+// LINK TO MYSQL
 $link = mysqli_connect('localhost', 'root', 'cmsc495fall');
 if (!$link) { die('Could not connect: ' . mysqli_connect_error()); }
 
-// SELECT THAT DB
+// SELECT THE DB CORRESPONDING TO THE ROOM NAME
 mysqli_select_db($link, $db_name) or die("Select DB Error: ".mysqli_error());
 
-// SET submission IN users
+// SET submission IN users USING PREPARED STATEMENT TO FOIL SQL INJECTION ATTACKS
 $prepared_statment = mysqli_prepare($link, "UPDATE users SET submission=? WHERE username=?;");
 mysqli_stmt_bind_param($prepared_statment, 'ss', $s, $u);
 $s = $submission;
@@ -20,7 +23,7 @@ $u = $username;
 mysqli_stmt_execute($prepared_statment);
 mysqli_stmt_close($prepared_statment);
 
-// GET new response, ECHO, then delete from responses
+// GET NEW RESPONSE, ECHO TO APP FOR USER, THEN DELETE RESPONSE FROM DATABASE
 $query = "SELECT text FROM responses LIMIT 1";
 $result = mysqli_query($link, $query);
 $row = mysqli_fetch_assoc($result);
@@ -29,7 +32,7 @@ echo urldecode($response_text);
 $query = "DELETE FROM responses where text = '$response_text'";
 mysqli_query($link, $query) or die("User submit--get new card error: ".mysqli_error());
 
-// CLOSE DATABASE
+// CLOSE MYSQL LINK
 mysqli_close($link);
 
 ?>

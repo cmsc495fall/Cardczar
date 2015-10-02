@@ -1,23 +1,25 @@
+<!-- This PHP file is for passing the turnprogress string from the database to the app -->
+
 <?php
 
-// PULL POST DATA
+// GET POST DATA FROM APACHE (DATA PASSED FROM APP) AND URLENCODE IT
 $db_name = urlencode($_POST["roomname"]);
 
-// LINK TO SQL
+// LINK TO MYSQL
 $link = mysqli_connect('localhost', 'root', 'cmsc495fall');
 if (!$link) { die('Could not connect: ' . mysqli_connect_error()); }
 
-// SELECT THAT DB
+// SELECT THE DB CORRESPONDING TO THE ROOM NAME
 mysqli_select_db($link, $db_name) or die("Select DB Error: ".mysqli_error());
 
-// GET gamestate dealer (int)
+// GET gamestate turnprogress (string) FROM DATABASE AND ECHO TO APP
 $query = "SELECT turnprogress FROM gamestate LIMIT 1";
 $result = mysqli_query($link, $query);
 $row = mysqli_fetch_assoc($result);
 $turnprogress = $row[turnprogress];
 echo urldecode($turnprogress);
 
-// CLOSE DATABASE
+// CLOSE MYSQL LINK
 mysqli_close($link);
 
 ?>

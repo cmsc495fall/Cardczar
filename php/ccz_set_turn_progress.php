@@ -1,14 +1,16 @@
+<!-- This PHP file is for changing turnprogress in gamestate table -->
+
 <?php
 
-// PULL POST DATA
+// GET POST DATA FROM APACHE (DATA PASSED FROM APP) AND URLENCODE IT
 $db_name = urlencode($_POST["roomname"]);
 $turn_progress = urlencode($_POST["turnprogress"]);
 
-// LINK TO SQL
+// LINK TO MYSQL
 $link = mysqli_connect('localhost', 'root', 'cmsc495fall');
 if (!$link) { die('Could not connect: ' . mysqli_connect_error()); }
 
-// SELECT THAT DB
+// SELECT THE DB CORRESPONDING TO THE ROOM NAME
 mysqli_select_db($link, $db_name) or die("set turn progress Select DB Error: ".mysqli_error());
 
 // SET turnprogress IN GAMESTATE
@@ -18,8 +20,7 @@ $t = $turn_progress;
 mysqli_stmt_execute($prepared_statment);
 mysqli_stmt_close($prepared_statment);
 
-
-// CLOSE DATABASE
+// CLOSE MYSQL LINK
 mysqli_close($link);
 
 ?>

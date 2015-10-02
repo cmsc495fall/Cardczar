@@ -1,13 +1,15 @@
+<!-- This PHP file is for updating game variables in database to indicate that game has started -->
+
 <?php
 
-// GET POST DATA
+// GET POST DATA FROM APACHE (DATA PASSED FROM APP) AND URLENCODE IT
 $db_name = urlencode($_POST["roomname"]);
 
-// LINK TO SQL
+// LINK TO MYSQL
 $link = mysqli_connect('localhost', 'root', 'cmsc495fall');
 if (!$link) { die('Could not connect: ' . mysqli_connect_error()); }
 
-// SELECT DB
+// SELECT THE DB CORRESPONDING TO THE ROOM NAME
 if (mysqli_select_db($link, $db_name)) {
     $connected = TRUE;
 } else {
@@ -28,7 +30,7 @@ if (connected) {
   }
 }
 
-// CLOSE DATABASE
+// CLOSE MYSQL LINK
 mysqli_close($link);
 
 ?>
