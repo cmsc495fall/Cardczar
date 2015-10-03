@@ -1,8 +1,7 @@
-<!-- This PHP file pulls 8 response cards from the database, deletes them from the database, and displays them
-     (app will take html output and load card data into cards[]) -->
-
-
 <?php
+// This PHP file pulls 8 response cards from the database, deletes them from the database, and displays them
+// (app will take html output and load card data into cards[])
+
 
 // GET POST DATA FROM APACHE (DATA PASSED FROM APP) AND URLENCODE IT
 $db_name = urlencode($_POST["roomname"]);

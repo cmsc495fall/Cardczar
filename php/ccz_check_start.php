@@ -1,7 +1,7 @@
-<!-- This PHP file checks to see if game has started by looking at gamestate boolean variable started and passing
-     the database value to the app -->
-
 <?php
+// This PHP file checks to see if game has started by looking at gamestate boolean variable started and passing
+// the database value to the app
+
 
 // GET POST DATA FROM APACHE (DATA PASSED FROM APP) AND URLENCODE IT
 $db_name = urlencode($_POST["roomname"]);

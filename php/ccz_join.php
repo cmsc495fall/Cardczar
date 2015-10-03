@@ -1,6 +1,6 @@
-<!-- This PHP file is for adding a user to the database -->
-
 <?php
+// This PHP file is for adding a user to the database
+
 
 // GET POST DATA FROM APACHE (DATA PASSED FROM APP) AND URLENCODE IT
 $db_name = urlencode($_POST["roomname"]);

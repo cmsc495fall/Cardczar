@@ -1,6 +1,6 @@
-<!-- This PHP file is for getting a bait text phrase from the database, echoing it to the app, then deleting in DB -->
-
 <?php
+// This PHP file is for getting a bait text phrase from the database, echoing it to the app, then deleting in DB
+
 
 // GET POST DATA FROM APACHE (DATA PASSED FROM APP) AND URLENCODE IT
 $db_name = urlencode($_POST["roomname"]);

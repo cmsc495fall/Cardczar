@@ -1,6 +1,6 @@
-<!-- This PHP file is for deleting databases -->
-
 <?php
+// This PHP file is for deleting databases
+
 
 // GET POST DATA FROM APACHE (DATA PASSED FROM APP) AND URLENCODE IT
 $db_name = urlencode($_POST["roomname"]);

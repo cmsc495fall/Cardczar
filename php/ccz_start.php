@@ -1,6 +1,5 @@
-<!-- This PHP file is for updating game variables in database to indicate that game has started -->
-
 <?php
+// This PHP file is for updating game variables in database to indicate that game has started
 
 // GET POST DATA FROM APACHE (DATA PASSED FROM APP) AND URLENCODE IT
 $db_name = urlencode($_POST["roomname"]);

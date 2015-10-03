@@ -1,6 +1,6 @@
-<!-- This PHP file is for passing the turnprogress string from the database to the app -->
-
 <?php
+// This PHP file is for passing the turnprogress string from the database to the app
+
 
 // GET POST DATA FROM APACHE (DATA PASSED FROM APP) AND URLENCODE IT
 $db_name = urlencode($_POST["roomname"]);

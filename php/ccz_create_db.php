@@ -1,13 +1,11 @@
-<!-- This PHP file is for creating the database that facilitates communication between the players.
-     The database stores 4 tables:
-     gamestate: id, started, timecreated, round, numusers, dealer, host, winner, activebait, selectedresponse, turnprogress
-     users: id, username, points, submission, timelastcontact
-     bait: id, text
-     responses: id, text
--->
-
-
 <?php
+// This PHP file is for creating the database that facilitates communication between the players.
+// The database stores 4 tables:
+//  gamestate: id, started, timecreated, round, numusers, dealer, host, winner, activebait, selectedresponse, turnprogress
+//  users: id, username, points, submission, timelastcontact
+//  bait: id, text
+//  responses: id, text
+
 
 // THE FOLLOWING FUNCTION IS FOR URLENCODING ARRAYS (PHP URLENCODE EXPECTS SINGLE STRING, NOT ARRAY) 
 // FUNCTION TAKEN FROM AMB: http://stackoverflow.com/questions/8734626/how-to-urlencode-a-multidimensional-array

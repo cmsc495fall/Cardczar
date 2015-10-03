@@ -1,6 +1,6 @@
-<!-- This PHP file is for setting database variables after a user has gracefully quit -->
-
 <?php
+// This PHP file is for setting database variables after a user has gracefully quit
+
 
 // GET POST DATA FROM APACHE (DATA PASSED FROM APP) AND URLENCODE IT
 $db_name = urlencode($_POST["roomname"]);

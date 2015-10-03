@@ -1,7 +1,7 @@
-<!-- This PHP file is for changing the user response submission in the database
-     and echoing a new response to the user (to refill their hand) -->
-
 <?php
+// This PHP file is for changing the user response submission in the database
+// and echoing a new response to the user (to refill their hand)
+
 
 // GET POST DATA FROM APACHE (DATA PASSED FROM APP) AND URLENCODE IT
 $db_name = urlencode($_POST["roomname"]);

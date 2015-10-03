@@ -1,9 +1,8 @@
-<!-- This PHP file returns a user list from the database to the app
-     Output data is formatted as pipe delimited text with user numbers, like so:
-     1 joe|2 mary|3 sue|
--->
-
 <?php
+// This PHP file returns a user list from the database to the app
+// Output data is formatted as pipe delimited text with user numbers, like so:
+//    1 joe|2 mary|3 sue|
+
 
 // GET POST DATA FROM APACHE (DATA PASSED FROM APP) AND URLENCODE IT
 $db_name = urlencode($_POST["roomname"]);

@@ -527,7 +527,7 @@ public class GameplayActivity extends Activity {
                         // STEP 2B: DISPLAY RESPONSES
                         // Send a message to the handler with the users' responses so they will be
                         // displayed as the text of the button widgets on the dealer's view
-                        if (!result.equals("Submissions are not desired state (empty or full)")) {
+                        if (!result.equals("Submissions are not desired state")) {
                             // Pad result, since display function does not use responses[0]
                             result = "empty|"+result;
 
@@ -716,7 +716,7 @@ public class GameplayActivity extends Activity {
                             e.printStackTrace();
                         }
 
-                        if (!result.equals("Submissions are not desired state (empty or full)")) {
+                        if (!result.equals("Submissions are not desired state")) {
                             System.out.println("Dealer moving to set bait");
                             waitForAllSubmissions=false;
                         }

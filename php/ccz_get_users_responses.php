@@ -1,13 +1,12 @@
-<!-- This PHP file is for passing user reponses from the database to the app for dealer display.
-     In addition to the room name parameter, this takes and action parameter of "waitforallfull" or "waitfor allempty"
-     and returns data dependant on the parameter.  Following are example inputs and outputs:
-      waitforallfull: if all responses are in, pipe delimited text is echoed, like so: Batman|Spartacus|Skeletor|
-      waitforallempty: if all responses are empty (WAIT FOR RESPONSE is considered empty) then echo "OK"
-      If either of the desired states (full or empty) are not met, this PHP file returns:
-        "Submissions are not desired state (empty or full)"
--->
-
 <?php
+// This PHP file is for passing user reponses from the database to the app for dealer display.
+// In addition to the room name parameter, this takes and action parameter of "waitforallfull" or "waitfor allempty"
+// and returns data dependant on the parameter.  Following are example inputs and outputs:
+//  waitforallfull: if all responses are in, pipe delimited text is echoed, like so: Batman|Spartacus|Skeletor|
+//  waitforallempty: if all responses are empty (WAIT FOR RESPONSE is considered empty) then echo "OK"
+//  If either of the desired states (full or empty) are not met, this PHP file returns:
+//    "Submissions are not desired state (empty or full)"
+
 
 // GET POST DATA FROM APACHE (DATA PASSED FROM APP) AND URLENCODE IT
 $db_name = urlencode($_POST["roomname"]);
@@ -52,7 +51,7 @@ if ($myrow = mysqli_fetch_array($tablecontents))
 // RETURN APPROPRIATE OUTPUT TO APP DEPENDING ON INPUT ACTION
 if ($action == "waitforallfull" && $hasNoWAIT_FOR_RESPONSE) {echo $response_string;} else
  if ($action == "waitforallempty" && $fullOfWAIT_FOR_RESPONSE) {echo "OK";} else
-  { echo "Submissions are not desired state (empty or full)";}
+  { echo "Submissions are not desired state";}
 
 // CLOSE MYSQL LINK
 mysqli_close($link);

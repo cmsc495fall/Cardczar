@@ -1,6 +1,6 @@
-<!-- This PHP file passes the dealer number from the database table gamestate to the app -->
-
 <?php
+// This PHP file passes the dealer number from the database table gamestate to the app
+
 
 // GET POST DATA FROM APACHE (DATA PASSED FROM APP) AND URLENCODE IT
 $db_name = urlencode($_POST["roomname"]);

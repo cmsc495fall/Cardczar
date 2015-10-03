@@ -1,6 +1,5 @@
-<!-- This PHP file is for changing turnprogress in gamestate table -->
-
 <?php
+// This PHP file is for changing turnprogress in gamestate table
 
 // GET POST DATA FROM APACHE (DATA PASSED FROM APP) AND URLENCODE IT
 $db_name = urlencode($_POST["roomname"]);

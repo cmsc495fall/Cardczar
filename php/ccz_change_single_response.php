@@ -1,6 +1,6 @@
-<!-- This PHP file is for changing a user's response (in the DB) to WAIT FOR RESPONSE -->
-
 <?php
+// This PHP file is for changing a user's response (in the DB) to WAIT FOR RESPONSE
+
 
 // GET POST DATA FROM APACHE (DATA PASSED FROM APP) AND URLENCODE IT
 $db_name = urlencode($_POST["roomname"]);
