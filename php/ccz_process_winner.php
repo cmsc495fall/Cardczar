@@ -1,6 +1,6 @@
 <?php
 // This PHP file is for setting variables for selected winner response
-   Note that it updates the database by using the winning response, not the winner name or number
+// Note that it updates the database by using the winning response, not the winner name or number
 
 
 // GET POST DATA FROM APACHE (DATA PASSED FROM APP) AND URLENCODE IT

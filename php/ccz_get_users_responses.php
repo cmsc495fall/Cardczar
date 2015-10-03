@@ -5,7 +5,7 @@
 //  waitforallfull: if all responses are in, pipe delimited text is echoed, like so: Batman|Spartacus|Skeletor|
 //  waitforallempty: if all responses are empty (WAIT FOR RESPONSE is considered empty) then echo "OK"
 //  If either of the desired states (full or empty) are not met, this PHP file returns:
-//    "Submissions are not desired state (empty or full)"
+//    "Submissions are not desired state"
 
 
 // GET POST DATA FROM APACHE (DATA PASSED FROM APP) AND URLENCODE IT
