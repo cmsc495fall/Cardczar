@@ -602,7 +602,6 @@ public class GameplayActivity extends Activity {
                     //GAMEPLAY DEALER: Step 6
                     // Get the round, round winner and winning response from the database to display to the user
                     String[] winnerData;
-                    String winner = "-1";
                     String winningResponse = "Not set";
                     int round = -1;
 
@@ -620,7 +619,7 @@ public class GameplayActivity extends Activity {
                         Log.d("GP dealer step6a:", result);
                         winnerData = result.split("\\|");
                         round = Integer.parseInt(winnerData[0]) -1;
-                        winner = winnerData[1];
+                        // String winner = winnerData[1];
                         winningResponse = winnerData[2];
                         Log.d("GP dealer step6a:", result);
                     } catch (IOException e) {
