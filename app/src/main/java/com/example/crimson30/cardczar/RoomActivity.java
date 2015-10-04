@@ -135,7 +135,7 @@ public class RoomActivity extends Activity {
         //If the there aren't enough players or too many players than display an error to the user
         } else { // wrong number of users
             TextView statusTextView = (TextView) findViewById(R.id.statusTextView);
-            statusTextView.setText("  3-9 users ("+numusers+")");
+            statusTextView.setText("  3-6 users ("+numusers+")");
         } // end if (numusers > 3 && numusers < 7)
 
     } // end intentToGameplay
