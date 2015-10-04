@@ -1,12 +1,20 @@
 package com.example.crimson30.cardczar;
 
 import android.app.Activity;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.PictureDrawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import android.content.Intent;
 import android.view.View;
+
+import android.widget.LinearLayout;
+
+import com.caverock.androidsvg.SVG;
+import com.caverock.androidsvg.SVGImageView;
+import com.caverock.androidsvg.SVGParseException;
 
 /**
  * File: MainActivity
@@ -29,6 +37,22 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // ADD SVG COAT OF ARMS BY SETTING LAYOUT BACKGROUND
+        // SVG SOURCE: https://commons.wikimedia.org/wiki/File:Coat_of_Arms_of_the_Russian_Federation_bw2.svg
+        // SVG AUTHOR: Федеральный конституционный закон «О Государственном гербе Российской Федерации»
+        LinearLayout coatLayout = (LinearLayout) findViewById(R.id.coatLayout);
+        SVG svg = null;
+        try {
+            svg = SVG.getFromResource(this, R.raw.coat);
+        } catch (SVGParseException e) {
+            e.printStackTrace();
+        }
+        SVGImageView svgImageView = new SVGImageView(this);
+        svgImageView.setImageAsset("coat.svg");
+        Drawable drawableCoat = new PictureDrawable(svg.renderToPicture());
+        coatLayout.setBackground(drawableCoat.getCurrent());
+
     }
 
     /**

@@ -2,13 +2,20 @@ package com.example.crimson30.cardczar;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.PictureDrawable;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.caverock.androidsvg.SVG;
+import com.caverock.androidsvg.SVGImageView;
+import com.caverock.androidsvg.SVGParseException;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -22,7 +29,6 @@ import org.apache.http.util.EntityUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * File: GameOverActivity
@@ -56,6 +62,21 @@ public class GameOverActivity extends Activity {
         //Specify the activity game over layout
         setContentView(R.layout.activity_game_over);
 
+        // ADD SVG CROWN BY SETTING LAYOUT BACKGROUND
+        // SVG SOURCE: https://commons.wikimedia.org/wiki/File:Heraldic_Royal_Crown_%28Common%29.svg
+        // SVG AUTHOR: "Heralder"
+        LinearLayout crownLayout = (LinearLayout) findViewById(R.id.crownLayout);
+        SVG svg = null;
+        try {
+            svg = SVG.getFromResource(this, R.raw.crown);
+        } catch (SVGParseException e) {
+            e.printStackTrace();
+        }
+        SVGImageView svgImageView = new SVGImageView(this);
+        svgImageView.setImageAsset("coat.svg");
+        Drawable drawableCoat = new PictureDrawable(svg.renderToPicture());
+        crownLayout.setBackground(drawableCoat.getCurrent());
+
         //Get the bundle with information passed from the previous activity
         Bundle extras = getIntent().getExtras();
         roomname = extras.getString("roomname");
@@ -79,9 +100,9 @@ public class GameOverActivity extends Activity {
         //Create the message that will be displayed to the user and set the text view
         //in the layout to the message
         TextView gameoverMessage = (TextView) findViewById(R.id.gameOverText);
-        StringBuilder displayMessage = new StringBuilder("CONGRATULATIONS, " + winningUser + "\n");
-        displayMessage.append("won the game!!!\n\n\n");
-        displayMessage.append("Game Over");
+        StringBuilder displayMessage = new StringBuilder("All hail "+winningUser+",\n");
+        displayMessage.append("the new Card Czar!\n\n");
+        // displayMessage.append("Game Over");
         gameoverMessage.setText(displayMessage.toString());
     }
 
