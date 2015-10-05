@@ -7,6 +7,7 @@ import android.graphics.drawable.PictureDrawable;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -73,7 +74,6 @@ public class GameOverActivity extends Activity {
             e.printStackTrace();
         }
         SVGImageView svgImageView = new SVGImageView(this);
-        svgImageView.setImageAsset("coat.svg");
         Drawable drawableCoat = new PictureDrawable(svg.renderToPicture());
         ImageView coatImage = (ImageView) findViewById(R.id.crownImage);
         coatImage.setImageDrawable(drawableCoat);
@@ -93,7 +93,7 @@ public class GameOverActivity extends Activity {
             HttpResponse response = httpclient.execute(post);
             result = EntityUtils.toString(response.getEntity());
             winningUser = result;
-            Log.d("GameOverActivity winner:", result);
+            Log.d("GameOver winner:", result);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -105,6 +105,7 @@ public class GameOverActivity extends Activity {
         displayMessage.append("the new Card Czar!\n\n");
         // displayMessage.append("Game Over");
         gameoverMessage.setText(displayMessage.toString());
+        gameoverMessage.setTextSize(TypedValue.COMPLEX_UNIT_DIP,30);
     }
 
     /**

@@ -24,13 +24,12 @@
         android:text="Start New Game"
         android:id="@+id/restartButton"
         android:onClick="intentToRestartStart"
-        android:layout_below="@+id/gameOverText"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="125dp" />
+        android:layout_marginTop="150dp" />
 
     <GridLayout
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_width="fill_parent"
+        android:layout_height="200dp"
         android:id="@+id/gridLayout"
         android:layout_alignParentTop="false"
         android:layout_alignParentStart="false"
@@ -40,7 +39,8 @@
         <ImageView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:id="@+id/crownImage" />
+            android:id="@+id/crownImage"
+            android:layout_marginLeft="80dp" />
     </GridLayout>
 
 

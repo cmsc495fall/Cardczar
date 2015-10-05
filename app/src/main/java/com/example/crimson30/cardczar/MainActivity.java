@@ -49,7 +49,6 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
         SVGImageView svgImageView = new SVGImageView(this);
-        svgImageView.setImageAsset("coat.svg");
         Drawable drawableCoat = new PictureDrawable(svg.renderToPicture());
         ImageView coatImage = (ImageView) findViewById(R.id.coatImage);
         coatImage.setImageDrawable(drawableCoat);
