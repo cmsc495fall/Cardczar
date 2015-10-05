@@ -29,18 +29,18 @@
 
     <GridLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="250dp"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/joinButton">
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentBottom="true">
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="264dp"
-            android:layout_height="246dp"
-            android:layout_row="8"
-            android:layout_column="7"
-            android:id="@+id/coatLayout"
-            android:gravity="center_vertical|center|center_horizontal"></LinearLayout>
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/coatImage"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentRight="false" />
     </GridLayout>
 
 </RelativeLayout>

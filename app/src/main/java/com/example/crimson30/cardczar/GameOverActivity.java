@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -62,11 +63,10 @@ public class GameOverActivity extends Activity {
         //Specify the activity game over layout
         setContentView(R.layout.activity_game_over);
 
-        // ADD SVG CROWN BY SETTING LAYOUT BACKGROUND
+        // ADD SVG CROWN BY SETTING ImageView in the layout
         // SVG SOURCE: https://commons.wikimedia.org/wiki/File:Heraldic_Royal_Crown_%28Common%29.svg
         // SVG AUTHOR: "Heralder"
-        LinearLayout crownLayout = (LinearLayout) findViewById(R.id.crownLayout);
-        SVG svg = null;
+       SVG svg = null;
         try {
             svg = SVG.getFromResource(this, R.raw.crown);
         } catch (SVGParseException e) {
@@ -75,7 +75,8 @@ public class GameOverActivity extends Activity {
         SVGImageView svgImageView = new SVGImageView(this);
         svgImageView.setImageAsset("coat.svg");
         Drawable drawableCoat = new PictureDrawable(svg.renderToPicture());
-        crownLayout.setBackground(drawableCoat.getCurrent());
+        ImageView coatImage = (ImageView) findViewById(R.id.crownImage);
+        coatImage.setImageDrawable(drawableCoat);
 
         //Get the bundle with information passed from the previous activity
         Bundle extras = getIntent().getExtras();

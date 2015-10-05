@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.content.Intent;
 import android.view.View;
 
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.caverock.androidsvg.SVG;
@@ -38,10 +39,9 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // ADD SVG COAT OF ARMS BY SETTING LAYOUT BACKGROUND
+        // ADD SVG COAT OF ARMS BY SETTING ImageView in the layout
         // SVG SOURCE: https://commons.wikimedia.org/wiki/File:Coat_of_Arms_of_the_Russian_Federation_bw2.svg
         // SVG AUTHOR: Федеральный конституционный закон «О Государственном гербе Российской Федерации»
-        LinearLayout coatLayout = (LinearLayout) findViewById(R.id.coatLayout);
         SVG svg = null;
         try {
             svg = SVG.getFromResource(this, R.raw.coat);
@@ -51,7 +51,8 @@ public class MainActivity extends Activity {
         SVGImageView svgImageView = new SVGImageView(this);
         svgImageView.setImageAsset("coat.svg");
         Drawable drawableCoat = new PictureDrawable(svg.renderToPicture());
-        coatLayout.setBackground(drawableCoat.getCurrent());
+        ImageView coatImage = (ImageView) findViewById(R.id.coatImage);
+        coatImage.setImageDrawable(drawableCoat);
 
     }
 

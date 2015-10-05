@@ -30,24 +30,17 @@
 
     <GridLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="250dp"
         android:id="@+id/gridLayout"
-        android:layout_below="@+id/gameOverText"
-        android:layout_alignParentEnd="true">
+        android:layout_alignParentTop="false"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true">
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="224dp"
-            android:layout_height="466dp"
-            android:layout_row="6"
-            android:layout_column="13"
-            android:id="@+id/crownLayout"
-            android:layout_below="@+id/gameOverText"
-            android:layout_alignEnd="@+id/gridLayout"
-            android:layout_alignStart="@+id/restartButton"
-            android:layout_rowSpan="2">
-
-        </LinearLayout>
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/crownImage" />
     </GridLayout>
 
 
