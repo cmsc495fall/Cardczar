@@ -73,10 +73,10 @@ public class GameOverActivity extends Activity {
         } catch (SVGParseException e) {
             e.printStackTrace();
         }
-        SVGImageView svgImageView = new SVGImageView(this);
-        Drawable drawableCoat = new PictureDrawable(svg.renderToPicture());
+
+        Drawable drawableCrown = new PictureDrawable(svg.renderToPicture());
         ImageView coatImage = (ImageView) findViewById(R.id.crownImage);
-        coatImage.setImageDrawable(drawableCoat);
+        coatImage.setImageDrawable(drawableCrown);
 
         //Get the bundle with information passed from the previous activity
         Bundle extras = getIntent().getExtras();
