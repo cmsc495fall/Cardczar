@@ -698,8 +698,8 @@ public class GameplayActivity extends Activity {
                             e.printStackTrace();
                         }
 
-
-                        // Query the database for the user's submissions.
+                        // STEP 8B: GET USER RESPONSES
+                        // Wait for user responses to "empty"
                         try {
                             String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_users_responses.php";
                             HttpClient httpclient = new DefaultHttpClient();
@@ -723,7 +723,7 @@ public class GameplayActivity extends Activity {
                     }  // end while waitForAllSubmissions
 
 
-                    // STEP 8B: SET BAIT
+                    // STEP 9: SET BAIT
                     //Query the database for the next bait question and set value
                     try {
                         String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_set_bait.php";
@@ -796,7 +796,7 @@ public class GameplayActivity extends Activity {
                     // the newly drawn response from step 2B
                     cards[buttonClicked]=result;
 
-                    // STEP 2D: send a message to the handler to set the text to the new reponse card
+                    // STEP 2D: send a message to the handler to set the text to the new response card
                     msg = Message.obtain();
                     Bundle notDealerNewCardBundle = new Bundle();
                     handler.removeCallbacks(this);  // Clear message queue
@@ -882,6 +882,7 @@ public class GameplayActivity extends Activity {
                             break;
                         }
 
+                        // STEP 5B: GET TURN PROGRESS
                         //Query the database to get the turn progress
                         try {
                             String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_turn_progress.php";
