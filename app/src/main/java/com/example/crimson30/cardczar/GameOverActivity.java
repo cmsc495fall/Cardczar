@@ -75,8 +75,8 @@ public class GameOverActivity extends Activity {
         }
 
         Drawable drawableCrown = new PictureDrawable(svg.renderToPicture());
-        ImageView coatImage = (ImageView) findViewById(R.id.crownImage);
-        coatImage.setImageDrawable(drawableCrown);
+        ImageView crownImage = (ImageView) findViewById(R.id.crownImage);
+        crownImage.setImageDrawable(drawableCrown);
 
         //Get the bundle with information passed from the previous activity
         Bundle extras = getIntent().getExtras();
