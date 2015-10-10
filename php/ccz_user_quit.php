@@ -14,11 +14,11 @@ if (!$link) { die('Could not connect: ' . mysqli_connect_error()); }
 mysqli_select_db($link, $db_name) or die("set bait Select DB Error: ".mysqli_error());
 
 // DELETE USER IN USERS TABLE FOR USERNAME PASSED FROM APP
-$prepared_statment = mysqli_prepare($link, "DELETE FROM users where username=?");
-mysqli_stmt_bind_param($prepared_statment, 's', $u);
+$prepared_statement = mysqli_prepare($link, "DELETE FROM users where username=?");
+mysqli_stmt_bind_param($prepared_statement, 's', $u);
 $u = $username;
-mysqli_stmt_execute($prepared_statment);
-mysqli_stmt_close($prepared_statment);
+mysqli_stmt_execute($prepared_statement);
+mysqli_stmt_close($prepared_statement);
 
 // GET gamestate VALUE FOR numusers
 $query = "SELECT numusers FROM gamestate LIMIT 1";
@@ -28,11 +28,11 @@ $numusers = intval($row[numusers]);
 $numusers--;
 
 // SET gamestate VALUE FOR numusers
-$prepared_statment = mysqli_prepare($link, "UPDATE gamestate SET numusers=? WHERE id=1;");
-mysqli_stmt_bind_param($prepared_statment, 's', $n);
+$prepared_statement = mysqli_prepare($link, "UPDATE gamestate SET numusers=? WHERE id=1;");
+mysqli_stmt_bind_param($prepared_statement, 's', $n);
 $n = $numusers;
-mysqli_stmt_execute($prepared_statment);
-mysqli_stmt_close($prepared_statment);
+mysqli_stmt_execute($prepared_statement);
+mysqli_stmt_close($prepared_statement);
 
 // CLOSE MYSQL LINK
 mysqli_close($link);

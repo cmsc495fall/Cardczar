@@ -2,7 +2,6 @@ package com.example.crimson30.cardczar;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -244,9 +243,9 @@ public class GameplayActivity extends Activity {
                     System.out.println("in handler display Bait");
                     TextView baitTextView = (TextView) findViewById(R.id.baitTextView);
                     baitTextView.setText(data);
-                //If the operation is to display the buttons then the data is a pipe delimited list string where
-                //each delimited value is the text for one of the buttons on the screen. The number of buttons
-                //that will be displayed is based on the number of delimited values in the data string
+                    //If the operation is to display the buttons then the data is a pipe delimited list string where
+                    //each delimited value is the text for one of the buttons on the screen. The number of buttons
+                    //that will be displayed is based on the number of delimited values in the data string
                 } else if (operation.equals("displayButtons")) {
                     // Note: Data for this arrives as something like "empty|button1Text|button2Text"
                     // The displayButtons code below breaks up the data to figure out how many buttons to display
@@ -307,8 +306,8 @@ public class GameplayActivity extends Activity {
                     } else {
                         button8.setVisibility(View.GONE);
                     } // end BUTTON 8 DISPLAY
-                //If the operation is new response then set the button that was clicked by
-                //the user tothe text for that button to the newly drawn response card
+                    //If the operation is new response then set the button that was clicked by
+                    //the user tothe text for that button to the newly drawn response card
                 } else if (operation.equals("newResponse")) { // FOR JUST CHANGING BUTTON LAST CLICKED
                     if (buttonClicked==1) { button1.setText(data); } else
                     if (buttonClicked==2) { button2.setText(data); } else
@@ -318,14 +317,14 @@ public class GameplayActivity extends Activity {
                     if (buttonClicked==6) { button6.setText(data); } else
                     if (buttonClicked==7) { button7.setText(data); } else
                     if (buttonClicked==8) { button8.setText(data); }
-                //If the operation is to display the winner, then the data contains information about
-                //what response card won the round and this user's current point total. Display this
-                //information in the winnnerTextView widget in the view
+                    //If the operation is to display the winner, then the data contains information about
+                    //what response card won the round and this user's current point total. Display this
+                    //information in the winnnerTextView widget in the view
                 } else if (operation.equals("displayWinner")){
                     TextView winnerTextView = (TextView) findViewById(R.id.winnerText);
                     winnerTextView.setText(data);
-                //If the operation is to update the application title, then update the title bar
-                //to display the current round
+                    //If the operation is to update the application title, then update the title bar
+                    //to display the current round
                 } else if (operation.equals("updateAppBarTitle")){
                     getActionBar().setTitle("Round " + round);
                 }
@@ -698,8 +697,8 @@ public class GameplayActivity extends Activity {
                             e.printStackTrace();
                         }
 
-
-                        // Query the database for the user's submissions.
+                        // STEP 8B: GET USER RESPONSES
+                        // Wait for user responses to "empty"
                         try {
                             String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_users_responses.php";
                             HttpClient httpclient = new DefaultHttpClient();
@@ -723,7 +722,7 @@ public class GameplayActivity extends Activity {
                     }  // end while waitForAllSubmissions
 
 
-                    // STEP 8B: SET BAIT
+                    // STEP 9: SET BAIT
                     //Query the database for the next bait question and set value
                     try {
                         String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_set_bait.php";
@@ -796,7 +795,7 @@ public class GameplayActivity extends Activity {
                     // the newly drawn response from step 2B
                     cards[buttonClicked]=result;
 
-                    // STEP 2D: send a message to the handler to set the text to the new reponse card
+                    // STEP 2D: send a message to the handler to set the text to the new response card
                     msg = Message.obtain();
                     Bundle notDealerNewCardBundle = new Bundle();
                     handler.removeCallbacks(this);  // Clear message queue
@@ -882,6 +881,7 @@ public class GameplayActivity extends Activity {
                             break;
                         }
 
+                        // STEP 5B: GET TURN PROGRESS
                         //Query the database to get the turn progress
                         try {
                             String url = "http://ec2-52-3-241-249.compute-1.amazonaws.com/ccz_get_turn_progress.php";

@@ -23,12 +23,12 @@ $query = "DELETE FROM bait where text = '$bait_text'";
 mysqli_query($link, $query) or die("set bait Delete row error: ".mysqli_error()); 
 
 // SET activebait and turnprogress IN GAMESTATE
-$prepared_statment = mysqli_prepare($link, "UPDATE gamestate SET activebait=?, turnprogress=? WHERE id=1;");
-mysqli_stmt_bind_param($prepared_statment, 'ss', $a, $t);
+$prepared_statement = mysqli_prepare($link, "UPDATE gamestate SET activebait=?, turnprogress=? WHERE id=1;");
+mysqli_stmt_bind_param($prepared_statement, 'ss', $a, $t);
 $a = $bait_text;
 $t = $turn_progress;
-mysqli_stmt_execute($prepared_statment);
-mysqli_stmt_close($prepared_statment);
+mysqli_stmt_execute($prepared_statement);
+mysqli_stmt_close($prepared_statement);
 
 // CLOSE MYSQL LINK
 mysqli_close($link);

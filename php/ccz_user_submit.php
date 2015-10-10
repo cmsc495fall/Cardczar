@@ -16,12 +16,12 @@ if (!$link) { die('Could not connect: ' . mysqli_connect_error()); }
 mysqli_select_db($link, $db_name) or die("Select DB Error: ".mysqli_error());
 
 // SET submission IN users USING PREPARED STATEMENT TO FOIL SQL INJECTION ATTACKS
-$prepared_statment = mysqli_prepare($link, "UPDATE users SET submission=? WHERE username=?;");
-mysqli_stmt_bind_param($prepared_statment, 'ss', $s, $u);
+$prepared_statement = mysqli_prepare($link, "UPDATE users SET submission=? WHERE username=?;");
+mysqli_stmt_bind_param($prepared_statement, 'ss', $s, $u);
 $s = $submission;
 $u = $username;
-mysqli_stmt_execute($prepared_statment);
-mysqli_stmt_close($prepared_statment);
+mysqli_stmt_execute($prepared_statement);
+mysqli_stmt_close($prepared_statement);
 
 // GET NEW RESPONSE, ECHO TO APP FOR USER, THEN DELETE RESPONSE FROM DATABASE
 $query = "SELECT text FROM responses LIMIT 1";

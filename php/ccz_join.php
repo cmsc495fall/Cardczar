@@ -22,11 +22,11 @@ if (mysqli_select_db($link, $db_name)) {
 if (connected) {
 
  // CHECK TO SEE IF USER ALREADY EXISTS USING PREPARED STATEMENT TO GUARD AGAINST SQL INJECTION ATTACKS
- $prepared_statment = mysqli_prepare($link, "SELECT count(*) from users where username=?");
- mysqli_stmt_bind_param($prepared_statment, 's', $u);
+ $prepared_statement = mysqli_prepare($link, "SELECT count(*) from users where username=?");
+ mysqli_stmt_bind_param($prepared_statement, 's', $u);
  $u = $username;
- mysqli_stmt_execute($prepared_statment);
- $result = mysqli_stmt_get_result($prepared_statment);
+ mysqli_stmt_execute($prepared_statement);
+ $result = mysqli_stmt_get_result($prepared_statement);
  $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
  // CHECK FOR EXISTING USERNAME
@@ -53,13 +53,13 @@ if (connected) {
   }
 
   // ADD USER TO users (DIE KEEPS BAD CASES [like too many users] FROM GETTING HERE)
-  $prepared_statment = mysqli_prepare($link, "INSERT INTO users (username, points, submission) VALUES (?, ?, ?)");
-  mysqli_stmt_bind_param($prepared_statment, 'sis', $u, $p, $s);
+  $prepared_statement = mysqli_prepare($link, "INSERT INTO users (username, points, submission) VALUES (?, ?, ?)");
+  mysqli_stmt_bind_param($prepared_statement, 'sis', $u, $p, $s);
   $u = $username;
   $p = 0;
   $s = "WAIT FOR RESPONSE";
-  if (mysqli_stmt_execute($prepared_statment)) { echo "OK"; $inserted = true; }
-  mysqli_stmt_close($prepared_statment);
+  if (mysqli_stmt_execute($prepared_statement)) { echo "OK"; $inserted = true; }
+  mysqli_stmt_close($prepared_statement);
 
   // INCREMENT NUMUSERS IN gamestate
   if ($inserted) {

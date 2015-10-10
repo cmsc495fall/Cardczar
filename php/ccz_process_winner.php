@@ -15,11 +15,11 @@ if (!$link) { die('Could not connect: ' . mysqli_connect_error()); }
 mysqli_select_db($link, $db_name) or die("process winner Select DB Error: ".mysqli_error());
 
 // GET USER VALUES BY RESPONSE USING PREPARED STATEMENT TO GUARD AGAINST SQL INJECTION ATTACKS
-$prepared_statment = mysqli_prepare($link, "SELECT * FROM users WHERE submission=?");
-mysqli_stmt_bind_param($prepared_statment, 's', $r);
+$prepared_statement = mysqli_prepare($link, "SELECT * FROM users WHERE submission=?");
+mysqli_stmt_bind_param($prepared_statement, 's', $r);
 $r = $response;
-mysqli_stmt_execute($prepared_statment);
-$result = mysqli_stmt_get_result($prepared_statment);
+mysqli_stmt_execute($prepared_statement);
+$result = mysqli_stmt_get_result($prepared_statement);
 $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 $selected_response = $row[submission];
 $points = intval($row[points]);
@@ -43,15 +43,15 @@ $round++;
 
 // SET round, dealer, winner, selectedresponse, and turnprogress IN gamestate
 // AGAIN USING PREPARED STATEMENT TO FOIL SQL INJECTION ATTACKS
-$prepared_statment = mysqli_prepare($link, "UPDATE gamestate SET round=?, dealer=?, winner=?, selectedresponse=?, turnprogress=? WHERE id=1;");
-mysqli_stmt_bind_param($prepared_statment, 'iiiss', $r, $d, $w, $s, $t);
+$prepared_statement = mysqli_prepare($link, "UPDATE gamestate SET round=?, dealer=?, winner=?, selectedresponse=?, turnprogress=? WHERE id=1;");
+mysqli_stmt_bind_param($prepared_statement, 'iiiss', $r, $d, $w, $s, $t);
 $r = $round;
 $d = $user;
 $w = $user;
 $s = $selected_response;
 $t = $turn_progress;
-mysqli_stmt_execute($prepared_statment);
-mysqli_stmt_close($prepared_statment);
+mysqli_stmt_execute($prepared_statement);
+mysqli_stmt_close($prepared_statement);
 
 // ECHO TURN PROGRESS TO APP
 echo $turn_progress;

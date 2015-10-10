@@ -94,13 +94,13 @@ if ($create_db) { // ONLY DO THE FOLLOWING CODE (DB CREATION) IF DB DOESN'T EXIS
   // INSERT USER DATA
   // BECAUSE username COULD CONTAIN SQL INJECTION ATTACK,
   // USE PREPARED STATEMENT TO SEPERATE QUERY CODE FROM DATA TO PREVENT SQL INJECTION
-  $prepared_statment = mysqli_prepare($link, "INSERT INTO users (username, points, submission) VALUES (?, ?, ?)");
-  mysqli_stmt_bind_param($prepared_statment, 'sis', $u, $p, $s);
+  $prepared_statement = mysqli_prepare($link, "INSERT INTO users (username, points, submission) VALUES (?, ?, ?)");
+  mysqli_stmt_bind_param($prepared_statement, 'sis', $u, $p, $s);
   $u = $username;
   $p = 0;
   $s = "WAIT FOR RESPONSE";
-  mysqli_stmt_execute($prepared_statment);
-  mysqli_stmt_close($prepared_statment);
+  mysqli_stmt_execute($prepared_statement);
+  mysqli_stmt_close($prepared_statement);
 
   // INSERT BAIT DATA
   // PULL BAIT FILE FROM APACHE HTML DIRECTORY AND STORE AS URLENCODED DATA IN DATABASE (IN RANDOM ORDER)
